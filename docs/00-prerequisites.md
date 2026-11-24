@@ -37,7 +37,7 @@ aca --version
 
 ## 도구와 계정
 
-Node.js는 **22.13 이상**이어야 한다. Docker workload와 ACA image에서도 직접 확인한다. Tailspin은 Node 내장 `node:sqlite`를 사용한다.
+Node.js는 **22.13 이상**이어야 한다. Docker workload와 ACA image에서도 직접 확인한다. Tailspin은 Node 내장 `node:sqlite`를 사용한다. Windows용 제공 스크립트에는 **PowerShell 7 이상**이 필요하다.
 
 Copilot CLI, Docker Sandboxes CLI(`sbx`), Azure CLI, ACA Sandboxes CLI(`aca`)는 각각 공식 설치 문서를 따른다. Docker Desktop이나 `az containerapp`은 `sbx`/`aca`를 대체하지 않는다. 최종 설치 버전과 설치 파일 checksum은 `TBD(검증 필요)`다.
 
@@ -59,7 +59,7 @@ sbx secret set copilot
 1. `az login` 후 `az account show`로 본인의 구독을 화면에서 확인한다. 원자료를 공유할 때 구독 ID와 계정 정보를 지운다.
 2. 참가자별 교육 전용 sandbox group을 준비한다. `Microsoft.App/SandboxGroups` 경로이며 Dynamic Sessions/session pool이 아니다.
 3. control plane 생성 권한과 `Container Apps SandboxGroup Data Owner` data plane 권한을 구분한다. 자동 역할 부여 시도가 성공했는지 확인한다.
-4. 본인의 fine-grained PAT를 provider credential로 등록하고 정확한 credential ID를 보관한다. 조사 당시 ACA provider는 `github_pat_`를 요구하며 classic `ghp_`는 지원하지 않는다고 설명한다.
+4. Azure portal의 본인 sandbox group에서 **GitHub Copilot > Set Token**으로 fine-grained PAT를 등록한다. `Configured`를 확인하고 sandbox 생성에 쓸 정확한 credential ID를 확인한다. 조사 당시 provider는 `github_pat_`를 요구하며 classic `ghp_`는 지원하지 않는다고 설명한다. 이 포털 표시만으로 실제 모델 요청 성공을 확정하지 않는다.
 5. 아래 preflight와 이미지, quota를 확인한다.
 
 ```text
@@ -67,10 +67,18 @@ aca doctor
 aca config show
 aca sandboxgroup disk list-public
 aca sandboxgroup --help
-aca credential --help
 ```
 
-`aca credential` 하위 명령과 group 설정 절차의 실제 문법은 `TBD(검증 필요)`다. 목록의 첫 credential을 자동 선택하지 않는다. group/identity를 공유하면 이름이나 label만으로 참가자 접근을 격리할 수 없다.
+본인 구독을 선택한 후 group을 만드는 명령 구조는 다음과 같다(미검증). 실제 region과 고유한 교육용 이름을 확인한 후에만 실행한다.
+
+```powershell
+$subscription = az account show --query id -o tsv
+az group create --name <개인교육용리소스그룹> --location <검증한지역>
+aca sandboxgroup create -g <개인교육용리소스그룹> --name <개인교육용SandboxGroup> --location <검증한지역> -s $subscription --set-config
+aca doctor
+```
+
+provider credential 관리는 공식 문서의 portal 경로를 사용한다. CLI 하위 명령을 추측하지 않는다. credential ID 확인 경로와 최종 group 설정 문법은 `TBD(검증 필요)`다. 목록의 첫 credential을 자동 선택하지 않는다. group/identity를 공유하면 이름이나 label만으로 참가자 접근을 격리할 수 없다.
 
 지역은 Korea Central이 **후보**일 뿐이다. 실제 region, image ID/revision, tier, 동시 cores quota, CPU architecture, 예상 비용과 예산 한도는 `TBD(검증 필요)`다. compute 중지 후에도 저장소와 네트워크 비용이 남을 수 있다.
 
