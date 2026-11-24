@@ -1,4 +1,6 @@
 # syntax=docker/sandbox-kit:3
+# Copyright 2026 Docker, Inc. Apache-2.0. LICENSE-APACHE-2.0와 NOTICE 참조.
+# 원본 MOTD 예제를 수정했다: 이름, 생성 경로와 내용을 워크숍용으로 변경.
 schemaVersion: "3"
 kind: mixin
 displayName: Workshop greeting
