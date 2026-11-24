@@ -1,0 +1,7 @@
+workspace*/
+evidence/
+.azure/
+**/main.json
+*.bicep.user
+*.log
+.DS_Store
