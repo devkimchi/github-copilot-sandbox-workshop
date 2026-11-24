@@ -39,7 +39,23 @@ Set-Location <실습저장소>
 
 ## 자료 구조
 
+진행 순서는 다음과 같다.
+
+| 순서 | 실습 문서 |
+| --- | --- |
+| 사전 | [도구와 개인 계정 준비](docs/00-prerequisites.md), [선택 Windows VM](docs/00-windows-vm.md) |
+| 1 | [승인과 실행 경계](docs/01-approval-and-boundaries.md) |
+| 2 | [Lab 0/1: baseline과 Copilot OFF/ON](docs/02-copilot-local-sandbox.md) |
+| 3 | [Lab 2: Docker Direct/Clone와 네트워크](docs/03-docker-workspaces-and-network.md) |
+| 4 | [Lab 2B: published mixin과 180분 제작 확장](docs/04-docker-mixins.md) |
+| 5 | [Lab 3: ACA 원격 경계와 상태](docs/05-aca-sandboxes.md) |
+| 6 | [비교와 정리](docs/06-review-and-cleanup.md) |
+
+강사는 [운영 가이드](docs/instructor-guide.md)와 [문제 해결](docs/troubleshooting.md)을 먼저 확인한다.
+
 `docs/`는 순서대로 읽는 실습 문서, `tasks/`는 고정 SHA의 과제 원문, `scripts/`는 앱 추출 도우미다. `mixins/`는 180분 확장 골격, `windows-vm/`은 선택 사전 준비용 자립형 azd 템플릿이다. `checkpoints/`의 패치는 예행 연습 후 생성한다.
+
+[05번 기본 과제](tasks/05-catalog-summary.md), [02번 대안 과제](tasks/02-sort-games.md), [추출 도우미](scripts/README.md), [복구와 패치 운영](checkpoints/README.md), [mixin 골격](mixins/README.md), [VM 템플릿](windows-vm/README.md), [관찰표](evidence-template/observation.md), [비교표](evidence-template/comparison.md)를 파일로 제공한다.
 
 `workspace*/`는 앱의 독립 Git 저장소이며 실습 자료 저장소에서 추적하지 않는다. `evidence/`는 사람이 원자료와 관찰표를 저장하는 폴더다. 앱 안의 `workspace/evidence/summary.md`는 Copilot이 작성하는 과제 산출물로, 사람이 작성하는 관찰 기록과 다르다.
 
