@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://aka.ms/azure.yaml.json
+name: copilot-sandbox-workshop-vm
+requiredVersions:
+  azd: ">= 1.35.1"
+infra:
+  provider: bicep
+  path: infra
+  module: main
+hooks:
+  preprovision:
+    windows:
+      shell: pwsh
+      interactive: true
+      run: ./hooks/preprovision.ps1
+    posix:
+      shell: sh
+      interactive: true
+      run: bash ./hooks/preprovision.sh
+  postprovision:
+    windows:
+      shell: pwsh
+      interactive: true
+      run: ./hooks/postprovision.ps1
+    posix:
+      shell: sh
+      interactive: true
+      run: bash ./hooks/postprovision.sh
