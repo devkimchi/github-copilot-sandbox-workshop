@@ -12,7 +12,7 @@
 
 Windows 11 클라이언트 Azure 라이선스 자격, 개인 구독 권한, 이미지/SKU와 Bastion Developer의 지역 가용성, quota와 예상 비용을 본인이 먼저 확인한다. 기본 `Standard_D8s_v5`와 SKU `win11-26h2-ent`는 **참고값이지 호환성 보장이나 필수 사양이 아니다**.
 
-개인 PC에 Azure CLI, azd >=1.35.1과 PowerShell 7을 준비한다. POSIX hook도 `pwsh`를 호출한다. Windows 이미지의 고정 숫자 버전, OS 업데이트와 실제 모듈 통과 결과는 `TBD(검증 필요)`다.
+개인 PC에 Azure CLI, azd >=1.35.1과 PowerShell 7을 준비한다. POSIX hook도 `pwsh`를 호출한다. Windows 이미지 버전은 기본적으로 `latest`를 사용한다. 실제 이미지 버전, OS 업데이트와 모듈 통과 결과는 `TBD(검증 필요)`다.
 
 ## 4. 배포, 접속과 설치
 
@@ -26,12 +26,13 @@ az login
 azd env new <VM_ENV_NAME>
 azd env set AZURE_SUBSCRIPTION_ID <본인구독ID>
 azd env set AZURE_LOCATION <검증한지역>
-azd env set WORKSHOP_VM_IMAGE_VERSION <검증한고정숫자버전>
 azd env set WORKSHOP_CONFIRM_WINDOWS_LICENSE true
 azd up --environment <VM_ENV_NAME>
 ```
 
-azd와 Azure CLI에서 같은 구독을 선택한다. `adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 입력과 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터을 자동 검증했다고 출력하지 않는다.
+azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set WORKSHOP_VM_IMAGE_VERSION <검증한고정숫자버전>`으로 이미지 버전을 고정할 수 있다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다.
+
+`adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 입력과 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터를 자동 검증했다고 출력하지 않는다.
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
@@ -69,7 +70,7 @@ VM에서 개인 워크숍 저장소를 별도로 클론하고 Lab 0을 진행한
 
 ## 7. 실패가 정상인 경우
 
-라이선스 미확인과 미확정 버전은 hook의 의도된 중단 조건이다. 지역/SKU/이미지 미가용, quota와 Bastion 미지원은 일반 Azure 준비 오류다. Docker 중첩 가상화 미지원이면 개인 PC 경로를 사용하며 보안 설정 우회로 해결하지 않는다.
+라이선스 미확인과 잘못된 이미지 버전은 hook의 의도된 중단 조건이다. 지역/SKU/이미지 미가용, quota와 Bastion 미지원은 일반 Azure 준비 오류다. Docker 중첩 가상화 미지원이면 개인 PC 경로를 사용하며 보안 설정 우회로 해결하지 않는다.
 
 ## 8. 복구
 

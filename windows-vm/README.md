@@ -8,7 +8,7 @@
 | --- | --- |
 | VM | `Standard_D8s_v5`, Windows 11 Enterprise Gen2, 256 GiB Premium SSD |
 | 이미지 | publisher `MicrosoftWindowsDesktop`, offer `windows-11`, SKU `win11-26h2-ent` 참고값 |
-| 버전 | 고정 숫자 이미지 버전을 사용자가 확인해 입력. `TBD(검증 필요)` |
+| 버전 | 기본 `latest`, 선택적으로 고정 숫자 버전 지정. 가용성 `TBD(검증 필요)` |
 | 보안 | Trusted Launch, Secure Boot, vTPM 유지 |
 | 접속 | VM NIC 공인 IP 없음. Bastion Developer |
 | 외부 다운로드 | NAT Gateway와 전용 Standard 공인 IP |
@@ -20,9 +20,9 @@
 
 ## 입력
 
-`azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`, `WORKSHOP_VM_IMAGE_VERSION`, `WORKSHOP_CONFIRM_WINDOWS_LICENSE=true`를 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. preprovision은 값 존재와 고정 버전 형식, 사용자 확인만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
+`azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`, `WORKSHOP_CONFIRM_WINDOWS_LICENSE=true`를 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. preprovision은 필수 값, 지정한 이미지 버전 형식과 사용자 확인만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
 
-선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 커맨드 라인/관찰표에 기록하지 않는다.
+선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`, `WORKSHOP_VM_IMAGE_VERSION`(기본 `latest`, 고정 숫자 버전도 가능)이다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 커맨드 라인/관찰표에 기록하지 않는다.
 
 ## 도구 설치 스크립트
 
@@ -32,4 +32,4 @@ WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 
 
 ## 참고와 변경
 
-[`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크/VM/Run Command 전달 방식을 참고했다. 원본 [MIT 고지](LICENSE-UPSTREAM)를 유지한다. 워크숍용으로 리소스 이름과 태그, 고정 이미지 입력, 라이선스 확인, 도구 목록과 설치 전달을 수정했고 `shared` 의존을 없앴다. 원본의 배포 성공을 이번 템플릿의 검증으로 승계하지 않는다.
+[`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크/VM/Run Command 전달 방식을 참고했다. 원본 [MIT 고지](LICENSE-UPSTREAM)를 유지한다. 워크숍용으로 리소스 이름과 태그, 이미지 버전 입력, 라이선스 확인, 도구 목록과 설치 전달을 수정했고 `shared` 의존을 없앴다. 원본의 배포 성공을 이번 템플릿의 검증으로 승계하지 않는다.
