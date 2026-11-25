@@ -94,11 +94,11 @@ aca doctor
 
 provider credential 관리는 공식 문서의 portal 경로를 사용한다. CLI 하위 명령을 추측하지 않는다. credential ID 확인 경로와 최종 group 설정 문법은 `TBD(검증 필요)`다. 목록의 첫 credential을 자동 선택하지 않는다. group/identity를 공유하면 이름이나 label만으로 참가자 접근을 격리할 수 없다.
 
-지역은 Korea Central이 **후보**일 뿐이다. 실제 region, image ID/revision, tier, 동시 cores quota, CPU architecture, 예상 비용과 예산 한도는 `TBD(검증 필요)`다. compute 중지 후에도 저장소와 네트워크 비용이 남을 수 있다.
+지역은 Korea Central이 **후보**일 뿐이다. 실제 region, 동시 cores quota, 예상 비용과 예산 한도는 `TBD(검증 필요)`다. compute 중지 후에도 저장소와 네트워크 비용이 남을 수 있다.
 
 ## 다운로드와 확장 준비
 
-현장 전에 npm registry, 고정 v3 workload/mixin과 Playwright 브라우저 다운로드 경로를 확인한다. exact-host allowlist는 리허설 로그로 확정한다. 일반적인 초기 후보는 `github.com`, `codeload.github.com`, `registry.npmjs.org`이며 모델 endpoint와 Playwright 호스트는 `TBD(검증 필요)`다.
+현장 전에 npm registry, `latest` v3 workload/mixin과 Playwright 브라우저 다운로드 경로를 확인한다. exact-host allowlist는 리허설 로그로 확정한다. 일반적인 초기 후보는 `github.com`, `codeload.github.com`, `registry.npmjs.org`이며 모델 endpoint와 Playwright 호스트는 `TBD(검증 필요)`다.
 
 180분 확장에서는 **mixin을 직접 제작**한다. 선택한 source build 경로에 필요한 Docker/Buildx를 사전에 준비한다. published mixin 사용에 host Docker가 불필요하다고 해서 제작에도 불필요한 것은 아니다.
 
@@ -110,6 +110,6 @@ provider credential 관리는 공식 문서의 portal 경로를 사용한다. CL
 | Node >=22.13, Git, Copilot, sbx, aca 버전 | 참가자 작성 | 참가자 작성 |
 | 본인 모델 요청과 sbx 로컬 microVM 생성 | 참가자 작성 | 참가자 작성 |
 | Azure 인증, group, RBAC, image와 quota | 참가자 작성 | 참가자 작성 |
-| v3 kit digest와 Playwright 조합 | 참가자 작성 | 참가자 작성 |
+| Playwright mixin과 1.65.0 조합 | 참가자 작성 | 참가자 작성 |
 
 토큰, 실제 credential 내용, 구독 ID를 표에 쓰지 않는다. 실패하면 일반 환경 오류인지 미지원인지 먼저 분류하고 조직 정책을 우회하지 않는다.

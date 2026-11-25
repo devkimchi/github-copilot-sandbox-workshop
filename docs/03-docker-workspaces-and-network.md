@@ -2,7 +2,7 @@
 
 ## 1. 목표와 시간
 
-30분(환경 5분, 공유 방식 12분, 도구 5분, 네트워크 8분). 로컬 Linux microVM의 격리 방식과 코드 회수 방식을 비교한다. **모든 명령과 기대 결과는 미검증**이다. kit tag/digest는 `TBD(검증 필요)`이며 아래 `<VERIFIED_TAG>`를 확정하기 전 실행하지 않는다. [출처](sources.md), [개요](../README.md).
+30분(환경 5분, 공유 방식 12분, 도구 5분, 네트워크 8분). 로컬 Linux microVM의 격리 방식과 코드 회수 방식을 비교한다. **모든 명령과 기대 결과는 미검증**이다. workload는 `latest` tag를 사용한다. [출처](sources.md), [개요](../README.md).
 
 ## 2. 실행 위치
 
@@ -32,7 +32,7 @@ POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-
 ```powershell
 # HOST
 Set-Location .\workspace-direct
-sbx run --name ws-direct sbx/copilot:<VERIFIED_TAG> .
+sbx run --name ws-direct sbx/copilot:latest .
 ```
 
 DOCKER VM의 Copilot에게 아래 명령을 호출하도록 요청한다. 도구 출력 원문을 사람이 `evidence/lab-2/`에 저장한다.
@@ -59,7 +59,7 @@ git -C .\workspace-direct diff --binary --output=..\evidence\lab-2\direct.patch
 ```powershell
 # HOST, <WORKSHOP_DIR>
 Set-Location .\workspace-docker
-sbx run --clone --name ws-clone sbx/copilot:<VERIFIED_TAG> .
+sbx run --clone --name ws-clone sbx/copilot:latest .
 ```
 
 DOCKER VM에서:

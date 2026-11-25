@@ -10,7 +10,7 @@
 
 ## 3. 사전 조건과 현재 상태
 
-v3 전용이다. `schemaVersion: "3"`, `kind`, `requires`, `provides`, network/credential/lifecycle capability와 신뢰할 출처를 검토한다. `<VERIFIED_TAG>`는 `TBD(검증 필요)`다.
+v3 전용이다. `schemaVersion: "3"`, `kind`, `requires`, `provides`, network/credential/lifecycle capability와 신뢰할 출처를 검토한다. workload와 mixin은 `latest` tag를 사용한다.
 
 Tailspin lock 파일의 `@playwright/test`, `playwright`, `playwright-core`는 **1.65.0**이다. mixin 호출 시 `--kit-arg playwright.version=1.65.0`으로 샘플 앱이 요구하는 버전을 지정한다. compatible Debian 13 workload, apt/Bash와 package repository 접근도 확인한다. 실제 브라우저 정합과 E2E 실행은 리허설에서 확인한다.
 
@@ -25,10 +25,10 @@ Tailspin lock 파일의 `@playwright/test`, `playwright`, `playwright-core`는 *
 HOST의 clean `workspace-docker`에서, 다른 이름으로 생성한다.
 
 ```text
-sbx run --clone --name ws-mixin sbx/copilot:<VERIFIED_TAG> . --kit sbx/playwright:<VERIFIED_TAG> --kit-arg playwright.version=1.65.0
+sbx run --clone --name ws-mixin sbx/copilot:latest . --kit sbx/playwright:latest --kit-arg playwright.version=1.65.0
 ```
 
-실제 사용한 workload와 mixin의 tag와 digest를 기록한다. 버전 인자를 지정했다고 실제 브라우저 정합과 E2E 성공까지 확인한 것으로 취급하지 않는다.
+버전 인자를 지정했다고 실제 브라우저 정합과 E2E 성공까지 확인한 것으로 취급하지 않는다.
 
 새 DOCKER VM에서:
 
@@ -63,7 +63,7 @@ headless Chromium만 다룬다. headed mode, codegen/UI runner는 display가 별
 3. HOST의 clean 앱 폴더에서 source kit을 참조하는 **새 sandbox**를 만든다. build network는 runtime network와 별개다.
 
 ```text
-sbx run --clone --name ws-custom sbx/copilot:<VERIFIED_TAG> . --kit ../workspace-mixin-kit
+sbx run --clone --name ws-custom sbx/copilot:latest . --kit ../workspace-mixin-kit
 ```
 
 위 경로는 HOST `workspace-docker`에서 실행할 때의 예시다. 선택한 버전의 source kit 탐색/인자 문법은 `TBD(검증 필요)`다. 공식 제작 가이드에서 이 경로의 Docker/Buildx 전제를 확인한다. OCI publish, registry 로그인과 다른 모델 호출은 필수가 아니다.
@@ -72,7 +72,7 @@ DOCKER VM에서 `cat /etc/workshop-greeting`과 `touch /run/sandbox/source/__wor
 
 ## 5. 관찰 항목
 
-기본/확장 sandbox 이름, workload와 mixin의 고정 digest, descriptor, 프로젝트와 tool version, E2E 로그, browser 설치 여부, source 쓰기 차단과 network decision을 `evidence/lab-2b/`에 사람이 저장한다.
+기본/확장 sandbox 이름, descriptor, 프로젝트와 tool version, E2E 로그, browser 설치 여부, source 쓰기 차단과 network decision을 `evidence/lab-2b/`에 사람이 저장한다.
 
 HOST에서는 폴더를 먼저 만들고 transcript를 사용할 수 있다.
 

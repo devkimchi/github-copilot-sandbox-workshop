@@ -10,7 +10,6 @@
 | --- | --- | --- |
 | OS/build와 실행 위치 | 참가자 작성 | 참가자 작성 |
 | Copilot/Node/Git/sbx/aca 버전 | 참가자 작성 | 참가자 작성 |
-| kit digest, image revision/architecture | 참가자 작성 | 참가자 작성 |
 | CWD와 baseline, sandbox 이름/ID(비공개 보관) | 참가자 작성 | 참가자 작성 |
 | 시작 전 설정과 조직 정책 | 참가자 작성 | 참가자 작성 |
 

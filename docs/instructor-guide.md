@@ -34,10 +34,10 @@
 | Playwright 프로젝트 lock | 1.65.0 | 원본 고정, browser 정합 검증 필요 |
 | Git, Azure CLI, Copilot CLI, sbx CLI, aca CLI | 설치 경로에서 제공하는 최신 버전, 기존 설치는 자동 업데이트하지 않음 | 실제 버전 기록 |
 | Copilot의 각 OS/build/backend | 공식 지원 조건 | `TBD(검증 필요)` |
-| workload와 Playwright v3 mixin | 실제 사용한 tag와 digest 기록 | `TBD(검증 필요)` |
+| workload와 Playwright v3 mixin | `latest` tag 사용 | 고정하거나 기록하지 않음 |
 | Playwright mixin 호출 인자 | `--kit-arg playwright.version=1.65.0` | 실제 browser 정합과 E2E 리허설 필요 |
-| source mixin build/frontend/base digest/architecture | Docker/Buildx와 busybox 참고 | `TBD(검증 필요)` |
-| ACA image ID/revision, tier/architecture | public copilot image 후보 | `TBD(검증 필요)` |
+| source mixin build 도구 | Docker/Buildx와 busybox 참고 | `TBD(검증 필요)` |
+| ACA copilot image | 최신 public image 사용 | 고정하거나 기록하지 않음 |
 | exact-host allowlist | 모델/npm/archive/browser 각각 기록 | `TBD(검증 필요)` |
 | Azure region/quota/예상 비용 | Korea Central 후보, 개인 구독별 확인 | `TBD(검증 필요)` |
 | Windows VM 이미지/SKU | appmod-box 참고값, Trusted Launch 유지 | `TBD(검증 필요)` |

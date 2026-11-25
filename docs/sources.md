@@ -17,4 +17,4 @@
 - ACA: [개요](https://learn.microsoft.com/azure/container-apps/sandboxes-overview), [CLI 설치](https://sandboxes.azure.com/docs/sandboxes/quickstart/setup-cli), [그룹과 RBAC](https://sandboxes.azure.com/docs/sandboxes/sandbox-groups), [egress](https://sandboxes.azure.com/docs/sandboxes/sandbox/egress), [수명주기](https://sandboxes.azure.com/docs/sandboxes/sandbox/lifecycle), [credential](https://sandboxes.azure.com/docs/sandboxes/credentials), [파일](https://sandboxes.azure.com/docs/sandboxes/sandbox/files), [identity](https://sandboxes.azure.com/docs/sandboxes/identity), [quota](https://sandboxes.azure.com/docs/sandboxes/limits), [지역](https://sandboxes.azure.com/docs/sandboxes/regions), [이미지](https://sandboxes.azure.com/docs/sandboxes/disk-images), [ingress](https://sandboxes.azure.com/docs/sandboxes/sandbox/ports).
 - Windows VM: [중첩 가상화](https://learn.microsoft.com/windows-server/virtualization/hyper-v/enable-nested-virtualization).
 
-이 링크들의 현재 내용을 실행해 재검증한 것은 아니다. 최종 버전, kit digest, ACA image와 allowlist, 지역, 비용, VM 호환성과 실제 소요 시간은 `TBD(검증 필요)`다.
+이 링크들의 현재 내용을 실행해 재검증한 것은 아니다. 최종 버전, ACA allowlist, 지역, 비용, VM 호환성과 실제 소요 시간은 `TBD(검증 필요)`다.

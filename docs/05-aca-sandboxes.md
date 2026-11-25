@@ -34,7 +34,7 @@ aca sandbox create --disk copilot --credential <CREDENTIAL_ID> --label name=<UNI
 aca sandbox get -l name=<UNIQUE_NAME> -o json
 ```
 
-반환된 **정확한 `<SANDBOX_ID>`**를 개인 기록에 보관한다. `copilot` public image의 실제 revision과 Node 버전을 확인한다. 위 상태에서는 모델 요청이 실패할 수 있으므로 다음 allowlist를 확정하고 적용한 뒤 모델을 호출한다.
+반환된 **정확한 `<SANDBOX_ID>`**를 개인 기록에 보관한다. `copilot` public image는 최신 이미지를 사용한다. Node 버전을 확인한다. 위 상태에서는 모델 요청이 실패할 수 있으므로 다음 allowlist를 확정하고 적용한 뒤 모델을 호출한다.
 
 ```text
 aca sandbox egress set --id <SANDBOX_ID> --default Deny --traffic-inspection Full --rule "github.com:Allow" --rule "codeload.github.com:Allow" --rule "registry.npmjs.org:Allow" --rule "<VERIFIED_MODEL_HOST>:Allow" --rule "example.com:Deny"
