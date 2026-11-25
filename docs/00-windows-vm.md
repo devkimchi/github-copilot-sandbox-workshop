@@ -12,7 +12,7 @@
 
 Windows 11 클라이언트 Azure 라이선스 자격, 개인 구독 권한, 이미지/SKU와 Bastion Developer의 지역 가용성, quota와 예상 비용을 본인이 먼저 확인한다. 기본 `Standard_D8s_v5`와 SKU `win11-26h2-ent`는 **참고값이지 호환성 보장이나 필수 사양이 아니다**.
 
-개인 PC에 Azure CLI, azd >=1.35.1과 PowerShell 7을 준비한다. POSIX hook도 `pwsh`를 호출한다. Windows 이미지 버전은 기본적으로 `latest`를 사용한다. 실제 이미지 버전, OS 업데이트와 모듈 통과 결과는 `TBD(검증 필요)`다.
+개인 PC에 Azure CLI와 azd >=1.35.1을 준비한다. Windows hook은 PowerShell 7, macOS와 Linux hook은 Bash를 사용한다. Windows 이미지 버전은 기본적으로 `latest`를 사용한다. 실제 이미지 버전, OS 업데이트와 모듈 통과 결과는 `TBD(검증 필요)`다.
 
 ## 4. 배포, 접속과 설치
 
