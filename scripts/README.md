@@ -1,4 +1,29 @@
-# 앱 추출 스크립트
+# 스크립트
+
+## 사전 준비 확인과 설치
+
+**설치 동작은 실행 미검증.** 저장소 루트에서 실행한다. 결과는 Host, Core tools, GitHub Copilot CLI, Docker Sandboxes, Azure, Optional 그룹별로 PASS, FAIL, WARN, MANUAL, INFO로 표시한다.
+
+| 스크립트 | 동작 |
+| --- | --- |
+| `check-prerequisites.ps1`, `check-prerequisites.sh` | 읽기 전용으로 OS, Git, Node.js, npm, Copilot CLI, `sbx`, Azure CLI, `aca`와 로그인 상태를 확인한다. 필수 항목이 실패하면 0이 아닌 코드로 끝난다. |
+| `install-prerequisites.ps1`, `install-prerequisites.sh` | 대화형 터미널에서 항목마다 확인을 받고 PATH에 없는 도구만 설치한다. 마지막에 check 스크립트를 다시 실행한다. 비대화형 환경에서는 설치하지 않고 실패한다. |
+
+```powershell
+# Windows, PowerShell 7
+./scripts/check-prerequisites.ps1
+./scripts/install-prerequisites.ps1
+```
+
+```bash
+# macOS, Linux
+./scripts/check-prerequisites.sh
+./scripts/install-prerequisites.sh
+```
+
+Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. nvm 밖에서 설치한 Node.js가 있으면 자동으로 바꾸지 않고 MANUAL로 안내한다. Windows는 WinGet, macOS는 Homebrew, Linux는 Ubuntu 계열의 apt를 사용한다. Windows Hypervisor Platform 활성화와 재부팅은 사람이 직접 한다. `terminal-output.sh`와 `powershell-bootstrap.ps1`은 공통 출력과 초기화 도우미다.
+
+## 앱 추출
 
 **실행 미검증.** PowerShell 7 이상 또는 Bash에서, 개인 워크숍 저장소 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
 

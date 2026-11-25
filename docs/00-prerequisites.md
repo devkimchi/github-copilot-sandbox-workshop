@@ -37,7 +37,21 @@ aca --version
 
 ## 도구와 계정
 
-Node.js는 **22.13 이상**이어야 한다. Docker workload와 ACA image에서도 직접 확인한다. Tailspin은 Node 내장 `node:sqlite`를 사용한다. Windows용 제공 스크립트에는 **PowerShell 7 이상**이 필요하다.
+제공 스크립트로 도구를 확인하고 설치할 수 있다. check 스크립트는 읽기 전용이다. install 스크립트는 대화형 터미널에서 항목마다 확인을 받은 뒤 PATH에 없는 도구만 설치하고 마지막에 check 스크립트를 다시 실행한다. 두 스크립트 모두 **미검증**이다.
+
+```powershell
+# Windows, PowerShell 7
+./scripts/check-prerequisites.ps1
+./scripts/install-prerequisites.ps1
+```
+
+```bash
+# macOS, Linux
+./scripts/check-prerequisites.sh
+./scripts/install-prerequisites.sh
+```
+
+Node.js는 **22.13 이상**이어야 한다. install 스크립트는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. Docker workload와 ACA image에서도 직접 확인한다. Tailspin은 Node 내장 `node:sqlite`를 사용한다. Windows용 제공 스크립트에는 **PowerShell 7 이상**이 필요하다.
 
 Copilot CLI, Docker Sandboxes CLI(`sbx`), Azure CLI, ACA Sandboxes CLI(`aca`)는 각각 공식 설치 문서를 따른다. Docker Desktop이나 `az containerapp`은 `sbx`/`aca`를 대체하지 않는다. 최종 설치 버전과 설치 파일 checksum은 `TBD(검증 필요)`다.
 
