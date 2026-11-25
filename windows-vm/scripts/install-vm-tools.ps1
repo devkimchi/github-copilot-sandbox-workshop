@@ -18,6 +18,7 @@ $packages = @(
     @{ Id = 'Microsoft.PowerShell'; Command = 'pwsh.exe' },
     @{ Id = 'Microsoft.AzureCLI'; Command = 'az.cmd' },
     @{ Id = 'Docker.sbx'; Command = 'sbx.exe' },
+    @{ Id = 'Docker.DockerDesktop'; Command = 'docker.exe' },
     @{ Id = 'GitHub.Copilot'; Command = 'copilot.exe' }
 )
 $existingNode = Get-Command node.exe -ErrorAction SilentlyContinue
@@ -25,6 +26,7 @@ if ($existingNode -and -not (Get-Command nvm.exe -ErrorAction SilentlyContinue))
     throw "nvm-windows 밖에서 설치한 Node.js가 있습니다($($existingNode.Source)). 원래 설치 프로그램으로 제거한 뒤 다시 실행하세요."
 }
 $packages | ForEach-Object { Write-Host "$($_.Id): WinGet에서 제공하는 최신 버전" }
+Write-Host 'WSL2와 Ubuntu: wsl --install로 설치. 재부팅과 Ubuntu 첫 실행 시 사용자 생성이 필요할 수 있음'
 Write-Host 'Node.js: nvm-windows 2.x를 통해 24.x 최신 버전 설치'
 Write-Host 'ACA CLI: 공식 설치 스크립트 https://aka.ms/aca-cli-install-ps 사용'
 if ($EnableHypervisorPlatform) {
@@ -36,6 +38,25 @@ if ($Yes) {
 else {
     $answer = Read-Host '설치와 표시한 패키지 사용 조건을 검토한 뒤 INSTALL을 입력하세요'
     if ($answer -cne 'INSTALL') { throw '사용자가 도구 설치를 취소했습니다.' }
+}
+$previousWslUtf8 = $env:WSL_UTF8
+$env:WSL_UTF8 = '1'
+try {
+    $distributions = @(& wsl.exe --list --quiet 2>$null | ForEach-Object { $_.Trim() })
+    $hasUbuntu = $LASTEXITCODE -eq 0 -and ($distributions -contains 'Ubuntu')
+}
+catch {
+    $hasUbuntu = $false
+}
+finally {
+    $env:WSL_UTF8 = $previousWslUtf8
+}
+if ($hasUbuntu) {
+    Write-Warning 'WSL Ubuntu 배포판이 이미 있습니다. 변경하지 않습니다.'
+}
+else {
+    & wsl.exe --install --distribution Ubuntu --no-launch
+    if ($LASTEXITCODE -ne 0) { throw "WSL2와 Ubuntu 설치 실패, exit=$LASTEXITCODE" }
 }
 foreach ($package in $packages) {
     if (Get-Command $package.Command -ErrorAction SilentlyContinue) {
@@ -89,5 +110,5 @@ else {
 if ($EnableHypervisorPlatform) {
     Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -All -NoRestart -ErrorAction Stop
 }
-Write-Output '도우미 실행 완료. 다시 로그인하고 필요한 재부팅 후 버전과 모듈별 preflight를 확인하세요.'
+Write-Output '도우미 실행 완료. 재부팅 후 다시 로그인하고, Ubuntu 첫 실행과 Docker Desktop 첫 실행(약관 동의)을 마친 뒤 버전과 모듈별 preflight를 확인하세요.'
 Write-Output '로그인, PAT 입력, 샌드박스 생성과 모델 호출은 하지 않았습니다. 중첩 가상화 지원도 보장하지 않습니다.'

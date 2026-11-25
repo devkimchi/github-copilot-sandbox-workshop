@@ -28,7 +28,7 @@ preprovision은 필수 환경 변수와 지정한 이미지 버전 형식만 검
 
 ## 도구 설치 스크립트
 
-WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, GitHub CLI(`GitHub.cli`), PowerShell, Azure CLI, `Docker.sbx`와 Copilot CLI는 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x(`AuthorSoftware.NVMWindows`)를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 최신 버전을 설치한다.
+WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, GitHub CLI(`GitHub.cli`), PowerShell, Azure CLI, `Docker.sbx`, Docker Desktop(`Docker.DockerDesktop`)과 Copilot CLI는 WinGet에서 제공하는 최신 버전으로 설치한다. WSL2와 Ubuntu는 `wsl --install --distribution Ubuntu --no-launch`로 먼저 설치하며 재부팅이 필요할 수 있다. Node.js는 nvm-windows 2.x(`AuthorSoftware.NVMWindows`)를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 최신 버전을 설치한다.
 
 도구 버전 인자는 받지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 모든 도구의 최신 상태를 의미하지 않는다**. 필요한 업데이트는 원래 설치 경로로 직접 수행하고 실제 버전을 기록한다. 실제 설치 동작은 미검증이다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
 
