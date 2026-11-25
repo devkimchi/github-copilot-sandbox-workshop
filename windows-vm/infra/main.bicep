@@ -40,7 +40,7 @@ var tags = {
 }
 
 resource group 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: 'rg-${environmentName}-vm'
+  name: 'rg-${environmentName}'
   location: location
   tags: tags
 }

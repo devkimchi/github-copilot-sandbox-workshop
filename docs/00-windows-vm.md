@@ -31,6 +31,8 @@ azd up --environment <VM_ENV_NAME>
 
 azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set WORKSHOP_VM_IMAGE_VERSION <검증한고정숫자버전>`으로 이미지 버전을 고정할 수 있다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다.
 
+리소스 그룹 이름은 `rg-<VM_ENV_NAME>`이다. 이전 버전에서 `rg-<VM_ENV_NAME>-vm` 그룹을 만들었다면 재배포해도 기존 그룹과 자원은 자동으로 삭제되지 않는다. 두 그룹의 자원과 비용을 따로 확인한다.
+
 `confirmWindowsClientLicense`는 기본값 없이 `true`만 허용하는 Bicep의 bool 입력이다. azd에서 입력을 요청하면 Windows 11 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 `true`를 선택한다. 자격이 없거나 확인하지 못했다면 배포를 중단한다. 별도 라이선스 환경 변수는 설정하지 않는다.
 
 `adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 환경 변수와 지정한 이미지 버전 형식만 검사한다. 이미지, SKU, 지역별 가용성, 쿼터와 비용은 검사하지 않으므로 `azd up` 실행 전에 본인이 확인한다.
