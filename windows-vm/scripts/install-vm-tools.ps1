@@ -13,6 +13,7 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().IsSystem) {
 Get-Command winget.exe -ErrorAction Stop | Out-Null
 $packages = @(
     @{ Id = 'Git.Git'; Command = 'git.exe' },
+    @{ Id = 'GitHub.cli'; Command = 'gh.exe' },
     @{ Id = 'AuthorSoftware.NVMWindows'; Command = 'nvm.exe' },
     @{ Id = 'Microsoft.PowerShell'; Command = 'pwsh.exe' },
     @{ Id = 'Microsoft.AzureCLI'; Command = 'az.cmd' },
