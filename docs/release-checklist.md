@@ -12,7 +12,7 @@
 - [x] 공개할 파일 목록을 확인하고 인계 아카이브, 개인 기록, 비밀과 불필요한 생성물이 포함되지 않도록 한다.
 - [x] 지원할 참가자 OS와 환경, 선택적 Windows VM 사용 범위를 문서에 명시한다. (개인 PC는 Windows, macOS, Linux를 대상으로 하고 Windows VM은 선택 경로로 둔다. Codespaces, 일반 VDI와 회사 PC는 지원 범위에서 제외한다.)
 - [x] 참가자 인증 방식과 Copilot 라이선스, 조직 정책 준수 안내를 문서화한다. (`docs/00-prerequisites.md`에서 개인 Copilot 라이선스와 짧은 만료 기간의 fine-grained PAT 사용, 조직 정책 우회를 금지하는 원칙을 안내한다.)
-- [ ] 실제 참가자의 Copilot 라이선스와 조직 정책이 실습을 허용하는지 확인한다.
+- [x] 실제 참가자의 Copilot 라이선스와 조직 정책이 실습을 허용하는지 확인한다. (사용자 확인, 2026-11-25)
 - [x] 개인 Azure 구독 사용과 참가자별 자원·자격 증명 준비 절차를 문서화한다. (`docs/00-prerequisites.md`에 개인 구독, 참가자별 sandbox group, RBAC, credential 준비 절차를 안내한다.)
 - [ ] 실제 참가자의 Azure 구독, 권한, quota, 비용 승인과 자격 증명을 리허설 전에 확인한다.
 - [ ] 워크숍 자료의 라이선스 종류와 권리자를 확정하고 `LICENSE`와 안내를 갱신한다.
