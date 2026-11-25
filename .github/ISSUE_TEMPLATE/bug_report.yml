@@ -1,0 +1,27 @@
+name: 버그 신고
+description: 워크숍 자료나 스크립트의 문제를 신고합니다.
+labels: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 문제 설명
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 절차
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대 결과와 실제 결과
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 실행 환경과 관련 로그
+      description: OS와 도구 버전을 적고 토큰이나 개인 정보는 제거해 주세요.

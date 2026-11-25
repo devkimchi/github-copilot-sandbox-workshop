@@ -1,0 +1,20 @@
+# syntax=docker/sandbox-kit:3
+# Copyright 2026 Docker, Inc. Apache-2.0. LICENSE-APACHE-2.0와 NOTICE 참조.
+# 원본 MOTD 예제를 수정했다: 이름, 생성 경로와 내용을 워크숍용으로 변경.
+schemaVersion: "3"
+kind: mixin
+displayName: Workshop greeting
+description: 교육용 파일 하나를 만드는 미검증 v3 제작 골격
+version: "0.1.0"
+provides: ["workshop-greeting"]
+args:
+  greeting:
+    default: workshop
+    pattern: "^[a-z]+$"
+    buildArg: GREETING
+build: |
+  FROM busybox:1.37 AS build
+  ARG GREETING
+  RUN mkdir -p /out/etc && printf 'workshop: %s\n' "$GREETING" > /out/etc/workshop-greeting
+  FROM scratch
+  COPY --from=build /out/ /

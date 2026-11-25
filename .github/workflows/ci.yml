@@ -1,0 +1,33 @@
+name: Script syntax
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check Bash syntax
+        shell: bash
+        run: git ls-files -z -- '*.sh' | xargs -0 -r -n 1 bash -n
+      - name: Check PowerShell syntax
+        shell: pwsh
+        run: |
+          $failed = $false
+          git ls-files -- '*.ps1' | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Join-Path $PWD $_), [ref]$tokens, [ref]$errors
+            ) | Out-Null
+            if ($errors) {
+              $errors | ForEach-Object { Write-Error "$($_.Extent.File):$($_.Extent.StartLineNumber): $($_.Message)" -ErrorAction Continue }
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
