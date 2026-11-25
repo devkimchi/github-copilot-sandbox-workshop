@@ -12,14 +12,14 @@ if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
     throw "설치 스크립트가 없습니다: $target"
 }
 
-$suffix = '{0}.{1}' -f (Get-Date -Format 'yyyyMMdd-HHmmss'), ([guid]::NewGuid().ToString('N'))
-$backup = "$target.$suffix.bak"
-$temporary = Join-Path $PSScriptRoot ".install-vm-tools.$suffix.tmp"
+$timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$backup = "$target.$timestamp"
+$temporary = Join-Path $PSScriptRoot ".install-vm-tools.$([guid]::NewGuid().ToString('N')).tmp"
 $url = "https://raw.githubusercontent.com/devkimchi/github-copilot-sandbox-workshop/$CommitSha/windows-vm/scripts/install-vm-tools.ps1"
 $previousProtocol = [Net.ServicePointManager]::SecurityProtocol
 
 try {
-    Copy-Item -LiteralPath $target -Destination $backup -ErrorAction Stop
+    [IO.File]::Copy($target, $backup, $false)
     Write-Host "[INFO] 기존 파일을 백업했습니다: $backup"
 
     [Net.ServicePointManager]::SecurityProtocol = $previousProtocol -bor [Net.SecurityProtocolType]::Tls12
