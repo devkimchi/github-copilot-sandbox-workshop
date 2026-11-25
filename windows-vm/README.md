@@ -22,13 +22,13 @@
 
 `azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`, `WORKSHOP_VM_IMAGE_VERSION`, `WORKSHOP_CONFIRM_WINDOWS_LICENSE=true`를 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. preprovision은 값 존재와 고정 버전 형식, 사용자 확인만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
 
-선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 명령행/관찰표에 기록하지 않는다.
+선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 커맨드 라인/관찰표에 기록하지 않는다.
 
-## 도구 설치 도우미
+## 도구 설치 스크립트
 
 WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, Node.js >=22.13, PowerShell 7, Azure CLI, `Docker.sbx`와 Copilot CLI만 대상으로 한다. ACA는 공식 배포처에서 받은 Windows `aca.exe`와 검증한 SHA-256을 입력받아 사용자 도구 폴더에 복사한다.
 
-각 버전 인자는 필수다. 미확정 값을 latest로 바꾸지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 도우미 완료가 버전 일치를 의미하지 않는다**. 실제 `--version`을 검증표와 비교하고 불일치하면 사람이 승인한 설치 경로로 조정한다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
+각 버전 인자는 필수다. 미확정 값을 latest로 바꾸지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 버전 일치를 의미하지 않는다**. 실제 `--version`을 검증표와 비교하고 불일치하면 사람이 승인한 설치 경로로 조정한다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
 
 ## 참고와 변경
 

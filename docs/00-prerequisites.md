@@ -1,6 +1,6 @@
 # 사전 준비
 
-설치와 계정 준비는 150/180분에 포함하지 않는다. 모든 명령과 통과 조건은 **미검증**이다. 강사가 예행 연습 후 확정한 버전표와 함께 사용한다. [워크숍 개요](../README.md), [공식 출처](sources.md).
+설치와 계정 준비는 150/180분에 포함하지 않는다. 모든 명령과 통과 조건은 **미검증**이다. 강사가 리허설 후 확정한 버전표와 함께 사용한다. [워크숍 개요](../README.md), [공식 출처](sources.md).
 
 ## 실습 환경 선택
 
@@ -33,7 +33,7 @@ sbx --version
 aca --version
 ```
 
-실습에 사용할 Git 이름과 전자우편은 교육용 값을 **workspace 로컬 설정**에만 사용한다. 추출 스크립트는 기준 커밋에 한해 교육용 identity를 지정한다. 개인 전역 Git 설정을 덮어쓰지 않는다.
+실습에 사용할 Git 이름과 이메일은 교육용 값을 **workspace 로컬 설정**에만 사용한다. 추출 스크립트는 기준 커밋에 한해 교육용 identity를 지정한다. 개인 전역 Git 설정을 덮어쓰지 않는다.
 
 ## 도구와 계정
 
@@ -84,7 +84,7 @@ provider credential 관리는 공식 문서의 portal 경로를 사용한다. CL
 
 ## 다운로드와 확장 준비
 
-현장 전에 npm registry, 고정 v3 workload/mixin과 Playwright 브라우저 다운로드 경로를 확인한다. exact-host allowlist는 예행 연습 로그로 확정한다. 일반적인 초기 후보는 `github.com`, `codeload.github.com`, `registry.npmjs.org`이며 모델 endpoint와 Playwright 호스트는 `TBD(검증 필요)`다.
+현장 전에 npm registry, 고정 v3 workload/mixin과 Playwright 브라우저 다운로드 경로를 확인한다. exact-host allowlist는 리허설 로그로 확정한다. 일반적인 초기 후보는 `github.com`, `codeload.github.com`, `registry.npmjs.org`이며 모델 endpoint와 Playwright 호스트는 `TBD(검증 필요)`다.
 
 180분 확장에서는 **mixin을 직접 제작**한다. 선택한 source build 경로에 필요한 Docker/Buildx를 사전에 준비한다. published mixin 사용에 host Docker가 불필요하다고 해서 제작에도 불필요한 것은 아니다.
 

@@ -36,7 +36,7 @@
 | checkpoint 없음/검사 실패 | 실제 패치 파일과 고정 앱 snapshot | 현재 패치 미제공. 빈 패치 생성 금지, backup 보존, clean 다음 Lab 진행 |
 | 복구 스크립트 중단 | 대상 독립 .git/이름, backup 위치, realpath 지원, 특수 파일명 | snapshot을 별도 새 폴더에 풀어 확인. 기존 위에 무작정 덮어쓰지 않음 |
 | VM 배포 실패 | 라이선스 자격, 고정 이미지, 지역/SKU/Bastion/quota | 실제 Azure 오류 확인. 보안 유형 자동 하향 금지 |
-| VM 설치 도우미 실패 | 실제 사용자 관리자 세션, WinGet, 버전 가용성과 checksum | SYSTEM 실행 금지. 기존 도구 경고와 부분 설치를 기록 |
+| VM 설치 스크립트 실패 | 실제 사용자 관리자 세션, WinGet, 버전 가용성과 checksum | SYSTEM 실행 금지. 기존 도구 경고와 부분 설치를 기록 |
 | VM Docker만 실패 | 승인된 중첩 가상화/보안 조합에서 sbx microVM 실제 실행 | 미검증이면 개인 PC에서 해당 모듈 진행 |
 | 삭제 명령 실패/비용 남음 | 정확한 ID/이름과 snapshot/disk/volume/NAT/IP | 자원별 실제 상태 확인. 공용 group 일괄 삭제 금지 |
 

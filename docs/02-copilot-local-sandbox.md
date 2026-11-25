@@ -2,11 +2,11 @@
 
 ## 1. 목표와 시간
 
-Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 상태로 차이를 설명한다. **이 문서의 모든 명령과 기대 결과는 미검증**이다. 강사 예행 연습 후에만 배포본으로 사용한다. [출처](sources.md), [개요](../README.md).
+Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 상태로 차이를 설명한다. **이 문서의 모든 명령과 기대 결과는 미검증**이다. 강사 리허설 후에만 배포본으로 사용한다. [출처](sources.md), [개요](../README.md).
 
 ## 2. 실행 위치
 
-준비와 원자료 저장은 **HOST**, 경계 probe와 과제 실행은 **COPILOT CLI가 호출한 도구**에서 한다. HOST에서 실행한 probe를 sandbox 차단 증거로 기록하지 않는다. 예시는 PowerShell이다. macOS/Linux는 경로를 실제 절대 경로로 바꾸고 `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 쓴다.
+준비와 원자료 저장은 **HOST**, 접근 제한 확인과 과제 실행은 **COPILOT CLI가 호출한 도구**에서 한다. HOST에서 실행한 probe를 sandbox 차단 증거로 기록하지 않는다. 예시는 PowerShell이다. macOS/Linux는 경로를 실제 절대 경로로 바꾸고 `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 쓴다.
 
 ## 3. 사전 조건과 현재 상태
 
@@ -116,7 +116,7 @@ CLI 도구에서 `curl -I https://example.com`을 실행하고 출력과 종료 
 
 그다음 CLI에 `npm run test:unit`, `npm run build`, `npm run test:e2e`를 순서대로 실행하도록 요청한다. E2E의 실패를 browser 미설치, cache 접근 차단, localhost 차단, 일반 build 오류로 분류한다. Windows의 `Allow local network`는 proxy/credential masking과 private-network 접근에 영향을 줄 수 있다. 한 `curl` 결과를 모든 프로그램의 차단 보장으로 일반화하지 않는다.
 
-공통 코딩 작업은 별도로 준비한 05번 원문을 아래 프롬프트 뒤에 그대로 붙인다. 30분 안에 구현을 끝내는 것보다 경계 관찰을 우선하며 시간이 부족하면 강사가 복구 경로를 안내한다.
+공통 코딩 작업은 별도로 준비한 05번 원문을 아래 프롬프트 뒤에 그대로 붙인다. 30분 안에 구현을 끝내는 것보다 접근 허용과 차단 결과 관찰을 우선하며 시간이 부족하면 강사가 복구 경로를 안내한다.
 
 ```text
 아래 과제 원문의 수락 조건을 구현한다. npm run test:unit을 실행하고 결과와
@@ -161,7 +161,7 @@ OS/CLI 버전, 시작 CWD, 기준 commit, sandbox status, 유효 정책, 실제 
 
 ## 8. 복구와 checkpoint
 
-교육용 `__workshop-inside.txt`와 canary 파일만 대상으로 복구한다. 전체 저장소를 임의 초기화하지 않는다. 공통 과제 복구는 `checkpoints/README.md`를 사람이 읽는다. 현재 패치는 예행 연습 전이므로 제공하지 않는다. 다음 Lab은 별도 clean workspace를 사용해 계속할 수 있다.
+교육용 `__workshop-inside.txt`와 canary 파일만 대상으로 복구한다. 전체 저장소를 임의 초기화하지 않는다. 공통 과제 복구는 `checkpoints/README.md`를 사람이 읽는다. 현재 패치는 리허설 전이므로 제공하지 않는다. 다음 Lab은 별도 clean workspace를 사용해 계속할 수 있다.
 
 ## 9. 정리
 

@@ -1,6 +1,6 @@
 # 체크포인트 운영
 
-**스크립트 실행 미검증. 패치는 예행 연습 후 생성한다.** 정답/채점 자료가 아니라 시간이 초과했을 때 같은 기준 파일에서 다음 비교를 시작하기 위한 복구 자료다.
+**스크립트 실행 미검증. 패치는 리허설 후 생성한다.** 정답/채점 자료가 아니라 시간이 초과했을 때 같은 기준 파일에서 다음 비교를 시작하기 위한 복구 자료다.
 
 | 예정 파일 | 상태 |
 | --- | --- |
@@ -41,10 +41,10 @@ ignored 파일은 백업하되 workspace에서 제거하지 않는다. `node_mod
 
 ## ACA 수동 경로
 
-HOST에서 `aca sandbox fs write`로 실제 패치와 `.sh` 복구 도우미를 전송한다. [ACA Lab](../docs/05-aca-sandboxes.md)의 절대 경로를 확인한다. ACA REMOTE에서 예컨대 `bash restore-checkpoint.sh /home/aca-workshop/workspace /home/aca-workshop/task05-result.patch /home/aca-workshop/backup`으로 실행한다. 백업은 원격에 생기므로 필요한 증거를 삭제 전에 회수한다.
+HOST에서 `aca sandbox fs write`로 실제 패치와 `.sh` 복구 스크립트를 전송한다. [ACA Lab](../docs/05-aca-sandboxes.md)의 절대 경로를 확인한다. ACA REMOTE에서 예컨대 `bash restore-checkpoint.sh /home/aca-workshop/workspace /home/aca-workshop/task05-result.patch /home/aca-workshop/backup`으로 실행한다. 백업은 원격에 생기므로 필요한 증거를 삭제 전에 회수한다.
 
-## 예행 연습에서 생성할 때
+## 리허설에서 생성할 때
 
 clean baseline에 검증한 구현만 적용하고 새 파일도 staging한 뒤 `git diff --cached --binary baseline --output=<대상 밖 파일>`로 패치를 만든다. 별도 clean 추출본에서 `git apply --check`, 적용과 앱 테스트를 확인한 뒤 이 폴더에 배포한다. 생성 도구/버전, 원본 SHA와 파일 목록, 검증 로그를 강사 기록에 남긴다.
 
-Copilot은 이 폴더를 과제 해결에 참조하지 않는다. ON 상태에서 부모 `checkpoints/`를 읽을 수 있는지 예행 연습한다. 읽을 수 있으면 **배포 방식을 강사 시점 배포로 변경**하고 문서도 고친다. 프롬프트 금지만으로 접근 통제가 된다고 주장하지 않는다.
+Copilot은 이 폴더를 과제 해결에 참조하지 않는다. ON 상태에서 부모 `checkpoints/`를 읽을 수 있는지 리허설한다. 읽을 수 있으면 **배포 방식을 강사 시점 배포로 변경**하고 문서도 고친다. 프롬프트 금지만으로 접근 통제가 된다고 주장하지 않는다.

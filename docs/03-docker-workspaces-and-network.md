@@ -2,11 +2,11 @@
 
 ## 1. 목표와 시간
 
-30분(환경 5분, 공유 방식 12분, 도구 5분, 네트워크 8분). 로컬 Linux microVM의 경계와 코드 회수 방식을 비교한다. **모든 명령과 기대 결과는 미검증**이다. kit tag/digest는 `TBD(검증 필요)`이며 아래 `<VERIFIED_TAG>`를 확정하기 전 실행하지 않는다. [출처](sources.md), [개요](../README.md).
+30분(환경 5분, 공유 방식 12분, 도구 5분, 네트워크 8분). 로컬 Linux microVM의 격리 방식과 코드 회수 방식을 비교한다. **모든 명령과 기대 결과는 미검증**이다. kit tag/digest는 `TBD(검증 필요)`이며 아래 `<VERIFIED_TAG>`를 확정하기 전 실행하지 않는다. [출처](sources.md), [개요](../README.md).
 
 ## 2. 실행 위치
 
-`sbx`, hash와 fetch는 **HOST**, `npm`, source 쓰기 probe와 코딩은 **DOCKER VM**에서 실행한다. 기본 Copilot workload는 `--yolo`로 시작하므로 실행 승인과 VM 경계를 별개로 해석한다.
+`sbx`, hash와 fetch는 **HOST**, `npm`, source 쓰기 probe와 코딩은 **DOCKER VM**에서 실행한다. 기본 Copilot workload는 `--yolo`로 시작하므로 실행 승인과 VM 격리를 별개로 해석한다.
 
 ## 3. 사전 조건과 현재 상태
 

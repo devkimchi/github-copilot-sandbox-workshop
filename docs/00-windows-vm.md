@@ -31,7 +31,7 @@ azd env set WORKSHOP_CONFIRM_WINDOWS_LICENSE true
 azd up --environment <VM_ENV_NAME>
 ```
 
-azd와 Azure CLI에서 같은 구독을 선택한다. `adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 입력과 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/할당량을 자동 검증했다고 출력하지 않는다.
+azd와 Azure CLI에서 같은 구독을 선택한다. `adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 입력과 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터을 자동 검증했다고 출력하지 않는다.
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
@@ -46,9 +46,9 @@ C:\WorkshopSetup\install-tools.ps1 `
   -AcaExecutablePath <검증한공식aca.exe경로> -AcaSha256 <검증한64자리SHA256>
 ```
 
-이 명령은 자리표시자 그대로 실행할 수 없다. ACA 실행 파일은 공식 배포처와 checksum을 별도로 확인해 VM에 전달한다. 버전별 정확한 다운로드 URL과 checksum은 `TBD(검증 필요)`다. 도우미가 `INSTALL` 확인 후 WinGet/npm을 사용한다. 기존 도구는 보존하며 불일치 경고를 직접 해결한다.
+이 명령은 플레이스홀더 그대로 실행할 수 없다. ACA 실행 파일은 공식 배포처와 checksum을 별도로 확인해 VM에 전달한다. 버전별 정확한 다운로드 URL과 checksum은 `TBD(검증 필요)`다. 설치 스크립트가 `INSTALL` 확인 후 WinGet/npm을 사용한다. 기존 도구는 보존하며 불일치 경고를 직접 해결한다.
 
-Windows Hypervisor Platform은 기본 자동 변경하지 않는다. 승인된 중첩 가상화 조합을 예행 연습한 뒤에만 `-EnableHypervisorPlatform`을 추가한다. 필요 시 사람이 재부팅한다. Trusted Launch, Secure Boot와 vTPM을 낮추는 옵션은 제공하지 않는다.
+Windows Hypervisor Platform은 기본 자동 변경하지 않는다. 승인된 중첩 가상화 조합을 리허설한 뒤에만 `-EnableHypervisorPlatform`을 추가한다. 필요 시 사람이 재부팅한다. Trusted Launch, Secure Boot와 vTPM을 낮추는 옵션은 제공하지 않는다.
 
 VM에서 개인 워크숍 저장소를 별도로 클론하고 Lab 0을 진행한다. PAT/자격 증명은 도구의 보안 입력 흐름으로 **각자** 준비한다. VM 이미지나 Bicep에 넣지 않는다.
 
@@ -67,7 +67,7 @@ VM에서 개인 워크숍 저장소를 별도로 클론하고 Lab 0을 진행한
 | 항목 | 기대 결과(미검증) | 실제/근거 |
 | --- | --- | --- |
 | azd/VM/Bastion | 본인 전용 환경 생성과 접속 | 참가자 작성 |
-| 설치 도우미 | 전달과 실제 사용자 설치를 구분 | 참가자 작성 |
+| 설치 스크립트 | 전달과 실제 사용자 설치를 구분 | 참가자 작성 |
 | OS/tool version과 모듈 | 모듈별로 독립 판정 | 참가자 작성 |
 | 삭제 | VM 전용 리소스와 비용 잔존 확인 | 참가자 작성 |
 

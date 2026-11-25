@@ -1,4 +1,4 @@
-# 출처와 검증 경계
+# 출처와 검증 범위
 
 조사 보고서 §3~§12, §13과 부록 A.7을 실습 자료로 구성했다. 보고서는 제품 실행 결과가 아니라 공식 문서와 고정 소스에 근거한 설계다. 부록 A.7의 이전 Windows 추출 확인을 이번 스크립트 실행 검증으로 승계하지 않는다.
 
@@ -12,7 +12,7 @@
 
 ## 공식 제품 문서
 
-- Copilot: [사용](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/using-local-sandboxing), [설정](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/configuring-local-sandbox-settings), [정책과 강제 경계](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/understanding-local-sandboxing), [CLI와 인증](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference).
+- Copilot: [사용](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/using-local-sandboxing), [설정](https://docs.github.com/en/copilot/how-tos/cloud-and-local-sandboxes/configuring-local-sandbox-settings), [정책 적용과 한계](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/understanding-local-sandboxing), [CLI와 인증](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference).
 - Docker: [설치](https://docs.docker.com/ai/sandboxes/install/), [보안](https://docs.docker.com/ai/sandboxes/security/), [기본 상태](https://docs.docker.com/ai/sandboxes/security/defaults/), [Git](https://docs.docker.com/ai/sandboxes/workflows/git/), [v3 kit 사용](https://docs.docker.com/ai/sandboxes/customize/use-kits/), [mixin 제작](https://docs.docker.com/ai/sandboxes/customize/author/tool-mixins/), [네트워크](https://docs.docker.com/ai/governance/local/network-rules/), [Copilot workload](https://hub.docker.com/r/sbx/copilot), [Playwright mixin](https://hub.docker.com/r/sbx/playwright).
 - ACA: [개요](https://learn.microsoft.com/azure/container-apps/sandboxes-overview), [CLI 설치](https://sandboxes.azure.com/docs/sandboxes/quickstart/setup-cli), [그룹과 RBAC](https://sandboxes.azure.com/docs/sandboxes/sandbox-groups), [egress](https://sandboxes.azure.com/docs/sandboxes/sandbox/egress), [수명주기](https://sandboxes.azure.com/docs/sandboxes/sandbox/lifecycle), [credential](https://sandboxes.azure.com/docs/sandboxes/credentials), [파일](https://sandboxes.azure.com/docs/sandboxes/sandbox/files), [identity](https://sandboxes.azure.com/docs/sandboxes/identity), [quota](https://sandboxes.azure.com/docs/sandboxes/limits), [지역](https://sandboxes.azure.com/docs/sandboxes/regions), [이미지](https://sandboxes.azure.com/docs/sandboxes/disk-images), [ingress](https://sandboxes.azure.com/docs/sandboxes/sandbox/ports).
 - Windows VM: [중첩 가상화](https://learn.microsoft.com/windows-server/virtualization/hyper-v/enable-nested-virtualization).

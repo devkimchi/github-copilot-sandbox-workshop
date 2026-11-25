@@ -1,4 +1,4 @@
-# Lab 3. ACA 원격 경계, egress와 상태 보존
+# Lab 3. ACA 원격 격리, egress와 상태 보존
 
 ## 1. 목표와 시간
 
@@ -6,7 +6,7 @@
 
 ## 2. 실행 위치
 
-`aca`는 **HOST** 제어 클라이언트다. Copilot과 앱은 **ACA REMOTE**에서 실행한다. Windows VM을 HOST로 써도 ACA는 그 VM과 다른 실행 경계다. `az containerapp`과 ACA Sandboxes CLI를 혼동하지 않는다.
+`aca`는 **HOST** 제어 클라이언트다. Copilot과 앱은 **ACA REMOTE**에서 실행한다. Windows VM을 HOST로 써도 ACA는 그 VM과 분리된 원격 환경에서 실행된다. `az containerapp`과 ACA Sandboxes CLI를 혼동하지 않는다.
 
 ## 3. 사전 조건과 현재 상태
 
@@ -126,7 +126,7 @@ aca sandbox get --id <SANDBOX_ID> -o json
 aca sandbox shell --id <SANDBOX_ID>
 ```
 
-`Running` 전환 후 ACA REMOTE에서 **같은 절대 경로**의 `sha256sum`을 반복한다. 새 create는 resume의 증거가 아니다. 파일 hash 비교는 파일 보존만 입증하며 **memory 복원은 입증하지 않는다**. timeout 설정만으로 auto-suspend가 검증되는 것도 아니다. 대화형 연결은 idle 판정에 영향을 줄 수 있다.
+`Running` 전환 후 ACA REMOTE에서 **같은 절대 경로**의 `sha256sum`을 반복한다. 새 create는 resume의 증거가 아니다. 파일 hash 비교는 파일 보존만 입증하며 **memory 복원은 입증하지 않는다**. timeout 설정만으로 auto-suspend가 검증되는 것도 아니다. 인터랙티브 연결은 idle 판정에 영향을 줄 수 있다.
 
 ### 결과 회수
 

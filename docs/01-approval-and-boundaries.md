@@ -1,8 +1,8 @@
-# 승인과 실행 경계
+# 승인과 접근 범위
 
 ## 1. 목표와 시간
 
-10분. 승인 요청, 모델의 거부와 실행 경계의 차단을 구분한다. 아래 기대 동작은 **미검증**이며 공식 문서에 근거한 비교 모델이다. [출처](sources.md), [개요](../README.md).
+10분. 승인 요청, 모델의 거부와 정책에 따른 차단을 구분한다. 아래 기대 동작은 **미검증**이며 공식 문서에 근거한 비교 모델이다. [출처](sources.md), [개요](../README.md).
 
 ## 2. 실행 위치
 
@@ -17,14 +17,14 @@ HOST는 개인 PC 또는 실습용 Windows VM이다. COPILOT CLI는 HOST에서 �
 | 항목 | Copilot 자체 샌드박스 | Docker 로컬 | ACA |
 | --- | --- | --- | --- |
 | CLI 위치 | HOST | Linux microVM | Azure microVM |
-| 경계 | 도구별 OS 정책과 CLI 내부 정책 검사 | 별도 커널 VM과 공유/프록시 정책 | 원격 VM, RBAC와 egress |
+| 격리 방식과 접근 제한 | 도구별 OS 정책과 CLI 내부 정책 검사 | 별도 커널 VM과 공유/프록시 정책 | 원격 VM, RBAC와 egress |
 | 파일 | 유효 경로 grant | Direct 공유 또는 Clone | 원격 파일, 자동 host mount 없음 |
 | 기본 네트워크 설명 | outbound ON, local-network OFF가 기본이며 OS 차이 있음 | preset/kit/개인/조직 정책 조합 | 정책이 없으면 unrestricted outbound |
 | 결과 | host에 남음 | Direct 즉시 반영, Clone 명시적 회수 | 파일 API 등 명시적 회수 |
 
 Copilot의 셸, 로컬 MCP/LSP와 자식 프로세스에는 OS 샌드박스가 적용된다. 내장 파일 도구는 CLI 내부 소프트웨어 정책 검사다. CLI 전체가 VM으로 옮겨지는 것은 아니다. 원격 MCP 서버의 실행 권한을 로컬 파일 정책이 제한하지도 않는다.
 
-`--yolo`와 `allow-all`은 실행 승인 설정이다. Docker Copilot workload가 `copilot --yolo`로 시작해도 VM, mount, credential과 network 경계는 별개로 남는다. 반대로 승인 창이 떴다는 사실은 격리를 입증하지 않는다.
+`--yolo`와 `allow-all`은 실행 승인 설정이다. Docker Copilot workload가 `copilot --yolo`로 시작해도 VM의 격리 방식과 mount, credential, network의 접근 범위는 별개로 유지된다. 반대로 승인 창이 떴다는 사실은 격리를 입증하지 않는다.
 
 토의 프롬프트:
 
