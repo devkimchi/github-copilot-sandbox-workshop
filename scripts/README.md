@@ -21,7 +21,9 @@
 ./scripts/install-prerequisites.sh
 ```
 
-Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. nvm 밖에서 설치한 Node.js가 있으면 자동으로 바꾸지 않고 MANUAL로 안내한다. Windows는 WinGet, macOS는 Homebrew, Linux는 Ubuntu 계열의 apt를 사용한다. Windows Hypervisor Platform 활성화와 재부팅은 사람이 직접 한다. `terminal-output.sh`와 `powershell-bootstrap.ps1`은 공통 출력과 초기화 도우미다.
+Git, Azure CLI, Copilot CLI, `sbx`와 `aca`는 설치 시점에 패키지 저장소나 공식 설치 프로그램에서 제공하는 최신 버전을 설치한다. 기존 설치는 자동 업데이트하지 않으며 필요한 업데이트는 원래 설치 경로로 직접 수행한다. check 스크립트는 설치 여부와 최소 요구 사항을 검사하며 최신 버전인지 판정하지 않는다.
+
+Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. nvm 밖에서 설치한 Node.js는 자동 제거하지 않는다. Windows는 WinGet, macOS는 Homebrew, Linux는 Ubuntu 계열의 apt를 사용한다. Windows Hypervisor Platform 활성화와 재부팅은 사람이 직접 한다. `terminal-output.sh`와 `powershell-bootstrap.ps1`은 공통 출력과 초기화 도우미다.
 
 ## 앱 추출
 

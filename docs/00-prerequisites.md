@@ -53,7 +53,7 @@ aca --version
 
 Node.js는 **22.13 이상**이어야 한다. install 스크립트는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. Docker workload와 ACA image에서도 직접 확인한다. Tailspin은 Node 내장 `node:sqlite`를 사용한다. Windows용 제공 스크립트에는 **PowerShell 7 이상**이 필요하다.
 
-Copilot CLI, Docker Sandboxes CLI(`sbx`), Azure CLI, ACA Sandboxes CLI(`aca`)는 각각 공식 설치 문서를 따른다. Docker Desktop이나 `az containerapp`은 `sbx`/`aca`를 대체하지 않는다. 최종 설치 버전과 설치 파일 checksum은 `TBD(검증 필요)`다.
+Git, Copilot CLI, Docker Sandboxes CLI(`sbx`), Azure CLI, ACA Sandboxes CLI(`aca`)는 설치 시점에 패키지 저장소나 공식 설치 프로그램에서 제공하는 최신 버전을 사용한다. 기존 설치는 자동 업데이트하지 않으므로 필요한 업데이트는 원래 설치 경로로 직접 수행한다. 실제 사용한 버전은 기록한다. Docker Desktop이나 `az containerapp`은 `sbx`/`aca`를 대체하지 않는다.
 
 Copilot은 본인 라이선스와 본인의 fine-grained PAT(`Copilot Requests`)를 사용한다. 짧은 만료와 최소 권한으로 만들고 공식 보안 입력 흐름으로 저장한다. 토큰을 예제 파일, Bicep, 스크립트, 셸 이력 또는 관찰표에 붙여 넣지 않는다. `gh auth token` 존재만으로 모델 요청 권한을 판정하지 않는다.
 

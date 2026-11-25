@@ -26,9 +26,9 @@
 
 ## 도구 설치 스크립트
 
-WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, nvm-windows 2.x(`AuthorSoftware.NVMWindows`)와 이를 통한 Node.js 24.x, PowerShell 7, Azure CLI, `Docker.sbx`와 Copilot CLI만 대상으로 한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA는 공식 배포처에서 받은 Windows `aca.exe`와 검증한 SHA-256을 입력받아 사용자 도구 폴더에 복사한다.
+WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, PowerShell, Azure CLI, `Docker.sbx`와 Copilot CLI는 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x(`AuthorSoftware.NVMWindows`)를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 최신 버전을 설치한다.
 
-각 버전 인자는 필수다. 미확정 값을 latest로 바꾸지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 버전 일치를 의미하지 않는다**. 실제 `--version`을 검증표와 비교하고 불일치하면 사람이 승인한 설치 경로로 조정한다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
+도구 버전 인자는 받지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 모든 도구의 최신 상태를 의미하지 않는다**. 필요한 업데이트는 원래 설치 경로로 직접 수행하고 실제 버전을 기록한다. 실제 설치 동작은 미검증이다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
 
 ## 참고와 변경
 

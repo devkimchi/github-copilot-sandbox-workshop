@@ -10,9 +10,9 @@
 
 ## 3. 사전 조건과 현재 상태
 
-v3 전용이다. `schemaVersion: "3"`, `kind`, `requires`, `provides`, network/credential/lifecycle capability와 신뢰할 출처를 검토한다. `<VERIFIED_TAG>`와 Playwright 인자는 모두 `TBD(검증 필요)`다.
+v3 전용이다. `schemaVersion: "3"`, `kind`, `requires`, `provides`, network/credential/lifecycle capability와 신뢰할 출처를 검토한다. `<VERIFIED_TAG>`는 `TBD(검증 필요)`다.
 
-Tailspin lock 파일의 `@playwright/test`, `playwright`, `playwright-core`는 **1.65.0**이다. mixin의 필수 `version` 인자는 이 버전으로 지정 가능한지 리허설해야 한다. compatible Debian 13 workload, apt/Bash와 package repository 접근도 확인한다.
+Tailspin lock 파일의 `@playwright/test`, `playwright`, `playwright-core`는 **1.65.0**이다. mixin 호출 시 `--kit-arg playwright.version=1.65.0`으로 샘플 앱이 요구하는 버전을 지정한다. compatible Debian 13 workload, apt/Bash와 package repository 접근도 확인한다. 실제 브라우저 정합과 E2E 실행은 리허설에서 확인한다.
 
 `requires`는 자동 다운로드가 아니다. 중복 feature는 충돌할 수 있다. v3에는 `sbx kit add`로 기존 sandbox에 mixin을 추가하지 않는다. 새 sandbox를 만든다.
 
@@ -25,10 +25,10 @@ Tailspin lock 파일의 `@playwright/test`, `playwright`, `playwright-core`는 *
 HOST의 clean `workspace-docker`에서, 다른 이름으로 생성한다.
 
 ```text
-sbx run --clone --name ws-mixin sbx/copilot:<VERIFIED_TAG> . --kit sbx/playwright:<VERIFIED_TAG> --kit-arg playwright.version=<VERIFIED_PLAYWRIGHT_VERSION>
+sbx run --clone --name ws-mixin sbx/copilot:<VERIFIED_TAG> . --kit sbx/playwright:<VERIFIED_TAG> --kit-arg playwright.version=1.65.0
 ```
 
-`--kit-arg <kit>.<name>=<value>`의 실제 kit 접두사와 digest 쌍을 리허설에서 확정한다. 가변 alias나 문서의 예시 tag를 검증된 조합으로 취급하지 않는다.
+실제 사용한 workload와 mixin의 tag와 digest를 기록한다. 버전 인자를 지정했다고 실제 브라우저 정합과 E2E 성공까지 확인한 것으로 취급하지 않는다.
 
 새 DOCKER VM에서:
 

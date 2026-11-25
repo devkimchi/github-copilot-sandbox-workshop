@@ -2,15 +2,6 @@
 #requires -RunAsAdministrator
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory)][ValidatePattern('^\d+(\.\d+){1,3}$')][string]$GitVersion,
-    [Parameter(Mandatory)][ValidatePattern('^2\.\d+\.\d+$')][string]$NvmVersion,
-    [Parameter(Mandatory)][ValidatePattern('^24\.\d+\.\d+$')][string]$NodeVersion,
-    [Parameter(Mandatory)][ValidatePattern('^\d+(\.\d+){1,3}$')][string]$PowerShellVersion,
-    [Parameter(Mandatory)][ValidatePattern('^\d+(\.\d+){1,3}$')][string]$AzureCliVersion,
-    [Parameter(Mandatory)][ValidatePattern('^\d+(\.\d+){1,3}$')][string]$SbxVersion,
-    [Parameter(Mandatory)][ValidatePattern('^\d+(\.\d+){1,3}$')][string]$CopilotVersion,
-    [Parameter(Mandatory)][string]$AcaExecutablePath,
-    [Parameter(Mandatory)][ValidatePattern('^[0-9a-fA-F]{64}$')][string]$AcaSha256,
     [switch]$EnableHypervisorPlatform
 )
 
@@ -19,25 +10,21 @@ if ([Security.Principal.WindowsIdentity]::GetCurrent().IsSystem) {
     throw 'SYSTEM이 아닌 실제 로그인한 관리자 사용자로 실행하세요.'
 }
 Get-Command winget.exe -ErrorAction Stop | Out-Null
-$acaSource = (Resolve-Path -LiteralPath $AcaExecutablePath).Path
-if ([IO.Path]::GetExtension($acaSource) -ne '.exe' -or
-    (Get-FileHash -LiteralPath $acaSource -Algorithm SHA256).Hash -ne $AcaSha256) {
-    throw 'ACA 실행 파일 형식 또는 SHA-256이 확인한 값과 다릅니다.'
-}
 $packages = @(
-    @{ Id = 'Git.Git'; Version = $GitVersion; Command = 'git.exe' },
-    @{ Id = 'AuthorSoftware.NVMWindows'; Version = $NvmVersion; Command = 'nvm.exe' },
-    @{ Id = 'Microsoft.PowerShell'; Version = $PowerShellVersion; Command = 'pwsh.exe' },
-    @{ Id = 'Microsoft.AzureCLI'; Version = $AzureCliVersion; Command = 'az.cmd' },
-    @{ Id = 'Docker.sbx'; Version = $SbxVersion; Command = 'sbx.exe' }
+    @{ Id = 'Git.Git'; Command = 'git.exe' },
+    @{ Id = 'AuthorSoftware.NVMWindows'; Command = 'nvm.exe' },
+    @{ Id = 'Microsoft.PowerShell'; Command = 'pwsh.exe' },
+    @{ Id = 'Microsoft.AzureCLI'; Command = 'az.cmd' },
+    @{ Id = 'Docker.sbx'; Command = 'sbx.exe' },
+    @{ Id = 'GitHub.Copilot'; Command = 'copilot.exe' }
 )
 $existingNode = Get-Command node.exe -ErrorAction SilentlyContinue
 if ($existingNode -and -not (Get-Command nvm.exe -ErrorAction SilentlyContinue)) {
     throw "nvm-windows 밖에서 설치한 Node.js가 있습니다($($existingNode.Source)). 원래 설치 프로그램으로 제거한 뒤 다시 실행하세요."
 }
-$packages | ForEach-Object { Write-Host "$($_.Id) @ $($_.Version)" }
-Write-Host "Node.js @ $NodeVersion (nvm-windows로 설치)"
-Write-Host "Copilot npm @ $CopilotVersion, ACA 실행 파일 SHA-256 검증 완료"
+$packages | ForEach-Object { Write-Host "$($_.Id): WinGet에서 제공하는 최신 버전" }
+Write-Host 'Node.js: nvm-windows 2.x를 통해 24.x 최신 버전 설치'
+Write-Host 'ACA CLI: 공식 설치 스크립트 https://aka.ms/aca-cli-install-ps 사용'
 if ($EnableHypervisorPlatform) {
     Write-Host 'Windows Hypervisor Platform 활성화를 요청했습니다. 재부팅이 필요할 수 있습니다.'
 }
@@ -45,10 +32,10 @@ $answer = Read-Host '설치와 표시한 패키지 사용 조건을 검토한 �
 if ($answer -cne 'INSTALL') { throw '사용자가 도구 설치를 취소했습니다.' }
 foreach ($package in $packages) {
     if (Get-Command $package.Command -ErrorAction SilentlyContinue) {
-        Write-Warning "$($package.Command)이 이미 있습니다. 변경하지 않습니다. 요청 버전과 실제 버전을 직접 비교하세요."
+        Write-Warning "$($package.Command)이 이미 있습니다. 변경하지 않습니다. 최신 버전이 필요한 경우 원래 설치 경로로 직접 업데이트하세요."
         continue
     }
-    & winget.exe install --id $package.Id --exact --version $package.Version --source winget --accept-package-agreements --accept-source-agreements
+    & winget.exe install --id $package.Id --exact --source winget --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -ne 0) { throw "패키지 설치 실패: $($package.Id), exit=$LASTEXITCODE" }
     $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
         [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -57,6 +44,11 @@ $actualNvm = & nvm.exe version
 if ($LASTEXITCODE -ne 0 -or $actualNvm -notmatch '^v?2\.') {
     throw "nvm-windows 2.x가 필요합니다. 현재 버전: $actualNvm"
 }
+$releases = Invoke-RestMethod -Uri 'https://nodejs.org/dist/index.json' -TimeoutSec 30 -ErrorAction Stop
+$latestNode = $releases | Where-Object { $_.version -match '^v24\.\d+\.\d+$' } |
+    ForEach-Object { [version]$_.version.TrimStart('v') } | Sort-Object -Descending | Select-Object -First 1
+if (-not $latestNode) { throw 'Node.js 24.x 최신 버전을 조회하지 못했습니다.' }
+$NodeVersion = $latestNode.ToString()
 & nvm.exe install $NodeVersion
 if ($LASTEXITCODE -ne 0) { throw "Node.js $NodeVersion 설치 실패, exit=$LASTEXITCODE" }
 & nvm.exe use $NodeVersion
@@ -68,27 +60,24 @@ $actualNode = & node.exe --version
 if ($LASTEXITCODE -ne 0 -or $actualNode -ne "v$NodeVersion") {
     throw "실제 Node.js 버전($actualNode)이 요청한 $NodeVersion과 다릅니다."
 }
-if (Get-Command copilot -ErrorAction SilentlyContinue) {
-    Write-Warning '기존 Copilot CLI를 보존합니다. 실제 버전을 요청 값과 직접 비교하세요.'
+if (Get-Command aca -ErrorAction SilentlyContinue) {
+    Write-Warning '기존 ACA CLI를 보존합니다. 최신 버전이 필요한 경우 원래 설치 경로로 직접 업데이트하세요.'
 }
 else {
-    & npm.cmd install --global "@github/copilot@$CopilotVersion"
-    if ($LASTEXITCODE -ne 0) { throw 'Copilot CLI 설치 실패' }
-}
-$bin = Join-Path $env:LOCALAPPDATA 'WorkshopTools'
-New-Item -ItemType Directory -Path $bin -Force | Out-Null
-$acaDestination = Join-Path $bin 'aca.exe'
-if (Test-Path -LiteralPath $acaDestination) {
-    if ((Get-FileHash -LiteralPath $acaDestination -Algorithm SHA256).Hash -ne $AcaSha256) {
-        throw '기존 ACA 실행 파일이 다른 내용입니다. 자동 덮어쓰지 않습니다.'
+    $installerDirectory = Join-Path ([IO.Path]::GetTempPath()) "workshop-aca-$([guid]::NewGuid().ToString('N'))"
+    New-Item -ItemType Directory -Path $installerDirectory -ErrorAction Stop | Out-Null
+    $installer = Join-Path $installerDirectory 'install.ps1'
+    try {
+        Invoke-WebRequest -Uri 'https://aka.ms/aca-cli-install-ps' -OutFile $installer -UseBasicParsing -ErrorAction Stop
+        & pwsh.exe -NoProfile -File $installer
+        if ($LASTEXITCODE -ne 0) { throw "ACA CLI 설치 실패, exit=$LASTEXITCODE" }
+        $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
+            [Environment]::GetEnvironmentVariable('Path', 'User')
+        Get-Command aca -ErrorAction Stop | Out-Null
     }
-}
-else {
-    Copy-Item -LiteralPath $acaSource -Destination $acaDestination -ErrorAction Stop
-}
-$userPath = [string][Environment]::GetEnvironmentVariable('Path', 'User')
-if (($userPath -split ';') -notcontains $bin) {
-    [Environment]::SetEnvironmentVariable('Path', ($userPath.TrimEnd(';') + ';' + $bin), 'User')
+    finally {
+        Remove-Item -LiteralPath $installerDirectory -Recurse -Force -ErrorAction Stop
+    }
 }
 if ($EnableHypervisorPlatform) {
     Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -All -NoRestart -ErrorAction Stop

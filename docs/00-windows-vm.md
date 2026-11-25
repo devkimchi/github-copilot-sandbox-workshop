@@ -38,15 +38,11 @@ azd와 Azure CLI에서 같은 구독을 선택한다. `adminPassword`는 azd의 
 Run Command는 도구를 자동 설치하지 않는다. VM의 `C:\WorkshopSetup\install-tools.ps1`을 사람이 검토한 뒤 로그인한 관리자 사용자 세션에서 실행한다. WinGet/App Installer가 없으면 공식 설치 절차로 먼저 준비한다.
 
 ```powershell
-# Windows VM, 관리자 PowerShell. 모든 버전과 checksum을 검증 값으로 대체한다.
-C:\WorkshopSetup\install-tools.ps1 `
-  -GitVersion <검증한버전> -NvmVersion <검증한2.x버전> -NodeVersion <검증한24.x버전> `
-  -PowerShellVersion <검증한7이상버전> -AzureCliVersion <검증한버전> `
-  -SbxVersion <검증한버전> -CopilotVersion <검증한버전> `
-  -AcaExecutablePath <검증한공식aca.exe경로> -AcaSha256 <검증한64자리SHA256>
+# Windows VM, 관리자 PowerShell
+C:\WorkshopSetup\install-tools.ps1
 ```
 
-이 명령은 플레이스홀더 그대로 실행할 수 없다. ACA 실행 파일은 공식 배포처와 checksum을 별도로 확인해 VM에 전달한다. 버전별 정확한 다운로드 URL과 checksum은 `TBD(검증 필요)`다. 설치 스크립트가 `INSTALL` 확인 후 WinGet/npm을 사용한다. Node.js는 WinGet으로 설치한 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 설치한다. 기존 도구는 보존하며 불일치 경고를 직접 해결한다.
+설치 스크립트가 `INSTALL` 확인 후 Git, PowerShell, Azure CLI, `sbx`와 Copilot CLI를 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 공식 설치 스크립트를 사용한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.
 
 Windows Hypervisor Platform은 기본 자동 변경하지 않는다. 승인된 중첩 가상화 조합을 리허설한 뒤에만 `-EnableHypervisorPlatform`을 추가한다. 필요 시 사람이 재부팅한다. Trusted Launch, Secure Boot와 vTPM을 낮추는 옵션은 제공하지 않는다.
 

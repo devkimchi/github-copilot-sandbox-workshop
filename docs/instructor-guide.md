@@ -25,21 +25,22 @@
 
 모델 거부, 승인 대기, 정책 차단, 미지원, 일반 오류와 성공을 분리한다. `.env`와 ignore 규칙을 접근 통제 수단으로 가르치지 않는다. 결과가 다르면 실행 위치, 실제 도구, 유효 정책과 명령 출력을 먼저 확인한다.
 
-## 고정 버전표(리허설 후 채움)
+## 설치 정책과 실제 버전 기록(리허설 후 채움)
 
 | 항목 | 조사 근거/참고값 | 배포본의 확정 값 |
 | --- | --- | --- |
 | Tailspin 원본 SHA | `9cd9a450f923c7a084bd47d661877d82ff710826` | 고정, OS별 추출 내용 검증 필요 |
-| Node | >=22.13 | `TBD(검증 필요)` |
+| Node | nvm으로 24.x 최신 버전 설치 | 실제 버전 기록 |
 | Playwright 프로젝트 lock | 1.65.0 | 원본 고정, browser 정합 검증 필요 |
-| Copilot CLI와 각 OS/build/backend | 공식 지원 조건 | `TBD(검증 필요)` |
-| sbx CLI, workload와 Playwright v3 mixin | v3 전용, 각각 digest 고정 | `TBD(검증 필요)` |
-| Playwright mixin `version`/인자 접두사 | 1.65.0 지정 가능 여부 확인 | `TBD(검증 필요)` |
+| Git, Azure CLI, Copilot CLI, sbx CLI, aca CLI | 설치 경로에서 제공하는 최신 버전, 기존 설치는 자동 업데이트하지 않음 | 실제 버전 기록 |
+| Copilot의 각 OS/build/backend | 공식 지원 조건 | `TBD(검증 필요)` |
+| workload와 Playwright v3 mixin | 실제 사용한 tag와 digest 기록 | `TBD(검증 필요)` |
+| Playwright mixin 호출 인자 | `--kit-arg playwright.version=1.65.0` | 실제 browser 정합과 E2E 리허설 필요 |
 | source mixin build/frontend/base digest/architecture | Docker/Buildx와 busybox 참고 | `TBD(검증 필요)` |
-| aca CLI, image ID/revision, tier/architecture | public copilot image 후보 | `TBD(검증 필요)` |
+| ACA image ID/revision, tier/architecture | public copilot image 후보 | `TBD(검증 필요)` |
 | exact-host allowlist | 모델/npm/archive/browser 각각 기록 | `TBD(검증 필요)` |
 | Azure region/quota/예상 비용 | Korea Central 후보, 개인 구독별 확인 | `TBD(검증 필요)` |
-| Windows VM 이미지/SKU/고정 버전 | appmod-box 참고값, Trusted Launch 유지 | `TBD(검증 필요)` |
+| Windows VM 이미지/SKU | appmod-box 참고값, Trusted Launch 유지 | `TBD(검증 필요)` |
 | VM 도구 버전/설치 checksum/중첩 가상화 | 선택 경로 | `TBD(검증 필요)` |
 | checkpoint 패치와 확장 완성본 | 리허설 후 생성 | `TBD(검증 필요)` |
 | 실제 모듈 소요 시간/다운로드/cache | 현장과 같은 network에서 확인 | `TBD(검증 필요)` |
