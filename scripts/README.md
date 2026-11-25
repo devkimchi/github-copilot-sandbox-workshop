@@ -30,11 +30,11 @@ Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x
 **실행 미검증.** PowerShell 7 이상 또는 Bash에서, 개인 워크숍 저장소 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
 
 ```powershell
-pwsh -File .\scripts\get-tailspin.ps1 -Target workspace
+pwsh -File .\scripts\download-sample.ps1 -Target workspace
 ```
 
 ```bash
-bash scripts/get-tailspin.sh workspace
+bash scripts/download-sample.sh workspace
 ```
 
 대상은 현재 폴더 바로 아래 `workspace` 또는 `workspace-이름`만 허용한다. 기존 대상은 덮어쓰지 않는다. 다운로드/추출 임시 폴더만 자동 정리한다. Git 단계에서 실패해 생긴 부분 workspace는 보존하며 오류를 보고한다. 실패한 대상은 사람이 확인하고 **다른 이름으로 다시 시작**한다.

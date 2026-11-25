@@ -50,7 +50,7 @@ HOST에서 원격 전용 디렉터리를 만들고 제공 스크립트를 전송
 
 ```text
 aca sandbox exec --id <SANDBOX_ID> -c "mkdir -p /home/aca-workshop"
-aca sandbox fs write --id <SANDBOX_ID> --path /home/aca-workshop/get-tailspin.sh --file scripts/get-tailspin.sh
+aca sandbox fs write --id <SANDBOX_ID> --path /home/aca-workshop/download-sample.sh --file scripts/download-sample.sh
 ```
 
 이 경로의 쓰기 권한은 image별 `TBD(검증 필요)`다. 권한 오류이면 실제 writable 작업 경로를 확인하고 모든 후속 절대 경로를 일관되게 바꾼다. HOST 경로가 자동 mount된다고 가정하지 않는다.
@@ -60,7 +60,7 @@ ACA REMOTE 셸에서:
 ```bash
 command -v curl tar git node
 cd /home/aca-workshop
-bash get-tailspin.sh workspace
+bash download-sample.sh workspace
 cd workspace
 pwd
 node --version

@@ -14,14 +14,14 @@ Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 �
 
 ```powershell
 # HOST, <WORKSHOP_DIR>
-.\scripts\get-tailspin.ps1 -Target workspace
+.\scripts\download-sample.ps1 -Target workspace
 New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
 Copy-Item .\evidence-template\* .\evidence -Recurse
 New-Item -ItemType Directory -Path .\evidence\lab-0,.\evidence\lab-1 -ErrorAction Stop
 Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-기존 `evidence`가 있으면 위 생성/복사를 반복하지 않고 새 실습 폴더를 고른다. POSIX에서는 `bash scripts/get-tailspin.sh workspace`, `mkdir evidence`, `cp -R evidence-template/. evidence/`를 사용한다.
+기존 `evidence`가 있으면 위 생성/복사를 반복하지 않고 새 실습 폴더를 고른다. POSIX에서는 `bash scripts/download-sample.sh workspace`, `mkdir evidence`, `cp -R evidence-template/. evidence/`를 사용한다.
 
 canary는 OS 임시 폴더나 부모 워크숍 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체 읽기 자동 grant 때문에 실험이 무효가 될 수 있다.
 

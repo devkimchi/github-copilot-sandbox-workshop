@@ -14,8 +14,8 @@ Lab 1에서 host용 `node_modules`를 설치한 폴더를 재사용하지 않는
 
 ```powershell
 # HOST, <WORKSHOP_DIR>
-.\scripts\get-tailspin.ps1 -Target workspace-direct
-.\scripts\get-tailspin.ps1 -Target workspace-docker
+.\scripts\download-sample.ps1 -Target workspace-direct
+.\scripts\download-sample.ps1 -Target workspace-docker
 New-Item -ItemType Directory .\evidence\lab-2 -ErrorAction Stop
 git -C .\workspace-direct status --short | Out-File .\evidence\lab-2\direct-before.txt
 git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-before.txt
@@ -23,7 +23,7 @@ git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-before.t
 Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-before.txt
 ```
 
-POSIX에서는 `bash scripts/get-tailspin.sh workspace-direct`와 `workspace-docker`를 각각 사용한다. Git 기준 commit `baseline`, remote 없음과 clean 상태를 확인한다.
+POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-docker`를 각각 사용한다. Git 기준 commit `baseline`, remote 없음과 clean 상태를 확인한다.
 
 ## 4. 실행 명령과 프롬프트
 

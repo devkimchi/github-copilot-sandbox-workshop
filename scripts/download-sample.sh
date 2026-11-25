@@ -3,7 +3,7 @@ set -euo pipefail
 
 target="${1:-workspace}"
 if [[ $# -gt 1 || ! "$target" =~ ^workspace(-[A-Za-z0-9_-]+)?$ ]]; then
-  printf '%s\n' '사용법: bash get-tailspin.sh [workspace 또는 workspace-이름]' >&2
+  printf '%s\n' '사용법: bash download-sample.sh [workspace 또는 workspace-이름]' >&2
   exit 2
 fi
 if [[ -e "$target" || -L "$target" ]]; then
