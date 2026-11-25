@@ -28,7 +28,17 @@ preprovision은 필수 환경 변수와 지정한 이미지 버전 형식만 검
 
 ## 도구 설치 스크립트
 
-WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. Git, GitHub CLI(`GitHub.cli`), PowerShell, Azure CLI, `Docker.sbx`, Docker Desktop(`Docker.DockerDesktop`)과 Copilot CLI는 WinGet에서 제공하는 최신 버전으로 설치한다. WSL2와 Ubuntu는 `wsl --install --distribution Ubuntu --no-launch`로 먼저 설치하며 재부팅이 필요할 수 있다. 기존 Ubuntu가 WSL1이면 `wsl --set-version Ubuntu 2`로 WSL2로 전환한다. Node.js는 nvm-windows 2.x(`AuthorSoftware.NVMWindows`)를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 최신 버전을 설치한다.
+WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. 도구를 다음 용도로 나누어 표시하고 이 순서대로 설치한다. 그룹별 선택 설치는 제공하지 않는다.
+
+- **공통 개발 환경**: Git, GitHub CLI(`GitHub.cli`), nvm-windows(`AuthorSoftware.NVMWindows`), PowerShell, Node.js
+- **Copilot CLI 샌드박스**: Copilot CLI
+- **Azure Container Apps Sandboxes**: Azure CLI, ACA CLI
+- **Docker Sandboxes**: 선택 사항인 Windows Hypervisor Platform, `Docker.sbx`
+- **Docker Desktop 및 Linux 개발 환경**: WSL2, Ubuntu, Docker Desktop(`Docker.DockerDesktop`)
+
+WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 PowerShell과 Azure CLI를 준비한 뒤 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 설치한다. Docker Desktop보다 먼저 `wsl --install --distribution Ubuntu --no-launch`로 WSL2와 Ubuntu를 설치한다. Ubuntu가 WSL1이면 `wsl --set-version Ubuntu 2`로 전환한다. Ubuntu의 WSL2 구성을 확인할 수 없거나 전환에 실패하면 재부팅하고 Ubuntu 첫 실행을 마친 뒤 스크립트를 다시 실행한다.
+
+`sbx`는 Docker Desktop 없이 사용할 수 있으며, Docker Desktop도 별도 Ubuntu 배포판을 필수로 요구하지 않는다. 이 스크립트는 선택한 실습 구성에 따라 Ubuntu를 설치한다. Docker Desktop의 Azure VM 공식 지원은 Docker Business 고객 대상이다. 세부 조건은 [참가자 절차](../docs/00-windows-vm.md)를 확인한다.
 
 도구 버전 인자는 받지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 모든 도구의 최신 상태를 의미하지 않는다**. 필요한 업데이트는 원래 설치 경로로 직접 수행하고 실제 버전을 기록한다. 실제 설치 동작은 미검증이다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
 

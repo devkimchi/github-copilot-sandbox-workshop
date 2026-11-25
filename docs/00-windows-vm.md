@@ -52,7 +52,19 @@ Run Command는 도구를 자동 설치하지 않는다. 배포 시 지정한 관
 & "$HOME\scripts\install-vm-tools.ps1" -Yes
 ```
 
-설치 스크립트가 `INSTALL` 확인(또는 `-Yes`) 후 Git, GitHub CLI, PowerShell, Azure CLI, `sbx`, Docker Desktop과 Copilot CLI를 WinGet에서 제공하는 최신 버전으로 설치한다. Docker Desktop보다 먼저 `wsl --install --distribution Ubuntu --no-launch`로 WSL2와 Ubuntu를 설치한다. 기존 Ubuntu가 WSL1이면 WSL2로 전환하고, 전환에 실패하면 재부팅 후 다시 실행하도록 중단한다. 설치 후 VM을 재부팅하고, Ubuntu 첫 실행에서 Linux 사용자를 만들고 Docker Desktop 첫 실행에서 약관을 확인한다. Docker Desktop은 `sbx`를 대체하지 않는다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 공식 설치 스크립트를 사용한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.
+설치 스크립트는 도구를 다음 용도로 나누어 표시하고 이 순서대로 설치한다. 그룹별 선택 설치는 제공하지 않는다. 지원하는 터미널에서 `[INFO]`는 청록색, `[PASS]`는 초록색, `[FAIL]`은 빨간색으로 표시하며 경고는 PowerShell 경고 색상을 사용한다.
+
+| 용도 | 도구 |
+| --- | --- |
+| 공통 개발 환경 | Git, GitHub CLI, nvm-windows, PowerShell, Node.js |
+| Copilot CLI 샌드박스 | Copilot CLI |
+| Azure Container Apps Sandboxes | Azure CLI, ACA CLI |
+| Docker Sandboxes | 선택 사항인 Windows Hypervisor Platform, `sbx` |
+| Docker Desktop 및 Linux 개발 환경 | WSL2, Ubuntu, Docker Desktop |
+
+`INSTALL` 확인(또는 `-Yes`) 후 WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 PowerShell과 Azure CLI를 준비한 뒤 공식 설치 스크립트로 설치한다. Docker Desktop보다 먼저 `wsl --install --distribution Ubuntu --no-launch`로 WSL2와 Ubuntu를 설치한다. Ubuntu가 WSL1이면 WSL2로 전환한다. Ubuntu의 WSL2 구성을 확인할 수 없거나 전환에 실패하면 설치를 중단하므로, 재부팅하고 Ubuntu 첫 실행을 마친 뒤 스크립트를 다시 실행한다. 설치 후에도 필요한 재부팅을 하고 Docker Desktop 첫 실행에서 약관을 확인한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.
+
+[`sbx`는 Docker Desktop 없이 사용할 수 있고](https://docs.docker.com/ai/sandboxes/install/), [Docker Desktop의 WSL2 백엔드는 별도 Ubuntu 배포판을 필수로 요구하지 않는다](https://docs.docker.com/desktop/features/wsl/). 이 스크립트는 선택한 실습 구성에 맞춰 Ubuntu도 설치한다. [Docker Desktop의 Azure VM 공식 지원](https://docs.docker.com/desktop/setup/vm-vdi/)은 Docker Business 고객 대상이며 로컬 VM 사용 시 중첩 가상화가 필요하다.
 
 Windows Hypervisor Platform은 기본 자동 변경하지 않는다. 승인된 중첩 가상화 조합을 리허설한 뒤에만 `-EnableHypervisorPlatform`을 추가한다. 필요 시 사람이 재부팅한다. Trusted Launch, Secure Boot와 vTPM을 낮추는 옵션은 제공하지 않는다.
 
