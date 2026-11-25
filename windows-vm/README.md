@@ -36,7 +36,7 @@ WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 
 - **Docker Sandboxes**: 선택 사항인 Windows Hypervisor Platform, `Docker.sbx`
 - **Docker Desktop 및 Linux 개발 환경**: WSL2, Ubuntu, Docker Desktop(`Docker.DockerDesktop`)
 
-WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 PowerShell과 Azure CLI를 준비한 뒤 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 설치한다. Docker Desktop보다 먼저 `wsl --install --distribution Ubuntu --no-launch`로 WSL2와 Ubuntu를 설치한다. Ubuntu가 WSL1이면 `wsl --set-version Ubuntu 2`로 전환한다. Ubuntu의 WSL2 구성을 확인할 수 없거나 전환에 실패하면 재부팅하고 Ubuntu 첫 실행을 마친 뒤 스크립트를 다시 실행한다.
+WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 PowerShell과 Azure CLI를 준비한 뒤 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 설치한다. Docker Desktop보다 먼저 `wsl --install --distribution Ubuntu --no-launch`로 WSL2와 Ubuntu를 설치한다. Ubuntu가 WSL1이면 `wsl --set-version Ubuntu 2`로 전환한다. WSL 구성 요소가 재부팅을 기다리면 경고와 함께 종료 코드 `3010`으로 중단한다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 스크립트를 다시 실행한다. 재부팅 대기 상태가 아닌 WSL 조회나 전환 실패는 오류를 확인한다.
 
 `sbx`는 Docker Desktop 없이 사용할 수 있으며, Docker Desktop도 별도 Ubuntu 배포판을 필수로 요구하지 않는다. 이 스크립트는 선택한 실습 구성에 따라 Ubuntu를 설치한다. Docker Desktop의 Azure VM 공식 지원은 Docker Business 고객 대상이다. 세부 조건은 [참가자 절차](../docs/00-windows-vm.md)를 확인한다.
 

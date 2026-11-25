@@ -111,24 +111,38 @@ function Get-UbuntuWslVersion {
     $previousWslUtf8 = $env:WSL_UTF8
     $env:WSL_UTF8 = '1'
     try {
-        $lines = @(& wsl.exe --list --verbose 2>$null)
-        if ($LASTEXITCODE -ne 0) {
-            Write-Status -Level WARNING -Message "WSL 배포판 목록을 확인하지 못했습니다(exit=$LASTEXITCODE)."
-            return $null
-        }
+        $ErrorActionPreference = 'Continue'
+        $lines = @(& wsl.exe --list --verbose 2>&1 | ForEach-Object { "$_" })
+        $exitCode = $LASTEXITCODE
+        $version = $null
         foreach ($line in $lines) {
             $fields = @(($line -replace '^\s*\*', '').Trim() -split '\s+')
-            if ($fields.Count -ge 3 -and $fields[0] -eq 'Ubuntu') { return [int]$fields[-1] }
+            if ($fields.Count -ge 3 -and $fields[0] -eq 'Ubuntu') {
+                if ($fields[-1] -notmatch '^\d+$') { throw "Ubuntu의 WSL 버전을 읽지 못했습니다: $line" }
+                $version = [int]$fields[-1]
+                break
+            }
         }
-        return $null
-    }
-    catch {
-        Write-Status -Level WARNING -Message "WSL 배포판 목록을 확인하지 못했습니다($($_.Exception.Message))."
-        return $null
+        return [pscustomobject]@{ Version = $version; ExitCode = $exitCode; Output = ($lines -join [Environment]::NewLine) }
     }
     finally {
         $env:WSL_UTF8 = $previousWslUtf8
     }
+}
+
+function Get-WslFeatures {
+    foreach ($name in @('Microsoft-Windows-Subsystem-Linux', 'VirtualMachinePlatform')) {
+        Get-WindowsOptionalFeature -Online -FeatureName $name -ErrorAction Stop
+    }
+}
+
+function Test-WslRestartPending {
+    param([array]$Features)
+    return @($Features | Where-Object { $_.State.ToString() -eq 'EnablePending' }).Count -gt 0
+}
+
+function Write-WslRestartRequired {
+    Write-Status -Level WARNING -Message 'WSL 구성 요소가 재부팅을 기다리고 있습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 이 스크립트를 다시 실행하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
 }
 
 function Install-WingetPackage {
@@ -197,39 +211,65 @@ function Install-AcaCli {
 
 function Install-WslUbuntu {
     Write-Status -Level INFO -Message 'WSL과 Ubuntu 상태를 확인합니다.'
-    $ubuntuVersion = Get-UbuntuWslVersion
+    $features = @(Get-WslFeatures)
+    if (Test-WslRestartPending $features) {
+        Write-WslRestartRequired
+        return 'RestartRequired'
+    }
+    $result = Get-UbuntuWslVersion
+    if ($result.ExitCode -ne 0) {
+        $notInstalled = @($features | Where-Object { $_.State.ToString() -ne 'Disabled' }).Count -eq 0
+        if (-not $notInstalled -and $result.Output -notmatch 'WSL_E_DEFAULT_DISTRO_NOT_FOUND') {
+            throw "WSL 배포판 목록을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
+        }
+    }
+    $ubuntuVersion = $result.Version
     if ($null -eq $ubuntuVersion) {
         Write-Status -Level INFO -Message 'WSL과 Ubuntu 설치를 시작합니다.'
-        & wsl.exe --install --distribution Ubuntu --no-launch
+        & wsl.exe --install --distribution Ubuntu --no-launch | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "WSL2와 Ubuntu 설치 실패, exit=$LASTEXITCODE" }
         Write-Status -Level PASS -Message 'WSL과 Ubuntu 설치 명령을 완료했습니다. 재부팅이 필요할 수 있습니다.'
-        $ubuntuVersion = Get-UbuntuWslVersion
-        if ($null -eq $ubuntuVersion) {
-            throw 'Ubuntu의 WSL 버전을 확인하지 못했습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 스크립트를 다시 실행하세요.'
+        if (Test-WslRestartPending @(Get-WslFeatures)) {
+            Write-WslRestartRequired
+            return 'RestartRequired'
         }
+        $result = Get-UbuntuWslVersion
+        if ($result.ExitCode -ne 0 -or $null -eq $result.Version) {
+            throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
+        }
+        $ubuntuVersion = $result.Version
     }
     elseif ($ubuntuVersion -eq 2) {
         Write-Status -Level WARNING -Message 'WSL2 Ubuntu 배포판이 이미 있습니다. 변경하지 않습니다.'
     }
     if ($ubuntuVersion -eq 1) {
         Write-Status -Level WARNING -Message 'Ubuntu 배포판이 WSL1입니다. WSL2로 전환합니다.'
-        & wsl.exe --install --no-distribution
+        & wsl.exe --install --no-distribution | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "WSL2 구성 요소 설치 실패, exit=$LASTEXITCODE" }
-        & wsl.exe --set-version Ubuntu 2
+        if (Test-WslRestartPending @(Get-WslFeatures)) {
+            Write-WslRestartRequired
+            return 'RestartRequired'
+        }
+        & wsl.exe --set-version Ubuntu 2 | Out-Host
         if ($LASTEXITCODE -ne 0) {
-            throw "Ubuntu를 WSL2로 전환하지 못했습니다(exit=$LASTEXITCODE). 재부팅한 뒤 스크립트를 다시 실행하세요."
+            throw "Ubuntu를 WSL2로 전환하지 못했습니다(exit=$LASTEXITCODE)."
         }
         Write-Status -Level PASS -Message 'Ubuntu WSL2 전환 명령을 완료했습니다.'
-        $ubuntuVersion = Get-UbuntuWslVersion
+        $result = Get-UbuntuWslVersion
+        if ($result.ExitCode -ne 0) {
+            throw "Ubuntu 전환 후 WSL 배포판 목록을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
+        }
+        $ubuntuVersion = $result.Version
     }
     if ($ubuntuVersion -ne 2) {
-        throw 'Ubuntu가 WSL2인지 확인하지 못했습니다. 재부팅하고 상태를 확인한 뒤 스크립트를 다시 실행하세요.'
+        throw "Ubuntu가 WSL2인지 확인하지 못했습니다.`n$($result.Output)"
     }
     Write-Status -Level PASS -Message 'Ubuntu의 WSL2 구성을 확인했습니다.'
     & wsl.exe --set-default-version 2
     if ($LASTEXITCODE -ne 0) {
         Write-Status -Level WARNING -Message "WSL 기본 버전을 2로 지정하지 못했습니다(exit=$LASTEXITCODE). 재부팅 후 wsl --set-default-version 2를 실행하세요."
     }
+    return 'Ready'
 }
 
 foreach ($group in $toolGroups) {
@@ -239,7 +279,9 @@ foreach ($group in $toolGroups) {
             'winget' { Install-WingetPackage -Package $step }
             'node' { Install-Node }
             'aca' { Install-AcaCli }
-            'wsl' { Install-WslUbuntu }
+            'wsl' {
+                if ((Install-WslUbuntu) -eq 'RestartRequired') { exit 3010 }
+            }
             'hypervisor' {
                 Write-Status -Level INFO -Message 'Windows Hypervisor Platform 활성화를 시작합니다.'
                 Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -All -NoRestart -ErrorAction Stop
