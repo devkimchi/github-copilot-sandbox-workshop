@@ -33,7 +33,7 @@ azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set 
 
 `confirmWindowsClientLicense`는 기본값 없이 `true`만 허용하는 Bicep의 bool 입력이다. azd에서 입력을 요청하면 Windows 11 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 `true`를 선택한다. 자격이 없거나 확인하지 못했다면 배포를 중단한다. 별도 라이선스 환경 변수는 설정하지 않는다.
 
-`adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 환경 변수와 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터를 자동 검증했다고 출력하지 않는다.
+`adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 환경 변수와 지정한 이미지 버전 형식만 검사한다. 이미지, SKU, 지역별 가용성, 쿼터와 비용은 검사하지 않으므로 `azd up` 실행 전에 본인이 확인한다.
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
