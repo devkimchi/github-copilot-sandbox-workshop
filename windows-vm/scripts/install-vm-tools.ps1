@@ -39,24 +39,45 @@ else {
     $answer = Read-Host '설치와 표시한 패키지 사용 조건을 검토한 뒤 INSTALL을 입력하세요'
     if ($answer -cne 'INSTALL') { throw '사용자가 도구 설치를 취소했습니다.' }
 }
-$previousWslUtf8 = $env:WSL_UTF8
-$env:WSL_UTF8 = '1'
-try {
-    $distributions = @(& wsl.exe --list --quiet 2>$null | ForEach-Object { $_.Trim() })
-    $hasUbuntu = $LASTEXITCODE -eq 0 -and ($distributions -contains 'Ubuntu')
+function Get-UbuntuWslVersion {
+    $previousWslUtf8 = $env:WSL_UTF8
+    $env:WSL_UTF8 = '1'
+    try {
+        $lines = @(& wsl.exe --list --verbose 2>$null)
+        if ($LASTEXITCODE -ne 0) { return $null }
+        foreach ($line in $lines) {
+            $fields = @(($line -replace '^\s*\*', '').Trim() -split '\s+')
+            if ($fields.Count -ge 3 -and $fields[0] -eq 'Ubuntu') { return [int]$fields[-1] }
+        }
+        return $null
+    }
+    catch {
+        return $null
+    }
+    finally {
+        $env:WSL_UTF8 = $previousWslUtf8
+    }
 }
-catch {
-    $hasUbuntu = $false
-}
-finally {
-    $env:WSL_UTF8 = $previousWslUtf8
-}
-if ($hasUbuntu) {
-    Write-Warning 'WSL Ubuntu 배포판이 이미 있습니다. 변경하지 않습니다.'
-}
-else {
+$ubuntuVersion = Get-UbuntuWslVersion
+if ($null -eq $ubuntuVersion) {
     & wsl.exe --install --distribution Ubuntu --no-launch
     if ($LASTEXITCODE -ne 0) { throw "WSL2와 Ubuntu 설치 실패, exit=$LASTEXITCODE" }
+}
+elseif ($ubuntuVersion -eq 2) {
+    Write-Warning 'WSL2 Ubuntu 배포판이 이미 있습니다. 변경하지 않습니다.'
+}
+else {
+    Write-Warning "기존 Ubuntu 배포판이 WSL$ubuntuVersion입니다. Docker Desktop을 위해 WSL2로 전환합니다."
+    & wsl.exe --install --no-distribution
+    if ($LASTEXITCODE -ne 0) { throw "WSL2 구성 요소 설치 실패, exit=$LASTEXITCODE" }
+    & wsl.exe --set-version Ubuntu 2
+    if ($LASTEXITCODE -ne 0) {
+        throw "Ubuntu를 WSL2로 전환하지 못했습니다(exit=$LASTEXITCODE). 재부팅한 뒤 스크립트를 다시 실행하세요."
+    }
+}
+& wsl.exe --set-default-version 2
+if ($LASTEXITCODE -ne 0) {
+    Write-Warning "WSL 기본 버전을 2로 지정하지 못했습니다(exit=$LASTEXITCODE). 재부팅 후 wsl --set-default-version 2를 실행하세요."
 }
 foreach ($package in $packages) {
     if (Get-Command $package.Command -ErrorAction SilentlyContinue) {
