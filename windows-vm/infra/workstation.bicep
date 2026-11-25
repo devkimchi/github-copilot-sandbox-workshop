@@ -7,7 +7,7 @@ param tags object
 param adminUsername string
 @secure()
 param adminPassword string
-param confirmWindowsClientLicense string
+param confirmWindowsClientLicense bool
 param vmSize string
 param imageSku string
 param imageVersion string
@@ -117,7 +117,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2025-04-01' = {
   tags: tags
   properties: {
     hardwareProfile: { vmSize: vmSize }
-    licenseType: confirmWindowsClientLicense == 'true' ? 'Windows_Client' : null
+    licenseType: confirmWindowsClientLicense ? 'Windows_Client' : null
     securityProfile: {
       securityType: 'TrustedLaunch'
       uefiSettings: {

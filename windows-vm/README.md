@@ -20,7 +20,9 @@
 
 ## 입력
 
-`azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`, `WORKSHOP_CONFIRM_WINDOWS_LICENSE=true`를 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. preprovision은 필수 값, 지정한 이미지 버전 형식과 사용자 확인만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
+`azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`을 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. `confirmWindowsClientLicense`는 기본값 없이 `true`만 허용하는 Bicep의 bool 입력이다. azd에서 입력을 요청하면 Windows 11 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 `true`를 선택한다. 자격이 없거나 확인하지 못했다면 배포를 중단한다. 별도 라이선스 환경 변수는 설정하지 않는다.
+
+preprovision은 필수 환경 변수, 지정한 이미지 버전 형식과 `PROVISION` 확인만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
 
 선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`, `WORKSHOP_VM_IMAGE_VERSION`(기본 `latest`, 고정 숫자 버전도 가능)이다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 커맨드 라인/관찰표에 기록하지 않는다.
 

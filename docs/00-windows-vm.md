@@ -26,13 +26,14 @@ az login
 azd env new <VM_ENV_NAME>
 azd env set AZURE_SUBSCRIPTION_ID <본인구독ID>
 azd env set AZURE_LOCATION <검증한지역>
-azd env set WORKSHOP_CONFIRM_WINDOWS_LICENSE true
 azd up --environment <VM_ENV_NAME>
 ```
 
 azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set WORKSHOP_VM_IMAGE_VERSION <검증한고정숫자버전>`으로 이미지 버전을 고정할 수 있다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다.
 
-`adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 입력과 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터를 자동 검증했다고 출력하지 않는다.
+`confirmWindowsClientLicense`는 기본값 없이 `true`만 허용하는 Bicep의 bool 입력이다. azd에서 입력을 요청하면 Windows 11 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 `true`를 선택한다. 자격이 없거나 확인하지 못했다면 배포를 중단한다. 별도 라이선스 환경 변수는 설정하지 않는다.
+
+`adminPassword`는 azd의 보안 입력에서만 제공하고 셸 명령/파일에 넣지 않는다. preprovision은 필수 환경 변수와 `PROVISION` 확인을 요구한다. 이미지/SKU/가용성/쿼터를 자동 검증했다고 출력하지 않는다.
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
@@ -70,7 +71,7 @@ VM에서 개인 워크숍 저장소를 별도로 클론하고 Lab 0을 진행한
 
 ## 7. 실패가 정상인 경우
 
-라이선스 미확인과 잘못된 이미지 버전은 hook의 의도된 중단 조건이다. 지역/SKU/이미지 미가용, quota와 Bastion 미지원은 일반 Azure 준비 오류다. Docker 중첩 가상화 미지원이면 개인 PC 경로를 사용하며 보안 설정 우회로 해결하지 않는다.
+라이선스 자격을 확인하지 못했다면 배포를 중단한다. 필수 환경 변수 누락과 잘못된 이미지 버전은 hook의 의도된 중단 조건이다. 지역/SKU/이미지 미가용, quota와 Bastion 미지원은 일반 Azure 준비 오류다. Docker 중첩 가상화 미지원이면 개인 PC 경로를 사용하며 보안 설정 우회로 해결하지 않는다.
 
 ## 8. 복구
 

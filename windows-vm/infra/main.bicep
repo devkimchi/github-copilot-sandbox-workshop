@@ -22,10 +22,10 @@ param adminUsername string = 'workshopuser'
 param adminPassword string
 
 @allowed([
-  'true'
+  true
 ])
 @description('Windows 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 true로 지정한다.')
-param confirmWindowsClientLicense string
+param confirmWindowsClientLicense bool
 
 param vmSize string = 'Standard_D8s_v5'
 param imageSku string = 'win11-26h2-ent'
