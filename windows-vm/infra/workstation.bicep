@@ -14,9 +14,13 @@ param imageVersion string
 
 var stageScript = replace(
   replace(
-    loadTextContent('../scripts/stage-tools.ps1'),
-    '__INSTALLER_BASE64__',
-    base64(loadTextContent('../scripts/install-vm-tools.ps1'))
+    replace(
+      loadTextContent('../scripts/stage-tools.ps1'),
+      '__INSTALLER_BASE64__',
+      base64(loadTextContent('../scripts/install-vm-tools.ps1'))
+    ),
+    '__UPDATER_BASE64__',
+    base64(loadTextContent('../scripts/update-vm-tools.ps1'))
   ),
   '__ADMIN_USERNAME__',
   replace(adminUsername, '\'', '\'\'')

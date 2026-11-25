@@ -12,7 +12,13 @@ else {
 }
 $directory = Join-Path $profilePath 'scripts'
 New-Item -ItemType Directory -Path $directory -Force | Out-Null
-$destination = Join-Path $directory 'install-vm-tools.ps1'
-$content = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__INSTALLER_BASE64__'))
-[IO.File]::WriteAllText($destination, $content, (New-Object Text.UTF8Encoding $true))
-Write-Output "Installer staged at $destination. No tools were installed."
+$scripts = [ordered]@{
+    'install-vm-tools.ps1' = '__INSTALLER_BASE64__'
+    'update-vm-tools.ps1' = '__UPDATER_BASE64__'
+}
+foreach ($script in $scripts.GetEnumerator()) {
+    $destination = Join-Path $directory $script.Key
+    $content = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($script.Value))
+    [IO.File]::WriteAllText($destination, $content, (New-Object Text.UTF8Encoding $true))
+    Write-Output "Script staged at $destination. No tools were installed."
+}

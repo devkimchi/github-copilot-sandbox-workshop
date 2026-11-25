@@ -39,7 +39,7 @@ azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set 
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
-Run Command는 도구를 자동 설치하지 않는다. 배포 시 지정한 관리자 사용자의 `$HOME\scripts\install-vm-tools.ps1`에 설치 스크립트만 저장한다. 사용자가 아직 로그인하지 않았다면 Default 프로필에 저장하며, 첫 로그인 시 사용자 홈으로 복사된다. 사람이 내용을 검토한 뒤 로그인한 관리자 사용자 세션에서 실행한다. WinGet/App Installer가 없으면 공식 설치 절차로 먼저 준비한다.
+Run Command는 도구를 자동 설치하지 않는다. 배포 시 지정한 관리자 사용자의 `$HOME\scripts`에 `install-vm-tools.ps1`과 `update-vm-tools.ps1`을 저장한다. 사용자가 아직 로그인하지 않았다면 Default 프로필에 저장하며, 첫 로그인 시 사용자 홈으로 복사된다. 사람이 내용을 검토한 뒤 로그인한 관리자 사용자 세션에서 실행한다. WinGet/App Installer가 없으면 공식 설치 절차로 먼저 준비한다.
 
 ```powershell
 # Windows VM, 관리자 PowerShell
@@ -95,7 +95,16 @@ VM에서 개인 워크숍 저장소를 별도로 클론하고 Lab 0을 진행한
 
 ## 8. 복구
 
-Node.js 설치 후 `npm.cmd`를 찾지 못해 중단됐다면 수정된 `install-vm-tools.ps1`을 VM의 `$HOME\scripts`에 다시 전달하고 실행한다. 스크립트는 확장자를 지정하지 않고 npm을 찾아 실행하므로 nvm-windows 2.x의 `npm.exe` shim도 지원한다. 실제 VM에서 재실행한 결과는 미검증이다.
+설치 스크립트를 갱신하려면 VM에서 `update-vm-tools.ps1`을 실행한다. `-CommitSha`에는 이 저장소의 수정본이 포함된 전체 40자리 커밋 SHA를 지정한다. 브랜치 이름과 축약 SHA는 받지 않는다.
+
+```powershell
+# PowerShell
+& "$HOME\scripts\update-vm-tools.ps1" -CommitSha '<40자리 커밋 SHA>'
+```
+
+갱신 스크립트는 같은 폴더의 `install-vm-tools.ps1`을 고유한 `.bak` 파일로 백업한다. 지정한 커밋에서 다운로드한 파일이 비어 있지 않고 PowerShell 구문 검사를 통과하면 UTF-8 BOM으로 저장해 교체한다. 다운로드나 구문 검사가 실패하면 기존 파일을 유지한다. 갱신 후 설치는 자동 실행하지 않으므로 내용을 검토한 뒤 별도로 실행한다. 이 갱신 스크립트의 실제 VM 동작은 미검증이다.
+
+Node.js 설치 후 `npm.cmd`를 찾지 못해 중단됐다면 위 절차로 수정본을 받아 다시 실행한다. 설치 스크립트는 확장자를 지정하지 않고 npm을 찾아 실행하므로 nvm-windows 2.x의 `npm.exe` shim도 지원한다. 실제 VM에서 재실행한 결과는 미검증이다.
 
 실패한 배포의 잔존 자원과 정확한 환경을 먼저 확인한다. 다른 사람의 VM/group을 재사용하거나 공유 토큰을 배포하지 않는다. 수업 시작 후 설치/재부팅을 수업 시간에 밀어 넣지 않는다. 미통과 모듈은 직접 수행과 구분해 기록한다.
 

@@ -13,7 +13,7 @@
 | 접속 | VM NIC 공인 IP 없음. Bastion Developer |
 | 외부 다운로드 | NAT Gateway와 전용 Standard 공인 IP |
 | 자동 종료 | 매일 한국 시간 00:00 할당 취소. 삭제 아님 |
-| 도구 전달 | Run Command는 관리자 사용자의 `$HOME\scripts\install-vm-tools.ps1`만 기록 |
+| 도구 전달 | Run Command는 관리자 사용자의 `$HOME\scripts`에 설치 스크립트와 갱신 스크립트를 기록 |
 | 사용자 설치 | 로그인한 관리자 계정에서 별도 확인 후 실행 |
 
 이미지/SKU/지역/Bastion Developer 가용성, 라이선스 자격과 quota, Windows 업데이트, 비용은 `TBD(검증 필요)`다. Docker 중첩 가상화는 **미검증**이다. Trusted Launch를 Standard로 자동 변경하지 않는다.
@@ -41,6 +41,17 @@ WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nv
 `sbx`는 Docker Desktop 없이 사용할 수 있으며, Docker Desktop도 별도 Ubuntu 배포판을 필수로 요구하지 않는다. 이 스크립트는 선택한 실습 구성에 따라 Ubuntu를 설치한다. Docker Desktop의 Azure VM 공식 지원은 Docker Business 고객 대상이다. 세부 조건은 [참가자 절차](../docs/00-windows-vm.md)를 확인한다.
 
 도구 버전 인자는 받지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 모든 도구의 최신 상태를 의미하지 않는다**. 필요한 업데이트는 원래 설치 경로로 직접 수행하고 실제 버전을 기록한다. 실제 설치 동작은 미검증이다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
+
+## 설치 스크립트 갱신
+
+프로비저닝은 `install-vm-tools.ps1`과 함께 `update-vm-tools.ps1`을 전달한다. VM의 Windows PowerShell 5.1 이상에서 수정본이 포함된 전체 40자리 커밋 SHA를 지정한다.
+
+```powershell
+# PowerShell
+& "$HOME\scripts\update-vm-tools.ps1" -CommitSha '<40자리 커밋 SHA>'
+```
+
+갱신 스크립트는 같은 폴더의 기존 설치 스크립트를 고유한 `.bak` 파일로 백업한다. 지정한 커밋의 파일을 다운로드하고 빈 파일과 구문 오류를 검사한 뒤 UTF-8 BOM으로 교체한다. 다운로드나 구문 검사 실패 시 기존 파일을 유지하며 설치는 자동 실행하지 않는다. 실제 VM에서의 전달과 갱신은 미검증이다. 자세한 절차는 [참가자 절차의 복구 항목](../docs/00-windows-vm.md#8-복구)을 따른다.
 
 ## 참고와 변경
 
