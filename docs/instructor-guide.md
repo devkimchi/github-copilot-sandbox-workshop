@@ -36,7 +36,7 @@
 | Copilot의 각 OS/build/backend | 공식 지원 조건 | `TBD(검증 필요)` |
 | workload와 Playwright v3 mixin | `latest` tag 사용 | 고정하거나 기록하지 않음 |
 | Playwright mixin 호출 인자 | `--kit-arg playwright.version=1.65.0` | 실제 browser 정합과 E2E 리허설 필요 |
-| source mixin build 도구 | Docker/Buildx와 busybox 참고 | `TBD(검증 필요)` |
+| source mixin build 도구/architecture | Docker/Buildx와 busybox 참고 | `TBD(검증 필요)` |
 | ACA copilot image | 최신 public image 사용 | 고정하거나 기록하지 않음 |
 | exact-host allowlist | 모델/npm/archive/browser 각각 기록 | `TBD(검증 필요)` |
 | Azure region/quota/예상 비용 | Korea Central 후보, 개인 구독별 확인 | `TBD(검증 필요)` |
@@ -63,7 +63,7 @@
 - [ ] sandbox ON에서 부모 실습 문서와 `checkpoints/` 접근 확인. 패치가 읽히면 **강사 시점 배포로 운영 변경**
 - [ ] 바깥 저장소의 `workspace*/`와 `evidence/` 추적 제외, 참가자 전역 설정 영향 기록
 - [ ] Copilot 모델 인증과 Git/gh 인증을 분리하고 필요한 service만 설정
-- [ ] 고정 v3 workload/mixin 조합, 지원 CPU architecture와 설치 시간 확인
+- [ ] `latest` v3 workload/mixin 조합, 지원 CPU architecture와 설치 시간 확인
 - [ ] clean 앱에서 Direct 즉시 전파와 Clone read-only source, VM/host 양쪽 remote와 fetch/diff 확인
 - [ ] 각 network 요청의 허용/차단 decision과 실제 결과 연결, OS별 한계 기록
 - [ ] 직접 제작 mixin의 source build/인자/파일과 기존 접근 범위 비교, OCI publish 없이 수행
