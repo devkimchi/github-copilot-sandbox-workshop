@@ -37,11 +37,11 @@ azd와 Azure CLI에서 같은 구독을 선택한다. 필요하면 `azd env set 
 
 배포 출력의 **VM 이름, 리소스 그룹, 사용자 이름**을 확인한다. Azure portal에서 해당 VM의 **연결 > Bastion**을 선택해 로그인한다. NIC에는 공인 IP가 없으며 outbound 다운로드는 NAT를 사용한다. RDP 포트를 인터넷에 직접 공개하지 않는다.
 
-Run Command는 도구를 자동 설치하지 않는다. VM의 `C:\WorkshopSetup\install-tools.ps1`을 사람이 검토한 뒤 로그인한 관리자 사용자 세션에서 실행한다. WinGet/App Installer가 없으면 공식 설치 절차로 먼저 준비한다.
+Run Command는 도구를 자동 설치하지 않는다. 배포 시 지정한 관리자 사용자의 `$HOME\scripts\install-vm-tools.ps1`에 설치 스크립트만 저장한다. 사용자가 아직 로그인하지 않았다면 Default 프로필에 저장하며, 첫 로그인 시 사용자 홈으로 복사된다. 사람이 내용을 검토한 뒤 로그인한 관리자 사용자 세션에서 실행한다. WinGet/App Installer가 없으면 공식 설치 절차로 먼저 준비한다.
 
 ```powershell
 # Windows VM, 관리자 PowerShell
-C:\WorkshopSetup\install-tools.ps1
+& "$HOME\scripts\install-vm-tools.ps1"
 ```
 
 설치 스크립트가 `INSTALL` 확인 후 Git, PowerShell, Azure CLI, `sbx`와 Copilot CLI를 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 공식 설치 스크립트를 사용한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.

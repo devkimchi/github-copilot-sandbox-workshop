@@ -67,4 +67,4 @@ output AZURE_VM_NAME string = workstation.outputs.vmName
 output AZURE_VM_ID string = workstation.outputs.vmId
 output AZURE_VM_ADMIN_USERNAME string = adminUsername
 output AZURE_BASTION_NAME string = workstation.outputs.bastionName
-output WORKSHOP_TOOL_HELPER string = 'C:\\WorkshopSetup\\install-tools.ps1'
+output WORKSHOP_TOOL_HELPER string = '$HOME\\scripts\\install-vm-tools.ps1'

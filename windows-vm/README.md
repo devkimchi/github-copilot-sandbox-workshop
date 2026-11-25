@@ -13,7 +13,7 @@
 | 접속 | VM NIC 공인 IP 없음. Bastion Developer |
 | 외부 다운로드 | NAT Gateway와 전용 Standard 공인 IP |
 | 자동 종료 | 매일 한국 시간 00:00 할당 취소. 삭제 아님 |
-| 도구 전달 | Run Command는 `C:\WorkshopSetup\install-tools.ps1`만 기록 |
+| 도구 전달 | Run Command는 관리자 사용자의 `$HOME\scripts\install-vm-tools.ps1`만 기록 |
 | 사용자 설치 | 로그인한 관리자 계정에서 별도 확인 후 실행 |
 
 이미지/SKU/지역/Bastion Developer 가용성, 라이선스 자격과 quota, Windows 업데이트, 비용은 `TBD(검증 필요)`다. Docker 중첩 가상화는 **미검증**이다. Trusted Launch를 Standard로 자동 변경하지 않는다.
