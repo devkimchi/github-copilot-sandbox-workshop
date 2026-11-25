@@ -140,7 +140,6 @@ azd down --environment "<VM_ENV_NAME>"
 
 - Tailspin Toys 과제 원문: 각 과제 파일의 MIT 고지
 - mixin: [mixins/LICENSE-APACHE-2.0](mixins/LICENSE-APACHE-2.0), [mixins/NOTICE](mixins/NOTICE)
-- Windows VM 템플릿: [원본 MIT 고지](windows-vm/README.md#원본-mit-고지)
 
 <!-- HUMANIZE-SUMMARY -->
 원문 글자 수: 4,749 | 윤문본 글자 수: 4,749 | 변경률: 0.0% | 탐지: S1 0건, S2 0건 | 자체검증: 6/6 | 등급: B

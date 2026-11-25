@@ -44,30 +44,4 @@ WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nv
 
 ## 참고와 변경
 
-[`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크/VM/Run Command 전달 방식을 참고했다. 원본 [MIT 고지](#원본-mit-고지)를 유지한다. 워크숍용으로 리소스 이름과 태그, 이미지 버전 입력, 라이선스 확인, 도구 목록과 설치 전달을 수정했고 `shared` 의존을 없앴다. 원본의 배포 성공을 이번 템플릿의 검증으로 승계하지 않는다.
-
-## 원본 MIT 고지
-
-```text
-MIT License
-
-Copyright (c) 2026 Justin Yoo
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+[`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크/VM/Run Command 전달 방식을 참고했다. 워크숍용으로 리소스 이름과 태그, 이미지 버전 입력, 라이선스 확인, 도구 목록과 설치 전달을 수정했고 `shared` 의존을 없앴다. 원본의 배포 성공을 이번 템플릿의 검증으로 승계하지 않는다.
