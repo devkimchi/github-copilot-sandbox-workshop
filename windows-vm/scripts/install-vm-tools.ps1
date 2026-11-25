@@ -162,7 +162,9 @@ function Install-Node {
     if ($LASTEXITCODE -ne 0) { throw "Node.js $NodeVersion 선택 실패, exit=$LASTEXITCODE" }
     $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
         [Environment]::GetEnvironmentVariable('Path', 'User')
-    Get-Command npm.cmd -ErrorAction Stop | Out-Null
+    $npm = Get-Command npm -CommandType Application -ErrorAction Stop | Select-Object -First 1
+    & $npm --version
+    if ($LASTEXITCODE -ne 0) { throw "npm 실행 실패, exit=$LASTEXITCODE" }
     $actualNode = & node.exe --version
     if ($LASTEXITCODE -ne 0 -or $actualNode -ne "v$NodeVersion") {
         throw "실제 Node.js 버전($actualNode)이 요청한 $NodeVersion과 다릅니다."
