@@ -1,7 +1,30 @@
 workspace*/
 evidence/
+/sandbox-workshop-session-archive.md
 .azure/
 **/main.json
 *.bicep.user
+
+# Node.js dependencies and caches
+node_modules/
+.npm/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+.pnpm-store/
+
+# Build and test output
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
 *.log
 .DS_Store

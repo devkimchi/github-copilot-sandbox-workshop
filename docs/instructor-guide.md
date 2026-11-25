@@ -57,7 +57,7 @@
 - [ ] mixin `version=1.65.0`, 실제 browser 정합과 추가 다운로드 필요 여부 확인
 - [ ] 각 OS와 ACA에서 앱 추출 파일 목록/내용 동일성, clean 기준 commit, baseline 태그와 remote 없음 확인
 - [ ] 추출 앱에서 원본 agent 설정과 MCP가 로드되지 않음 확인
-- [ ] 템플릿에도 `.github/copilot-instructions.md`, MCP 설정, custom agent, workflow가 없음 확인
+- [ ] 템플릿에 `.github/copilot-instructions.md`, MCP 설정, custom agent와 승인된 구문 검사 외의 workflow가 없음 확인
 - [ ] sandbox ON에서 부모 실습 문서와 `checkpoints/` 접근 확인. 패치가 읽히면 **강사 시점 배포로 운영 변경**
 - [ ] 바깥 저장소의 `workspace*/`와 `evidence/` 추적 제외, 참가자 전역 설정 영향 기록
 - [ ] Copilot 모델 인증과 Git/gh 인증을 분리하고 필요한 service만 설정

@@ -67,7 +67,7 @@ Set-Location <실습저장소>
 
 GitHub cloud sandbox와 Docker cloud는 비교 설명만 한다. 원격 push, PR 작성, 앱 배포, ACA ingress 공개는 실습에서 제외한다. 기존 조직 정책과 보안 기준을 낮추거나 우회하지 않는다. Windows VM은 별도 사전 준비 경로이지 네 번째 샌드박스 제품이 아니다.
 
-템플릿에는 `.github/copilot-instructions.md`, MCP 설정, custom agent, Actions workflow를 넣지 않는다. 참가자의 전역 설정과 조직 정책은 별도로 기록한다.
+템플릿에는 `.github/copilot-instructions.md`, MCP 설정과 custom agent를 넣지 않는다. Actions workflow는 PowerShell과 Bash 구문 검사에만 사용한다. 참가자의 전역 설정과 조직 정책은 별도로 기록한다.
 
 ## 근거와 라이선스
 
