@@ -46,7 +46,13 @@ Run Command는 도구를 자동 설치하지 않는다. 배포 시 지정한 관
 & "$HOME\scripts\install-vm-tools.ps1"
 ```
 
-설치 스크립트가 `INSTALL` 확인 후 Git, PowerShell, Azure CLI, `sbx`와 Copilot CLI를 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 공식 설치 스크립트를 사용한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.
+확인 입력 없이 진행하려면 `-Yes`를 추가한다. 이 옵션은 설치와 패키지 사용 조건에 동의한 것으로 간주하므로 내용을 검토한 뒤에만 사용한다.
+
+```powershell
+& "$HOME\scripts\install-vm-tools.ps1" -Yes
+```
+
+설치 스크립트가 `INSTALL` 확인(또는 `-Yes`) 후 Git, PowerShell, Azure CLI, `sbx`와 Copilot CLI를 WinGet에서 제공하는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x에서 `nvm install`과 `nvm use`로 24.x 최신 버전을 설치한다. ACA CLI는 공식 설치 스크립트를 사용한다. 기존 도구는 자동 업데이트하지 않으므로 필요하면 원래 설치 경로로 직접 업데이트한다. 실제 설치 동작은 미검증이다.
 
 Windows Hypervisor Platform은 기본 자동 변경하지 않는다. 승인된 중첩 가상화 조합을 리허설한 뒤에만 `-EnableHypervisorPlatform`을 추가한다. 필요 시 사람이 재부팅한다. Trusted Launch, Secure Boot와 vTPM을 낮추는 옵션은 제공하지 않는다.
 

@@ -2,7 +2,8 @@
 #requires -RunAsAdministrator
 [CmdletBinding()]
 param(
-    [switch]$EnableHypervisorPlatform
+    [switch]$EnableHypervisorPlatform,
+    [switch]$Yes
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,8 +29,13 @@ Write-Host 'ACA CLI: 공식 설치 스크립트 https://aka.ms/aca-cli-install-p
 if ($EnableHypervisorPlatform) {
     Write-Host 'Windows Hypervisor Platform 활성화를 요청했습니다. 재부팅이 필요할 수 있습니다.'
 }
-$answer = Read-Host '설치와 표시한 패키지 사용 조건을 검토한 뒤 INSTALL을 입력하세요'
-if ($answer -cne 'INSTALL') { throw '사용자가 도구 설치를 취소했습니다.' }
+if ($Yes) {
+    Write-Host '-Yes 옵션으로 설치와 패키지 사용 조건에 동의한 것으로 간주합니다.'
+}
+else {
+    $answer = Read-Host '설치와 표시한 패키지 사용 조건을 검토한 뒤 INSTALL을 입력하세요'
+    if ($answer -cne 'INSTALL') { throw '사용자가 도구 설치를 취소했습니다.' }
+}
 foreach ($package in $packages) {
     if (Get-Command $package.Command -ErrorAction SilentlyContinue) {
         Write-Warning "$($package.Command)이 이미 있습니다. 변경하지 않습니다. 최신 버전이 필요한 경우 원래 설치 경로로 직접 업데이트하세요."
