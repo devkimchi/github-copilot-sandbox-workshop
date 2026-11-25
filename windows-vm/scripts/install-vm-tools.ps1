@@ -145,6 +145,20 @@ function Write-WslRestartRequired {
     Write-Status -Level WARNING -Message 'WSL 구성 요소가 재부팅을 기다리고 있습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 이 스크립트를 다시 실행하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
 }
 
+function Test-NoWslDistribution {
+    param([string]$Output)
+    return $Output -match 'WSL_E_DEFAULT_DISTRO_NOT_FOUND|no installed distributions'
+}
+
+function Test-UbuntuPackageInstalled {
+    if (Get-Command ubuntu.exe -CommandType Application -ErrorAction SilentlyContinue) { return $true }
+    return $null -ne (Get-AppxPackage -Name 'CanonicalGroupLimited.Ubuntu' -ErrorAction SilentlyContinue)
+}
+
+function Write-UbuntuFirstLaunchRequired {
+    Write-Status -Level WARNING -Message 'Ubuntu 패키지는 설치됐지만 WSL 배포판으로 등록되지 않았습니다. 시작 메뉴에서 Ubuntu를 열거나 새 PowerShell 창에서 ubuntu.exe를 실행해 Linux 사용자 이름과 암호를 만드세요. exit로 Ubuntu를 닫은 뒤 이 스크립트를 다시 실행하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
+}
+
 function Install-WingetPackage {
     param([hashtable]$Package)
     if (Get-Command $package.Command -ErrorAction SilentlyContinue) {
@@ -219,11 +233,15 @@ function Install-WslUbuntu {
     $result = Get-UbuntuWslVersion
     if ($result.ExitCode -ne 0) {
         $notInstalled = @($features | Where-Object { $_.State.ToString() -ne 'Disabled' }).Count -eq 0
-        if (-not $notInstalled -and $result.Output -notmatch 'WSL_E_DEFAULT_DISTRO_NOT_FOUND') {
+        if (-not $notInstalled -and -not (Test-NoWslDistribution $result.Output)) {
             throw "WSL 배포판 목록을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
         }
     }
     $ubuntuVersion = $result.Version
+    if ($null -eq $ubuntuVersion -and (Test-UbuntuPackageInstalled)) {
+        Write-UbuntuFirstLaunchRequired
+        return 'FirstLaunchRequired'
+    }
     if ($null -eq $ubuntuVersion) {
         Write-Status -Level INFO -Message 'WSL과 Ubuntu 설치를 시작합니다.'
         & wsl.exe --install --distribution Ubuntu --no-launch | Out-Host
@@ -234,6 +252,10 @@ function Install-WslUbuntu {
             return 'RestartRequired'
         }
         $result = Get-UbuntuWslVersion
+        if ($null -eq $result.Version -and (Test-NoWslDistribution $result.Output) -and (Test-UbuntuPackageInstalled)) {
+            Write-UbuntuFirstLaunchRequired
+            return 'FirstLaunchRequired'
+        }
         if ($result.ExitCode -ne 0 -or $null -eq $result.Version) {
             throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
         }
@@ -280,7 +302,10 @@ foreach ($group in $toolGroups) {
             'node' { Install-Node }
             'aca' { Install-AcaCli }
             'wsl' {
-                if ((Install-WslUbuntu) -eq 'RestartRequired') { exit 3010 }
+                switch (Install-WslUbuntu) {
+                    'RestartRequired' { exit 3010 }
+                    'FirstLaunchRequired' { exit 2 }
+                }
             }
             'hypervisor' {
                 Write-Status -Level INFO -Message 'Windows Hypervisor Platform 활성화를 시작합니다.'
