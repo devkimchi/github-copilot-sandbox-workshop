@@ -65,7 +65,7 @@ VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 열고 아래 �
 
 설치가 끝난 후 아래 명령어를 실행시켜 설치된 도구를 확인한다.
 
-```powreshell
+```powershell
 git --version
 gh --version
 pwsh --version
