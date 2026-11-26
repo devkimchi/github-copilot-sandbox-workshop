@@ -10,18 +10,17 @@ Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 �
 
 ## 3. 사전 조건과 현재 상태
 
-`<WORKSHOP_DIR>`는 개인 템플릿 저장소의 클론 루트다. Node >=22.13, Git과 Copilot 지원 OS를 확인한다. 다음 추출 스크립트는 고정 SHA의 앱 파일만 남기며 원본 `.github/`, `.vscode/`, `.devcontainer/`와 문서는 제외한다. workspace에 remote를 만들지 않는다.
+`<WORKSHOP_DIR>`는 개인 템플릿 저장소의 클론 루트다. [사전 준비의 샘플 다운로드](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용하며 추출 스크립트를 다시 실행하지 않는다. Node >=22.13, Git과 Copilot 지원 OS를 확인한다. `workspace`에는 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소는 없어야 한다.
 
 ```powershell
 # HOST, <WORKSHOP_DIR>
-.\scripts\download-sample.ps1 -Target workspace
 New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
 Copy-Item .\evidence-template\* .\evidence -Recurse
 New-Item -ItemType Directory -Path .\evidence\lab-0,.\evidence\lab-1 -ErrorAction Stop
 Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-기존 `evidence`가 있으면 위 생성/복사를 반복하지 않고 새 실습 폴더를 고른다. POSIX에서는 `bash scripts/download-sample.sh workspace`, `mkdir evidence`, `cp -R evidence-template/. evidence/`를 사용한다.
+기존 `evidence`가 있으면 위 생성/복사를 반복하지 않고 새 실습 폴더를 고른다. POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비한다.
 
 canary는 OS 임시 폴더나 부모 워크숍 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체 읽기 자동 grant 때문에 실험이 무효가 될 수 있다.
 
