@@ -80,7 +80,7 @@ Set-Location "<실습저장소>"
 | 순서 | 실습 문서 | 기본 | 확장 |
 | --- | --- | ---: | ---: |
 | 1 | [실습 공통 기준](docs/01-workshop-guidelines.md) | 10분 | 10분 |
-| 2 | [Lab 0/1: baseline과 Copilot OFF/ON](docs/02-copilot-local-sandbox.md) | 40분 | 40분 |
+| 2 | [Copilot CLI 샌드박스](docs/02-copilot-cli-sandbox.md) | 40분 | 40분 |
 | 3 | [Lab 2: Docker Direct/Clone와 네트워크](docs/03-docker-workspaces-and-network.md) | 30분 | 30분 |
 | 4 | [Lab 2B: published mixin과 직접 만들기](docs/04-docker-mixins.md) | 20분 | 50분 |
 | - | 휴식 | 5분 | 5분 |
