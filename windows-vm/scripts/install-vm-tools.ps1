@@ -141,8 +141,17 @@ function Test-WslRestartPending {
     return @($Features | Where-Object { $_.State.ToString() -eq 'EnablePending' }).Count -gt 0
 }
 
+# wsl --install은 기능 활성화를 예약하고 exit 0을 반환하기도 한다. 이때 DISM 상태가 EnablePending으로 보이지 않을 수 있다.
+function Test-WslRestartNeededAfterInstall {
+    param([array]$Features)
+    if (Test-WslRestartPending $Features) { return $true }
+    return @($Features | Where-Object {
+        $_.FeatureName -eq 'VirtualMachinePlatform' -and $_.State.ToString() -eq 'Enabled'
+    }).Count -eq 0
+}
+
 function Write-WslRestartRequired {
-    Write-Status -Level WARNING -Message 'WSL 구성 요소가 재부팅을 기다리고 있습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 이 스크립트를 다시 실행하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
+    Write-Status -Level WARNING -Message 'WSL 구성 요소가 재부팅을 기다리고 있습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 이 스크립트를 다시 실행하세요. 재부팅한 뒤에도 같은 메시지가 반복되면 wsl.exe --status 출력과 VM 크기의 중첩 가상화 지원 여부를 확인하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
 }
 
 function Test-NoWslDistribution {
@@ -247,7 +256,7 @@ function Install-WslUbuntu {
         & wsl.exe --install --distribution Ubuntu --no-launch | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "WSL2와 Ubuntu 설치 실패, exit=$LASTEXITCODE" }
         Write-Status -Level PASS -Message 'WSL과 Ubuntu 설치 명령을 완료했습니다. 재부팅이 필요할 수 있습니다.'
-        if (Test-WslRestartPending @(Get-WslFeatures)) {
+        if (Test-WslRestartNeededAfterInstall @(Get-WslFeatures)) {
             Write-WslRestartRequired
             return 'RestartRequired'
         }
@@ -257,7 +266,7 @@ function Install-WslUbuntu {
             return 'FirstLaunchRequired'
         }
         if ($result.ExitCode -ne 0 -or $null -eq $result.Version) {
-            throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)).`n$($result.Output)"
+            throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)). wsl.exe --status 출력과 VM 크기의 중첩 가상화 지원 여부를 확인하세요.`n$($result.Output)"
         }
         $ubuntuVersion = $result.Version
     }
@@ -268,7 +277,7 @@ function Install-WslUbuntu {
         Write-Status -Level WARNING -Message 'Ubuntu 배포판이 WSL1입니다. WSL2로 전환합니다.'
         & wsl.exe --install --no-distribution | Out-Host
         if ($LASTEXITCODE -ne 0) { throw "WSL2 구성 요소 설치 실패, exit=$LASTEXITCODE" }
-        if (Test-WslRestartPending @(Get-WslFeatures)) {
+        if (Test-WslRestartNeededAfterInstall @(Get-WslFeatures)) {
             Write-WslRestartRequired
             return 'RestartRequired'
         }
