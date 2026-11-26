@@ -365,4 +365,5 @@ foreach ($group in $toolGroups) {
     Write-Status -Level INFO -Message "[$($group.Name)] 설치 단계를 마쳤습니다."
 }
 Write-Status -Level PASS -Message '설치 명령 처리를 마쳤습니다. 재부팅 후 다시 로그인하고, Ubuntu와 Docker Desktop 첫 실행을 마친 뒤 버전과 모듈별 preflight를 확인하세요.'
-Write-Status -Level INFO -Message 'Docker Desktop 첫 실행에서는 약관에 동의해야 합니다. 로그인, PAT 입력, 샌드박스 생성과 모델 호출은 하지 않았습니다. 중첩 가상화 지원도 보장하지 않습니다.'
+Write-Status -Level INFO -Message 'Docker Desktop을 처음 실행해 약관을 확인하고 초기 설정을 마치세요.'
+Write-Status -Level INFO -Message 'GitHub와 Azure 계정 인증은 각 도구에서 직접 진행하세요.'
