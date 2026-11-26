@@ -12,7 +12,7 @@
 | 추출 다운로드 실패 | GitHub archive redirect, `github.com`/`codeload.github.com`, 도구와 종료 코드 | 실제 network 문제부터 해결. 다른 SHA/전체 clone으로 바꾸지 않음 |
 | Git 기준 commit 실패 | Git 설치/버전, 잠금, 로컬 정책 | 부분 workspace 보존, 원격/전역 identity를 임의 변경하지 않음 |
 | PowerShell 스크립트가 구버전 오류 | `$PSVersionTable.PSVersion` | 추출/복구는 PowerShell 7로 실행. 조직 execution policy 우회 금지 |
-| baseline unit 실패 | HOST `npm ci`, Node >=22.13, 원본 파일과 lock | 일반 환경부터 해결. sandbox 차단으로 오분류 금지 |
+| baseline unit 실패 | HOST `npm ci`, Node.js 24.x, 원본 파일과 lock | 일반 환경부터 해결. sandbox 차단으로 오분류 금지 |
 | ON/OFF가 같음 | 실제 status/정책, 같은 도구와 명령인지, canary 경로/자동 grant | 임시 폴더와 부모 Git 저장소 밖의 기존 dummy 파일로 재배치 |
 | sandbox 미지원 | 실제 OS build/KB와 backend | `UNSUPPORTED` 기록, 조직 정책 우회 없이 지원 환경 사용 |
 | grant해도 deny | explicit Denied 우선순위와 기존 사용자/조직 정책 | 본인이 추가한 교육용 deny만 제거. 전체 홈 grant 금지 |

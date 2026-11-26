@@ -5,7 +5,7 @@ param([switch]$Help)
 $bootstrap = Initialize-WorkshopScript -ScriptPath $PSCommandPath -BoundParameters $PSBoundParameters -RemainingArguments $args -DotSourced ($MyInvocation.InvocationName -eq '.')
 if ($bootstrap.Handled) { exit $bootstrap.Code }
 
-$script:WorkshopNodeMinimum = [version]'22.13.0'
+$script:WorkshopNodeMinimum = [version]'24.0.0'
 $script:WorkshopNodeMajor = 24
 $script:WorkshopNvmMajor = 2
 $script:CheckFailures = 0
@@ -86,8 +86,8 @@ function Test-WorkshopCoreTools {
     elseif ($nvmVersion) { Add-Check WARN nvm-windows "$nvmVersion (the workshop uses nvm-windows $script:WorkshopNvmMajor.x)" }
     else { Add-Check WARN nvm-windows "Not found. The workshop installs Node.js through nvm-windows $script:WorkshopNvmMajor.x." }
     $node = Test-MinimumVersion node $script:WorkshopNodeMinimum node @('--version')
-    if ($node -and $node.Major -ne $script:WorkshopNodeMajor) {
-        Add-Check WARN node-major "$node is supported, but the workshop installs the latest Node.js $script:WorkshopNodeMajor.x."
+    if (-not $node) {
+        Add-Check INFO node-install "Run ./scripts/install-prerequisites.ps1 to install the latest Node.js $script:WorkshopNodeMajor.x with nvm-windows."
     }
     $npm = Invoke-ToolProbe npm @('--version')
     if ($npm.Code -eq 0) { Add-Check PASS npm $npm.Text } else { Add-Check FAIL npm $npm.Text }

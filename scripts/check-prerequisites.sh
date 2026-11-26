@@ -8,7 +8,7 @@ fi
 CHECK_SCRIPTS="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 source "$CHECK_SCRIPTS/terminal-output.sh"
 
-WORKSHOP_NODE_MINIMUM=22.13.0
+WORKSHOP_NODE_MINIMUM=24.0.0
 WORKSHOP_NODE_MAJOR=24
 CHECK_FAILURES=0
 CHECK_CONTEXT=''
@@ -139,10 +139,6 @@ check_core_tools() {
     minimum_version git 2.0.0 git --version
     initialize_node_environment
     if minimum_version node "$WORKSHOP_NODE_MINIMUM" node --version; then
-        version=$(extract_version "$PROBE_TEXT")
-        if [[ "${version%%.*}" != "$WORKSHOP_NODE_MAJOR" ]]; then
-            check_result WARN node-major "$version is supported, but the workshop installs the latest Node.js $WORKSHOP_NODE_MAJOR.x."
-        fi
         node_path=$(tool_path node)
         nvm_dir=$(nvm_directory)
         if [[ -n "$node_path" && -d "$nvm_dir" ]] &&
@@ -151,6 +147,8 @@ check_core_tools() {
         else
             check_result WARN node-manager "${node_path:-node} is not managed by nvm. The workshop installs Node.js through nvm."
         fi
+    else
+        check_result INFO node-install "Run bash scripts/install-prerequisites.sh to install the latest Node.js $WORKSHOP_NODE_MAJOR.x with nvm."
     fi
     probe npm --version
     if (( PROBE_CODE == 0 )); then check_result PASS npm "$PROBE_TEXT"
