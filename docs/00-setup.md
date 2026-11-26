@@ -1,6 +1,6 @@
 # 준비: 저장소 생성부터 샘플 다운로드까지
 
-[워크숍 개요](../README.md) | [다음: 승인과 접근 범위](01-approval-and-boundaries.md) | [문제 해결](troubleshooting.md)
+[워크숍 개요](../README.md) | [다음: 실습 공통 기준](01-approval-and-boundaries.md) | [문제 해결](troubleshooting.md)
 
 ## 실행 환경
 
@@ -172,4 +172,4 @@ git -C workspace rev-parse --verify baseline
 - [ ] `workspace/package.json`과 `workspace/LICENSE`가 있다.
 - [ ] `workspace`의 작업 트리가 깨끗하고 `baseline` 태그가 있으며 원격 저장소는 없다.
 
-준비를 마쳤다면 [1. 승인과 접근 범위](01-approval-and-boundaries.md)로 이동한다.
+준비를 마쳤다면 [1. 실습 공통 기준](01-approval-and-boundaries.md)으로 이동한다.
