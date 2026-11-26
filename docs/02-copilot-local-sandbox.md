@@ -1,4 +1,4 @@
-# Lab 0/1. Copilot 자체 샌드박스 OFF → ON → 최소 grant
+# 2. Copilot CLI 샌드박스
 
 ## 1. 목표와 시간
 
