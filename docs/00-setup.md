@@ -159,9 +159,18 @@ git -C workspace rev-parse --verify baseline
 
 ## 완료 및 다음 단계
 
+### 저장소와 도구
+
 - [ ] 개인 계정에 템플릿으로 저장소를 만들고 복제했다.
-- [ ] 도구 점검의 `FAIL` 항목을 해결하고 Node.js 24.x를 확인했다.
-- [ ] GitHub, Copilot CLI, Azure와 Docker Sandboxes 인증을 마쳤다.
+- [ ] 도구 점검에서 `FAIL` 항목이 없고 Node.js가 24.x 이상이다.
+- [ ] GitHub CLI에서 `gh auth status`로 로그인 상태를 확인했다.
+- [ ] Copilot CLI에 로그인했다.
+- [ ] Azure CLI에서 로그인과 구독 상태를 확인했다.
+- [ ] Docker Sandboxes에 로그인하고 Copilot 인증 정보를 등록했다.
+- [ ] ACA CLI에 로그인하고 샌드박스 그룹, 지역, 권한 설정을 확인했다.
+
+### 샘플 준비
+
 - [ ] `workspace/package.json`과 `workspace/LICENSE`가 있다.
 - [ ] `workspace`의 작업 트리가 깨끗하고 `baseline` 태그가 있으며 원격 저장소는 없다.
 
