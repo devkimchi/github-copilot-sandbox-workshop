@@ -51,7 +51,7 @@ VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 열고 아래 �
 
 설치 과정에서 Windows VM을 몇차례 재부팅할 수 있다. 화면 지시에 따라 재부팅하고 다시 `install-vm-tools.ps1` 스크립트를 실행한다.
 
-## 설치 도구 목록
+### 설치 도구 목록
 
 스크립트는 다음 도구를 순서대로 설치한다.
 
@@ -62,3 +62,20 @@ VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 열고 아래 �
 | Azure Container Apps Sandboxes | Azure CLI, ACA CLI |
 | Docker Sandboxes | Windows Hypervisor Platform (`-EnableHypervisorPlatform` 지정 시 활성화), `sbx` (Docker Sandboxes CLI) |
 | Docker Desktop 및 Linux 개발 환경 | WSL2, Ubuntu, Docker Desktop |
+
+설치가 끝난 후 아래 명령어를 실행시켜 설치된 도구를 확인한다.
+
+```powreshell
+git --version
+gh --version
+pwsh --version
+nvm --version
+node --version
+npm --version
+copilot --version
+az --version
+aca --version
+sbx --version
+wsl --version
+docker --version
+```
