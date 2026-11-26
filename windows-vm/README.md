@@ -60,5 +60,5 @@ VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 열고 아래 �
 | 공통 개발 환경 | Git, GitHub CLI, nvm-windows, PowerShell, Node.js 24.x |
 | Copilot CLI 샌드박스 | Copilot CLI |
 | Azure Container Apps Sandboxes | Azure CLI, ACA CLI |
-| Docker Sandboxes | `sbx` (Docker Sandboxes CLI), Windows Hypervisor Platform (`-EnableHypervisorPlatform` 지정 시 활성화) |
+| Docker Sandboxes | Windows Hypervisor Platform (`-EnableHypervisorPlatform` 지정 시 활성화), `sbx` (Docker Sandboxes CLI) |
 | Docker Desktop 및 Linux 개발 환경 | WSL2, Ubuntu, Docker Desktop |
