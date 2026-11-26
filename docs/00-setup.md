@@ -99,8 +99,6 @@ pwsh --version    # Windows
 | Docker Sandboxes | Docker Sandboxes CLI (`sbx`) | Windows: WinGet, macOS: Homebrew, Linux: Docker apt 저장소 |
 | Linux 로컬 샌드박스 | bubblewrap, slirp4netns | apt |
 
-설치와 점검 스크립트는 위 도구를 같은 그룹 순서로 처리한다. Windows PowerShell 7은 설치 스크립트가 그룹별 설치를 시작하기 전에 확인하고, 필요하면 WinGet 설치를 요청한다. Linux에서는 로컬 샌드박스 패키지를 마지막에 확인하고 설치한다. 기존 도구는 업데이트하지 않는다.
-
 ### 인증과 권한 확인
 
 #### GitHub 로그인 상태 확인
@@ -166,8 +164,8 @@ git -C workspace rev-parse --verify baseline
 - [ ] GitHub CLI에서 `gh auth status`로 로그인 상태를 확인했다.
 - [ ] Copilot CLI에 로그인했다.
 - [ ] Azure CLI에서 로그인과 구독 상태를 확인했다.
-- [ ] Docker Sandboxes에 로그인하고 Copilot 인증 정보를 등록했다.
-- [ ] ACA CLI에 로그인하고 샌드박스 그룹, 지역, 권한 설정을 확인했다.
+- [ ] Docker Sandboxes에 로그인했다.
+- [ ] ACA CLI에 로그인했다.
 
 ### 샘플 준비
 
