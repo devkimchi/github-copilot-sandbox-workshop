@@ -28,7 +28,7 @@ Windows에서는 **PowerShell 7**, macOS와 Linux에서는 **Bash** 또는 **Zsh
 
 ## 템플릿으로 저장소 만들고 복제하기
 
-1. [워크숍 템플릿](https://github.com/devkimchi/github-copilot-sandbox-workshop)에서 **Use this template > Create a new repository**를 선택한다.
+1. [워크숍 템플릿](https://github.com/devkimchi/github-copilot-sandbox-workshop)에서 **Use this template > Create a new repository**를 선택하거나 [![GitHub에서 템플릿으로 저장소 만들기](https://img.shields.io/badge/GitHub-Create%20repository%20from%20template-2ea44f?style=flat&logo=github&logoColor=white)](https://github.com/new?template_name=github-copilot-sandbox-workshop&template_owner=devkimchi)을 클릭한다.
 2. 소유자는 **개인 계정**, 공개 범위는 **Private**을 권장한다. **Include all branches**는 선택하지 않는다.
 3. 터미널에서 개인 GitHub 계정으로 로그인하고 만든 저장소를 복제한다. `<...>`는 본인의 계정과 저장소 이름으로 바꾼다.
 
@@ -58,13 +58,13 @@ bash scripts/check-prerequisites.sh
 
 | 결과 | 의미와 후속 조치 |
 | --- | --- |
-| `PASS` | 해당 점검 통과. 앱 실행이나 모델 요청까지 확인한 것은 아님 |
-| `FAIL` | 누락된 도구나 설정을 보완한 뒤 다시 점검 |
-| `WARN` | 권장 버전이나 선택 도구 등 경고 내용 확인 |
-| `MANUAL` | 로그인, 라이선스와 권한 등 직접 확인할 항목 |
-| `INFO` | 참고 정보 |
+| ![PASS](https://img.shields.io/badge/PASS-green) | 해당 점검 통과. 앱 실행이나 모델 요청까지 확인한 것은 아님 |
+| ![FAIL](https://img.shields.io/badge/FAIL-red) | 누락된 도구나 설정을 보완한 뒤 다시 점검 |
+| ![WARN](https://img.shields.io/badge/WARN-yellow) | 권장 버전이나 선택 도구 등 경고 내용 확인 |
+| ![MANUAL](https://img.shields.io/badge/MANUAL-cyan) | 로그인, 라이선스와 권한 등 직접 확인할 항목 |
+| ![INFO](https://img.shields.io/badge/INFO-blue) | 참고 정보 |
 
-GitHub CLI는 점검 스크립트의 대상이 아니므로 별도로 확인한다. Node.js는 24.x를 사용한다. 점검 스크립트는 22.13 이상이면 통과시키므로 메이저 버전도 직접 확인한다.
+GitHub CLI는 점검 스크립트의 대상이 아니므로 별도로 확인한다. Node.js는 24.x 이상이어야 한다. 이보다 낮으면 점검 스크립트가 `FAIL`로 표시하고 설치 스크립트로 24.x 최신 버전을 설치하도록 안내한다.
 
 ```bash
 gh --version
@@ -86,7 +86,19 @@ npm --version
 bash scripts/install-prerequisites.sh
 ```
 
-Node.js는 nvm으로 24.x 최신 버전을 설치하고 사용할 버전을 선택한다. 그 밖에 PATH에서 찾은 기존 도구는 자동 업데이트하지 않는다. GitHub CLI는 설치 대상이 아니므로 앞의 공식 링크로 준비한다.
+스크립트가 설치하는 도구는 다음과 같다.
+
+| 구분 | 설치 도구 | 설치 방법 |
+| --- | --- | --- |
+| 기본 도구 | Git | Windows: WinGet, macOS: Homebrew, Linux: apt |
+| Node.js | nvm, Node.js 24.x 최신 버전 | Windows: WinGet으로 nvm-windows 2.x 설치, macOS와 Linux: nvm 공식 설치 스크립트 |
+| Copilot | Copilot CLI | Windows: WinGet, macOS와 Linux: 공식 설치 스크립트 |
+| Docker 샌드박스 | Docker Sandboxes CLI (`sbx`) | Windows: WinGet, macOS: Homebrew, Linux: Docker apt 저장소 |
+| Azure | Azure CLI | Windows: WinGet, macOS: Homebrew, Linux: Microsoft 공식 설치 스크립트 |
+| Azure | ACA CLI (`aca`) | 공식 설치 스크립트 |
+| Linux 전용 | bubblewrap, slirp4netns | apt |
+
+macOS에서 Homebrew가 없으면 먼저 Homebrew 설치 승인을 요청한다. PATH에서 찾은 기존 도구는 설치하거나 업데이트하지 않는다. 단, Node.js는 nvm으로 24.x 최신 버전을 따로 설치하고 사용할 버전을 선택한다. Windows에서 nvm-windows 밖에 설치한 Node.js가 있으면 직접 제거한 뒤 다시 실행하라고 안내한다. GitHub CLI는 설치 대상이 아니므로 앞의 공식 링크로 준비한다. Windows Hypervisor Platform 활성화는 스크립트가 안내하는 명령으로 직접 진행한다.
 
 설치가 끝나면 스크립트가 점검을 다시 실행한다. 현재 터미널에서 새 도구나 Node.js 버전을 찾지 못하면 화면의 PATH 안내를 따르거나 새 터미널을 열어 다시 점검한다. 실행 정책이나 조직 정책으로 차단되면 임의로 완화하지 않는다.
 
@@ -117,12 +129,12 @@ sbx secret set copilot
 
 ```powershell
 # Windows, PowerShell 7
-./scripts/download-sample.ps1 -Target workspace
+./scripts/download-sample.ps1
 ```
 
 ```bash
 # macOS, Linux
-bash scripts/download-sample.sh workspace
+bash scripts/download-sample.sh
 ```
 
 스크립트는 [Tailspin Toys의 고정 스냅샷](https://github.com/github-samples/tailspin-toys/tree/9cd9a450f923c7a084bd47d661877d82ff710826)을 다운로드하고 앱 파일만 추출한다. 원본의 `.github/`, `.vscode/`, `.devcontainer/`와 문서는 제외하고, `.gitignore`와 MIT `LICENSE`는 유지한다.
@@ -135,7 +147,7 @@ git -C workspace remote -v
 git -C workspace rev-parse --verify baseline
 ```
 
-첫 두 명령은 출력이 없어야 하고, 마지막 명령은 기준 커밋 SHA를 표시해야 한다. 실패해서 일부 파일이 남았다면 삭제하거나 덮어쓰지 말고 내용을 확인한 뒤 `workspace-이름`처럼 다른 대상으로 다시 시작한다. 자세한 동작은 [스크립트 안내](../scripts/README.md#앱-추출)를 참고한다.
+첫 두 명령은 출력이 없어야 하고, 마지막 명령은 기준 커밋 SHA를 표시해야 한다. 실패해서 일부 파일이 남았다면 삭제하거나 덮어쓰지 말고 내용을 확인한다. 다시 받으려면 남은 폴더의 이름을 바꾼 뒤 명령을 다시 실행한다. 자세한 동작은 [스크립트 안내](../scripts/README.md#앱-추출)를 참고한다.
 
 이 단계에서는 의존성 설치와 테스트를 실행하지 않는다. 해당 절차는 [Lab 0/1](02-copilot-local-sandbox.md)에서 진행한다.
 

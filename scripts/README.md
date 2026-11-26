@@ -30,14 +30,14 @@ Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x
 **실행 미검증.** PowerShell 7 이상 또는 Bash에서, 개인 워크숍 저장소 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
 
 ```powershell
-pwsh -File .\scripts\download-sample.ps1 -Target workspace
+pwsh -File .\scripts\download-sample.ps1
 ```
 
 ```bash
-bash scripts/download-sample.sh workspace
+bash scripts/download-sample.sh
 ```
 
-대상은 현재 폴더 바로 아래 `workspace` 또는 `workspace-이름`만 허용한다. 기존 대상은 덮어쓰지 않는다. 다운로드/추출 임시 폴더만 자동 정리한다. Git 단계에서 실패해 생긴 부분 workspace는 보존하며 오류를 보고한다. 실패한 대상은 사람이 확인하고 **다른 이름으로 다시 시작**한다.
+기본 대상은 현재 폴더 바로 아래 `workspace`다. Lab 2처럼 별도 폴더가 필요하면 `-Target workspace-이름` 또는 첫 번째 인자로 `workspace-이름`을 지정한다. 기존 대상은 덮어쓰지 않는다. 다운로드/추출 임시 폴더만 자동 정리한다. Git 단계에서 실패해 생긴 부분 workspace는 보존하며 오류를 보고한다. 실패한 대상은 사람이 확인하고 **다른 이름으로 다시 시작**한다.
 
 고정 SHA `9cd9a450f923c7a084bd47d661877d82ff710826`의 압축본을 받고 명시 목록만 추출한다. 네트워크에서는 전체 스냅샷 압축본을 받지만 최종 폴더에는 앱 파일만 남는다. `.github/`, `.vscode/`, `.devcontainer/`와 원본 문서는 제외한다. 원본 `.gitignore`와 MIT `LICENSE`는 유지한다.
 
