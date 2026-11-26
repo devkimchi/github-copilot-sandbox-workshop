@@ -1,58 +1,76 @@
 # 승인과 접근 범위
 
-## 1. 목표와 시간
+다음 실습을 시작하기 전에 세 가지 샌드박스의 실행 위치와 파일 및 네트워크 접근 방식을 살펴본다. 실행 승인, 모델의 거부와 정책에 따른 차단을 구분하고, 실습 결과를 기록할 기준을 익힌다. 이 단계에서는 리소스를 만들거나 설정을 변경하지 않는다.
 
-10분. 승인 요청, 모델의 거부와 정책에 따른 차단을 구분한다. 아래 기대 동작은 **미검증**이며 공식 문서에 근거한 비교 모델이다. [출처](sources.md), [개요](../README.md).
+소요 시간은 10분이다. 아래 기대 동작은 **미검증**이며 공식 문서에 근거한 비교 기준이다. [워크숍 개요](../README.md)와 [출처](sources.md)를 참고한다.
 
-## 2. 실행 위치
+## 실습 전 확인
 
-HOST는 개인 PC 또는 실습용 Windows VM이다. COPILOT CLI는 HOST에서 실행하는 자체 샌드박스 세션, DOCKER VM은 로컬 Linux microVM 내부, ACA REMOTE는 Azure microVM의 원격 셸이다.
+교육용 데이터만 사용한다. 실제 자격 증명, SSH 키, 회사 `.env`와 고객 자료를 삭제하지 말고, 처음부터 이런 자료가 없는 별도의 교육용 폴더를 선택한다. 전역 설정, 조직 정책과 기존 허용 설정(grant)을 먼저 기록한다.
 
-## 3. 사전 조건과 현재 상태
+## 실행 위치
 
-교육용 데이터만 사용한다. 실제 홈 credential, SSH key, 회사 `.env`와 고객 자료를 제거하는 것이 아니라, **그런 자료가 없는 별도 교육용 폴더를 선택**한다. 전역 설정, 조직 정책과 기존 grant를 먼저 기록한다.
+이후 실습에서는 다음 표기로 명령을 실행할 위치를 구분한다.
 
-## 4. 비교와 질문
+- **HOST**: 개인 PC 또는 실습용 Windows VM
+- **COPILOT CLI**: HOST에서 실행하는 Copilot CLI의 자체 샌드박스 세션과 그 도구
+- **DOCKER VM**: 로컬 Linux microVM 내부
+- **ACA REMOTE**: Azure microVM의 원격 셸
 
-| 항목 | Copilot 자체 샌드박스 | Docker 로컬 | ACA |
+Docker Sandboxes와 ACA의 제어 명령인 `sbx`와 `aca`는 HOST에서 실행한다.
+
+## 환경별 비교
+
+| 항목 | Copilot CLI 자체 샌드박스 | Docker Sandboxes | ACA Sandboxes |
 | --- | --- | --- | --- |
-| CLI 위치 | HOST | Linux microVM | Azure microVM |
-| 격리 방식과 접근 제한 | 도구별 OS 정책과 CLI 내부 정책 검사 | 별도 커널 VM과 공유/프록시 정책 | 원격 VM, RBAC와 egress |
-| 파일 | 유효 경로 grant | Direct 공유 또는 Clone | 원격 파일, 자동 host mount 없음 |
-| 기본 네트워크 설명 | outbound ON, local-network OFF가 기본이며 OS 차이 있음 | preset/kit/개인/조직 정책 조합 | 정책이 없으면 unrestricted outbound |
-| 결과 | host에 남음 | Direct 즉시 반영, Clone 명시적 회수 | 파일 API 등 명시적 회수 |
+| Copilot 작업 실행 위치 | HOST | 로컬 Linux microVM | Azure microVM |
+| 격리와 접근 제한 | 도구별 OS 샌드박스와 CLI 내부 정책 검사 | 별도 커널을 가진 VM과 공유/프록시 정책 | 원격 VM, RBAC와 egress |
+| 파일 접근 | 유효한 경로 허용 설정에 따름 | Direct 공유 또는 Clone | 원격 파일 사용, HOST 자동 마운트 없음 |
+| 네트워크 설정 | `outbound` ON, `local-network` OFF가 기본이며 OS별 차이 있음 | preset, kit, 개인 및 조직 정책의 조합 | 정책이 없으면 나가는 트래픽 제한 없음 |
+| 작업 결과 | HOST에 남음 | Direct는 HOST에 즉시 반영, Clone은 별도 회수 | 파일 API 등으로 별도 회수 |
 
-Copilot의 셸, 로컬 MCP/LSP와 자식 프로세스에는 OS 샌드박스가 적용된다. 내장 파일 도구는 CLI 내부 소프트웨어 정책 검사다. CLI 전체가 VM으로 옮겨지는 것은 아니다. 원격 MCP 서버의 실행 권한을 로컬 파일 정책이 제한하지도 않는다.
+Copilot CLI에서는 셸, 로컬 MCP/LSP와 자식 프로세스에 OS 샌드박스가 적용된다. 내장 파일 도구는 CLI 내부의 소프트웨어 정책 검사를 거친다. CLI 전체가 VM으로 옮겨지는 것은 아니며, 로컬 파일 정책이 원격 MCP 서버의 실행 권한을 제한하지도 않는다.
 
-`--yolo`와 `allow-all`은 실행 승인 설정이다. Docker Copilot workload가 `copilot --yolo`로 시작해도 VM의 격리 방식과 mount, credential, network의 접근 범위는 별개로 유지된다. 반대로 승인 창이 떴다는 사실은 격리를 입증하지 않는다.
+## 승인과 정책 차단
 
-토의 프롬프트:
+`--yolo`와 `allow-all`은 실행 승인에 관한 설정이다. Docker의 Copilot 워크로드가 `copilot --yolo`로 시작하더라도 VM의 격리 방식과 마운트, 자격 증명, 네트워크 접근 범위는 별도로 확인해야 한다. 반대로 승인 창이 나타났다는 사실만으로 격리 여부를 알 수는 없다.
 
-> 같은 작업이 승인되었는데 실패했다. 어떤 실행 위치, 명령, 정책과 파일 상태를 확인해야 원인을 말할 수 있는가?
+다음 질문을 함께 생각해 본다.
 
-## 5. 관찰 항목
+> 같은 작업을 승인했는데도 실패했다면 실행 위치, 명령, 정책과 파일 상태 중 무엇을 확인해야 원인을 알 수 있을까?
 
-정확한 도구 호출과 실행 위치, 승인 여부, 종료 코드, stdout/stderr, 파일 전후 hash와 정책 decision을 구분한다. 모델의 설명은 원자료를 대체하지 못한다.
+## 관찰과 기록
 
-## 6. 기대와 실제 결과
+이후 각 실습에서는 [관찰 기록 양식](../evidence-template/observation.md)을 사용해 다음을 직접 기록한다.
 
-| 상황 | 기대 판정(미검증) | 실제 결과/근거 |
+- 정확한 도구 호출과 명령, 실행 위치
+- 승인 여부, 종료 코드, 표준 출력과 표준 오류(`stdout/stderr`)
+- 파일의 변경 전후 해시와 정책 결정 내역
+
+모델의 설명은 실제 명령 출력과 같은 원자료를 대신하지 못한다. 아래 판정은 다음 실습에서 실제 결과와 근거를 기록할 때 사용한다.
+
+| 상황 | 예상 판정(미검증) | 실제 결과/근거 |
 | --- | --- | --- |
-| 모델이 명령을 호출하지 않음 | `MODEL_REFUSAL` | 참가자 작성 |
-| 실행 승인에서 멈춤 | `APPROVAL_REQUIRED` | 참가자 작성 |
-| 실행과 일치하는 policy deny 확인 | `POLICY_DENIED` | 참가자 작성 |
-| OS/backend 미지원 | `UNSUPPORTED` | 참가자 작성 |
-| DNS, 인증, package, quota 오류 | `ENVIRONMENT_FAILURE` | 참가자 작성 |
+| 모델이 요청을 거부해 명령을 호출하지 않음 | `MODEL_REFUSAL` | 참가자 작성 |
+| 실행 승인을 기다리는 중 | `APPROVAL_REQUIRED` | 참가자 작성 |
+| 실행한 요청과 일치하는 정책 차단 기록 확인 | `POLICY_DENIED` | 참가자 작성 |
+| 운영체제 또는 백엔드 미지원 | `UNSUPPORTED` | 참가자 작성 |
+| DNS, 인증, 패키지 또는 할당량 오류 | `ENVIRONMENT_FAILURE` | 참가자 작성 |
 | 의도한 위치에서 상태 확인 | `SUCCESS` | 참가자 작성 |
 
-## 7. 실패가 정상인 경우
+## 실패 원인과 복구
 
-정책 실험에서 실제 deny를 기대할 수 있다. HTTP/DNS 오류만으로 deny라고 단정하지 않는다. Windows Copilot host rules는 proxy를 따르지 않는 프로그램에 한계가 있고, Docker hostname 규칙도 IP 공유와 복호화하지 않는 연결 등 제한이 있다. 우회 공격을 실습하지 않으며 관찰한 도구와 요청 범위 안에서만 결론을 쓴다.
+정책을 시험할 때 차단이 발생할 수 있지만, HTTP나 DNS 오류만으로 정책 차단이라고 단정하지 않는다. Windows Copilot의 호스트 규칙은 프록시를 따르지 않는 프로그램에 한계가 있고, Docker의 호스트 이름 규칙도 IP 공유나 복호화하지 않는 연결 등에서 제한이 있다. 우회 공격은 실습하지 않으며, 실제로 관찰한 도구와 요청에 대해서만 결론을 낸다.
 
-## 8. 복구와 checkpoint
+기능이 지원되지 않으면 승인된 대체 환경이나 강사가 제공하는 **버전이 표시된 실제** 리허설 기록을 사용한다. 직접 실행한 결과와 리허설 기록은 구분한다. 전체 권한을 허용하거나 조직의 차단 정책을 해제해 문제를 해결하지 않는다.
 
-개념 단계에는 패치가 없다. 미지원이면 승인된 대체 환경이나 강사의 **버전이 표시된 실제** 예행 기록을 사용하고 직접 실행과 구분한다. 전체 grant나 조직 deny 해제로 해결하지 않는다.
+이 단계에는 적용할 패치가 없다. 이후 실습에서 본인이 만든 리소스와 변경한 설정을 기록하고, 실습이 끝나면 정리하거나 원래대로 되돌린다.
 
-## 9. 정리
+## 다음 실습
 
-아직 리소스를 만들지 않는다. 이후 각 실습에서 만든 자원과 설정만 기록하고 되돌린다.
+다음 실습에서 위 기준을 적용하고 결과를 비교한다.
+
+1. [Copilot CLI 자체 샌드박스](02-copilot-local-sandbox.md)를 끈 상태, 켠 상태와 최소 권한을 부여한 상태를 비교한다.
+2. [Docker Sandboxes](03-docker-workspaces-and-network.md)의 Direct와 Clone 공유 방식 및 네트워크 정책을 살펴본다.
+3. [Docker mixin](04-docker-mixins.md)으로 도구를 추가하고 접근 제한이 달라지는지 확인한다.
+4. [ACA Sandboxes](05-aca-sandboxes.md)에서 원격 파일과 네트워크를 확인하고, 중지 후 재개와 결과 회수를 살펴본다.
