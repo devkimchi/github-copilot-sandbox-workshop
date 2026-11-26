@@ -2,12 +2,12 @@
 
 ## 사전 준비 확인과 설치
 
-**설치 동작은 실행 미검증.** 저장소 루트에서 실행한다. 결과는 Host, Core tools, GitHub Copilot CLI, Docker Sandboxes, Azure, Optional 그룹별로 PASS, FAIL, WARN, MANUAL, INFO로 표시한다.
+**설치 동작은 실행 미검증.** 저장소 루트에서 실행한다. 점검은 Host, Core tools, GitHub Copilot CLI, Azure Container Apps Sandboxes, Docker Sandboxes 순으로 진행한다. 설치는 Core tools, GitHub Copilot CLI, Azure Container Apps Sandboxes, Docker Sandboxes 순으로 진행한다. Linux에서는 Local sandbox packages도 점검하고 설치한다. 상태와 그룹 안내는 PASS, FAIL, WARN, MANUAL, INFO에 따라 색으로 구분한다.
 
 | 스크립트 | 동작 |
 | --- | --- |
-| `check-prerequisites.ps1`, `check-prerequisites.sh` | 읽기 전용으로 OS, Git, Node.js, npm, Copilot CLI, `sbx`, Azure CLI, `aca`와 로그인 상태를 확인한다. 필수 항목이 실패하면 0이 아닌 코드로 끝난다. |
-| `install-prerequisites.ps1`, `install-prerequisites.sh` | 대화형 터미널에서 항목마다 확인을 받고 PATH에 없는 도구만 설치한다. 마지막에 check 스크립트를 다시 실행한다. 비대화형 환경에서는 설치하지 않고 실패한다. |
+| `check-prerequisites.ps1`, `check-prerequisites.sh` | 읽기 전용으로 OS와 Windows PowerShell 7, Git, GitHub CLI, Node.js 관리자와 버전, npm, Copilot CLI, `sbx`, Azure CLI, `aca`와 로그인 상태를 확인한다. GitHub 로그인은 `gh auth status`로 직접 확인하도록 표시한다. Linux에서는 `bubblewrap`, `slirp4netns`, KVM 접근도 확인한다. 필수 항목이 실패하면 0이 아닌 코드로 끝난다. |
+| `install-prerequisites.ps1`, `install-prerequisites.sh` | 대화형 터미널에서 그룹별로 항목을 확인하고 PATH에 없는 도구만 설치한다. Windows PowerShell 7과 GitHub CLI도 설치하며, Linux에서는 로컬 샌드박스 패키지를 설치한다. 마지막에 check 스크립트를 다시 실행한다. 비대화형 환경에서는 설치하지 않고 실패한다. |
 
 ```powershell
 # Windows, PowerShell 7
@@ -21,7 +21,7 @@
 ./scripts/install-prerequisites.sh
 ```
 
-Git, Azure CLI, Copilot CLI, `sbx`와 `aca`는 설치 시점에 패키지 저장소나 공식 설치 프로그램에서 제공하는 최신 버전을 설치한다. 기존 설치는 자동 업데이트하지 않으며 필요한 업데이트는 원래 설치 경로로 직접 수행한다. check 스크립트는 설치 여부와 최소 요구 사항을 검사하며 최신 버전인지 판정하지 않는다.
+Git, GitHub CLI, Azure CLI, Copilot CLI, `sbx`와 `aca`는 설치 시점에 패키지 저장소나 공식 설치 프로그램에서 제공하는 버전을 설치한다. 기존 설치는 자동 업데이트하지 않으며 필요한 업데이트는 원래 설치 경로로 직접 수행한다. check 스크립트는 설치 여부와 최소 요구 사항을 검사하며 최신 버전인지 판정하지 않는다.
 
 Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x 최신 버전을 설치한다. nvm 밖에서 설치한 Node.js는 자동 제거하지 않는다. Windows는 WinGet, macOS는 Homebrew, Linux는 Ubuntu 계열의 apt를 사용한다. Windows Hypervisor Platform 활성화와 재부팅은 사람이 직접 한다. `terminal-output.sh`와 `powershell-bootstrap.ps1`은 공통 출력과 초기화 도우미다.
 

@@ -209,6 +209,8 @@ install_tool() {
     case "$os:$tool" in
         Darwin:git) brew_install git git ;;
         Linux:git) apt_install git git ;;
+        Darwin:gh) brew_install 'GitHub CLI' gh ;;
+        Linux:gh) apt_install 'GitHub CLI' gh ;;
         *:copilot) install_copilot ;;
         *:sbx) install_sbx "$os" ;;
         *:az) install_az "$os" ;;
@@ -220,13 +222,32 @@ install_missing_tools() {
     local os="$1" tool failed=0 brew_ready=1
     check_group 'Core tools'
     if [[ "$os" == Darwin ]] && ! ensure_homebrew; then failed=1; brew_ready=0; fi
-    for tool in git copilot sbx az aca; do
-        if [[ "$tool" == git ]]; then install_tool "$os" git || failed=1; install_node || failed=1; continue; fi
-        if [[ "$os" == Darwin ]] && (( ! brew_ready )) && [[ "$tool" == sbx || "$tool" == az ]] && [[ -z $(tool_path "$tool") ]]; then
+    for tool in git gh; do
+        if [[ "$os" == Darwin ]] && (( ! brew_ready )) && [[ -z $(tool_path "$tool") ]]; then
             workshop_status_printf '[WARN] %s: Skipping because Homebrew is unavailable.\n' "$tool"; failed=1; continue
         fi
         install_tool "$os" "$tool" || failed=1
     done
+    install_node || failed=1
+
+    check_group 'GitHub Copilot CLI'
+    install_tool "$os" copilot || failed=1
+
+    check_group 'Azure Container Apps Sandboxes'
+    for tool in az aca; do
+        if [[ "$tool" == az && "$os" == Darwin ]] && (( ! brew_ready )) && [[ -z $(tool_path "$tool") ]]; then
+            workshop_status_printf '[WARN] %s: Skipping because Homebrew is unavailable.\n' "$tool"; failed=1; continue
+        fi
+        install_tool "$os" "$tool" || failed=1
+    done
+
+    check_group 'Docker Sandboxes'
+    if [[ "$os" == Darwin ]] && (( ! brew_ready )) && [[ -z $(tool_path sbx) ]]; then
+        workshop_status_printf '%s\n' '[WARN] sbx: Skipping because Homebrew is unavailable.'; failed=1
+    else
+        install_tool "$os" sbx || failed=1
+    fi
+
     if [[ "$os" == Linux ]]; then
         check_group 'Local sandbox packages'
         install_linux_sandbox_packages || failed=1

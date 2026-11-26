@@ -46,7 +46,7 @@ cd "<저장소-이름>"
 ```
 
 ```powershell
-# PowreShell
+# PowerShell
 ./scripts/check-prerequisites.ps1
 ```
 
@@ -58,7 +58,7 @@ cd "<저장소-이름>"
 | ![MANUAL](https://img.shields.io/badge/MANUAL-cyan) | 로그인, 라이선스와 권한 등 직접 확인할 항목 |
 | ![INFO](https://img.shields.io/badge/INFO-blue) | 참고 정보 |
 
-GitHub CLI는 점검 스크립트의 대상이 아니므로 별도로 확인한다. Node.js는 24.x 이상이어야 한다. 이보다 낮으면 점검 스크립트가 `FAIL`로 표시하고 설치 스크립트로 24.x 최신 버전을 설치하도록 안내한다.
+점검 결과는 호스트, 기본 도구, Copilot CLI, Azure Container Apps Sandboxes, Docker Sandboxes 순으로 표시한다. Linux에서는 로컬 샌드박스 패키지도 확인한다. Node.js는 24.x 이상이어야 하며, 이보다 낮으면 `FAIL`로 표시하고 설치 스크립트로 24.x 최신 버전을 설치하도록 안내한다.
 
 ```bash
 git --version
@@ -91,15 +91,15 @@ pwsh --version    # Windows
 
 | 구분 | 설치 도구 | 설치 방법 |
 | --- | --- | --- |
-| 기본 도구 | Git | Windows: WinGet, macOS: Homebrew, Linux: apt |
-| 기본 도구 | GitHub CLI | Windows: WinGet, macOS: Homebrew, Linux: apt |
-| Node.js | nvm, Node.js 24.x 최신 버전 | Windows: WinGet으로 nvm-windows 2.x 설치, macOS와 Linux: nvm 공식 설치 스크립트 |
-| Copilot | Copilot CLI | Windows: WinGet, macOS와 Linux: 공식 설치 스크립트 |
-| Azure | Azure CLI | Windows: WinGet, macOS: Homebrew, Linux: Microsoft 공식 설치 스크립트 |
-| Azure | ACA CLI (`aca`) | 공식 설치 스크립트 |
-| Docker 샌드박스 | Docker Sandboxes CLI (`sbx`) | Windows: WinGet, macOS: Homebrew, Linux: Docker apt 저장소 |
-| Windows 전용 | PowerShell 7.x | WinGet |
-| Linux 전용 | bubblewrap, slirp4netns | apt |
+| Windows 호스트 | PowerShell 7.x | Windows PowerShell 7이 없으면 WinGet으로 먼저 설치 |
+| 기본 도구 | Git, GitHub CLI (`gh`) | Windows: WinGet, macOS: Homebrew, Linux: apt |
+| 기본 도구 | nvm, Node.js 24.x 최신 버전 | Windows: WinGet으로 nvm-windows 2.x 설치, macOS와 Linux: nvm 공식 설치 스크립트 |
+| Copilot CLI | GitHub Copilot CLI | Windows: WinGet, macOS와 Linux: 공식 설치 스크립트 |
+| Azure Container Apps Sandboxes | Azure CLI, ACA CLI (`aca`) | Azure CLI: Windows WinGet, macOS Homebrew, Linux 공식 설치 스크립트. ACA CLI: 공식 설치 스크립트 |
+| Docker Sandboxes | Docker Sandboxes CLI (`sbx`) | Windows: WinGet, macOS: Homebrew, Linux: Docker apt 저장소 |
+| Linux 로컬 샌드박스 | bubblewrap, slirp4netns | apt |
+
+설치와 점검 스크립트는 위 도구를 같은 그룹 순서로 처리한다. Windows PowerShell 7은 설치 스크립트가 그룹별 설치를 시작하기 전에 확인하고, 필요하면 WinGet 설치를 요청한다. Linux에서는 로컬 샌드박스 패키지를 마지막에 확인하고 설치한다. 기존 도구는 업데이트하지 않는다.
 
 ### 인증과 권한 확인
 
@@ -110,6 +110,7 @@ gh auth status
 ```
 
 #### Azure 로그인 및 상태 확인
+
 ```bash
 az login
 az account show
