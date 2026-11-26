@@ -15,11 +15,11 @@
 - **DOCKER VM**: 로컬 Linux microVM 내부
 - **ACA REMOTE**: Azure microVM의 원격 셸
 
-Docker Sandboxes와 ACA의 제어 명령인 `sbx`와 `aca`는 HOST에서 실행한다.
+Docker 샌드박스와 ACA의 제어 명령인 `sbx`와 `aca`는 HOST에서 실행한다.
 
 ## 환경별 비교
 
-| 항목 | Copilot CLI 자체 샌드박스 | Docker Sandboxes | ACA Sandboxes |
+| 항목 | Copilot CLI 샌드박스 | Docker 샌드박스 | ACA 샌드박스 |
 | --- | --- | --- | --- |
 | Copilot 작업 실행 위치 | HOST | 로컬 Linux microVM | Azure microVM |
 | 격리와 접근 제한 | 도구별 OS 샌드박스와 CLI 내부 정책 검사 | 별도 커널을 가진 VM과 공유/프록시 정책 | 원격 VM, RBAC와 egress |
@@ -56,7 +56,7 @@ HTTP나 DNS 오류만으로 정책 차단이라 단정하지 말고, 실행과 �
 
 다음 실습에서 위 기준을 적용하고 결과를 비교한다.
 
-1. [Copilot CLI 자체 샌드박스](02-copilot-local-sandbox.md)를 끈 상태, 켠 상태와 최소 권한을 부여한 상태를 비교한다.
-2. [Docker Sandboxes](03-docker-workspaces-and-network.md)의 Direct와 Clone 공유 방식 및 네트워크 정책을 살펴본다.
+1. [Copilot CLI 샌드박스](02-copilot-local-sandbox.md)를 끈 상태, 켠 상태와 최소 권한을 부여한 상태를 비교한다.
+2. [Docker 샌드박스](03-docker-workspaces-and-network.md)의 Direct와 Clone 공유 방식 및 네트워크 정책을 살펴본다.
 3. [Docker mixin](04-docker-mixins.md)으로 도구를 추가하고 접근 제한이 달라지는지 확인한다.
-4. [ACA Sandboxes](05-aca-sandboxes.md)에서 원격 파일과 네트워크를 확인하고, 중지 후 재개와 결과 회수를 살펴본다.
+4. [ACA 샌드박스](05-aca-sandboxes.md)에서 원격 파일과 네트워크를 확인하고, 중지 후 재개와 결과 회수를 살펴본다.
