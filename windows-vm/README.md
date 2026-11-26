@@ -51,14 +51,14 @@ VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 열고 아래 �
 
 설치 과정에서 Windows VM을 몇차례 재부팅할 수 있다. 화면 지시에 따라 재부팅하고 다시 `install-vm-tools.ps1` 스크립트를 실행한다.
 
-## 설치 도구
+## 설치 도구 목록
 
-스크립트는 다음 도구를 순서대로 설치한다. 이미 명령을 사용할 수 있는 WinGet 패키지와 ACA CLI는 다시 설치하지 않는다.
+스크립트는 다음 도구를 순서대로 설치한다.
 
 | 그룹 | 도구 및 구성 요소 |
 | --- | --- |
 | 공통 개발 환경 | Git, GitHub CLI, nvm-windows, PowerShell, Node.js 24.x |
-| Copilot CLI 샌드박스 | Copilot CLI |
+| Copilot CLI | Copilot CLI |
 | Azure Container Apps Sandboxes | Azure CLI, ACA CLI |
 | Docker Sandboxes | Windows Hypervisor Platform (`-EnableHypervisorPlatform` 지정 시 활성화), `sbx` (Docker Sandboxes CLI) |
 | Docker Desktop 및 Linux 개발 환경 | WSL2, Ubuntu, Docker Desktop |
