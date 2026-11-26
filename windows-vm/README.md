@@ -1,58 +1,64 @@
-# 선택 사전 준비용 Windows VM
+# 실습용 Windows VM 준비
 
-**배포와 실행 미검증.** [참가자 절차](../docs/00-windows-vm.md)를 먼저 읽는다. 설치/접속/재부팅은 150/180분 시간 밖이다.
+개인 PC 대신 사용할 Windows VM을 Azure에 만든다. VM 준비는 실습 시간에 포함되지 않는다.
 
-`azure.yaml`, `infra/`, `hooks/`, `scripts/`만으로 작동하도록 작성한 자립형 azd 템플릿이다. 상위 `shared` 의존, 앱 현대화 도구, PAT와 Azure credential은 포함하지 않는다. ACA 리소스는 생성하지 않는다.
+## VM 기본 구성
 
-| 구성 | 초안 |
+| 항목 | 기본값 |
 | --- | --- |
-| VM | `Standard_D8s_v5`, Windows 11 Enterprise Gen2, 256 GiB Premium SSD |
-| 이미지 | publisher `MicrosoftWindowsDesktop`, offer `windows-11`, SKU `win11-26h2-ent` 참고값 |
-| 버전 | 기본 `latest`, 선택적으로 고정 숫자 버전 지정. 가용성 `TBD(검증 필요)` |
-| 보안 | Trusted Launch, Secure Boot, vTPM 유지 |
-| 접속 | VM NIC 공인 IP 없음. Bastion Developer |
-| 외부 다운로드 | NAT Gateway와 전용 Standard 공인 IP |
-| 자동 종료 | 매일 한국 시간 00:00 할당 취소. 삭제 아님 |
-| 도구 전달 | Run Command는 관리자 사용자의 `$HOME\scripts`에 설치 스크립트와 갱신 스크립트를 기록 |
-| 사용자 설치 | 로그인한 관리자 계정에서 별도 확인 후 실행 |
+| VM 크기 | `Standard_D8s_v5` |
+| 운영체제 | Windows 11 Enterprise Gen2 (`win11-26h2-ent`) |
+| 이미지 버전 | 배포 시점의 최신 버전(`latest`) |
+| OS 디스크 | 256 GiB Premium SSD |
+| 관리자 계정 | `workshopuser` |
+| 보안 | Trusted Launch, Secure Boot, vTPM |
+| 접속 | Azure Bastion Developer. VM에 공인 IP를 할당하지 않음 |
+| 외부 통신 | NAT Gateway와 전용 Standard 공인 IP |
+| 자동 종료 | 매일 한국 시간 00:00에 할당 취소. 자원은 삭제하지 않음 |
 
-이미지/SKU/지역/Bastion Developer 가용성, 라이선스 자격과 quota, Windows 업데이트, 비용은 `TBD(검증 필요)`다. Docker 중첩 가상화는 **미검증**이다. Trusted Launch를 Standard로 자동 변경하지 않는다.
+## azd CLI로 VM 프로비저닝
 
-## 입력
+개인 PC에 azd 1.35.1 이상을 설치한다. 배포 훅을 실행하려면 Windows에서는 PowerShell 7, macOS와 Linux에서는 Bash가 필요하다. Windows 11의 Azure 사용 라이선스 자격, 구독 권한, 배포 지역의 VM 크기와 Bastion 가용성, 할당량과 비용을 먼저 확인한다.
 
-`azd env`에서 `AZURE_SUBSCRIPTION_ID`, `AZURE_LOCATION`을 준비한다. `AZURE_ENV_NAME`은 전용 azd 환경 이름이다. `confirmWindowsClientLicense`는 기본값 없이 `true`만 허용하는 Bicep의 bool 입력이다. azd에서 입력을 요청하면 Windows 11 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 `true`를 선택한다. 자격이 없거나 확인하지 못했다면 배포를 중단한다. 별도 라이선스 환경 변수는 설정하지 않는다.
-
-preprovision은 필수 환경 변수와 지정한 이미지 버전 형식만 검사하며 Azure 가용성이나 권한을 검사하지 않는다.
-
-선택 입력은 `WORKSHOP_VM_ADMIN_USERNAME`(기본 `workshopuser`), `WORKSHOP_VM_SIZE`, `WORKSHOP_VM_IMAGE_SKU`, `WORKSHOP_VM_IMAGE_VERSION`(기본 `latest`, 고정 숫자 버전도 가능)이다. `latest`는 배포 시점에 따라 달라질 수 있으므로 실제 이미지 버전을 확인해 기록한다. `adminPassword`는 Bicep의 secure 입력이며 parameter 파일에 값을 넣지 않는다. 암호와 PAT를 버전 관리하거나 커맨드 라인/관찰표에 기록하지 않는다.
-
-## 도구 설치 스크립트
-
-WinGet이 없다면 VM에서 Microsoft의 공식 App Installer/WinGet 준비를 먼저 마친다. 전달된 스크립트는 로그인한 사용자 세션에서 관리자 권한으로 실행하며 SYSTEM은 거부한다. 도구를 다음 용도로 나누어 표시하고 이 순서대로 설치한다. 그룹별 선택 설치는 제공하지 않는다.
-
-- **공통 개발 환경**: Git, GitHub CLI(`GitHub.cli`), nvm-windows(`AuthorSoftware.NVMWindows`), PowerShell, Node.js
-- **Copilot CLI 샌드박스**: Copilot CLI
-- **Azure Container Apps Sandboxes**: Azure CLI, ACA CLI
-- **Docker Sandboxes**: 선택 사항인 Windows Hypervisor Platform, `Docker.sbx`
-- **Docker Desktop 및 Linux 개발 환경**: WSL2, Ubuntu, Docker Desktop(`Docker.DockerDesktop`)
-
-WinGet 패키지는 제공되는 최신 버전으로 설치한다. Node.js는 nvm-windows 2.x를 통해 24.x 최신 버전을 설치한다. nvm-windows 밖에서 설치한 Node.js가 있으면 중단한다. ACA CLI는 PowerShell과 Azure CLI를 준비한 뒤 공식 설치 스크립트 `https://aka.ms/aca-cli-install-ps`로 설치한다. Docker Desktop보다 먼저 `wsl --install --no-distribution`으로 WSL 플랫폼을 준비하고 `wsl --install --distribution Ubuntu --no-launch`로 Ubuntu를 설치한다. Ubuntu가 WSL1이면 `wsl --set-version Ubuntu 2`로 전환한다. WSL 설치가 재부팅을 요청하거나 구성 요소가 재부팅을 기다리면 경고와 함께 종료 코드 `3010`으로 중단한다. Windows를 재부팅하고 스크립트를 다시 실행한다. 재부팅한 뒤에도 같은 경고가 반복되면 `wsl.exe --status` 출력과 Windows 기능 상태를 확인한다. Ubuntu 패키지가 첫 실행 전이라 WSL 배포판으로 등록되지 않았으면 경고와 함께 종료 코드 `2`로 중단한다. 시작 메뉴의 Ubuntu나 `ubuntu.exe`로 Linux 사용자를 만든 뒤 스크립트를 다시 실행한다. 재부팅 대기 상태가 아닌 WSL 조회나 전환 실패는 오류를 확인한다.
-
-`sbx`는 Docker Desktop 없이 사용할 수 있으며, Docker Desktop도 별도 Ubuntu 배포판을 필수로 요구하지 않는다. 이 스크립트는 선택한 실습 구성에 따라 Ubuntu를 설치한다. Docker Desktop의 Azure VM 공식 지원은 Docker Business 고객 대상이다. 세부 조건은 [참가자 절차](../docs/00-windows-vm.md)를 확인한다.
-
-도구 버전 인자는 받지 않는다. 이미 있는 도구는 보존하고 경고하므로 **설치 스크립트 완료가 모든 도구의 최신 상태를 의미하지 않는다**. 필요한 업데이트는 원래 설치 경로로 직접 수행하고 실제 버전을 기록한다. 실제 설치 동작은 미검증이다. 자동 로그인, PAT 저장, 모델 호출과 샌드박스 생성은 하지 않는다.
-
-## 설치 스크립트 갱신
-
-프로비저닝은 `install-vm-tools.ps1`과 함께 `update-vm-tools.ps1`을 전달한다. VM의 Windows PowerShell 5.1 이상에서 수정본이 포함된 전체 40자리 커밋 SHA를 지정한다.
+개인 PC의 저장소 루트에서 다음 명령을 실행한다. `<...>`는 사용할 값으로 바꾼다.
 
 ```powershell
-# PowerShell
-& "$HOME\scripts\update-vm-tools.ps1" -CommitSha '<40자리 커밋 SHA>'
+Set-Location ./windows-vm
+azd auth login
+azd env new <VM_ENV_NAME>
+azd env set AZURE_SUBSCRIPTION_ID <구독ID>
+azd env set AZURE_LOCATION <배포지역>
+azd up
 ```
 
-갱신 스크립트는 기존 설치 스크립트를 같은 폴더에 `install-vm-tools.ps1.<타임스탬프>`로 백업한다. 타임스탬프는 `yyyyMMdd-HHmmss` 형식이다. 같은 이름이 이미 있으면 덮어쓰지 않고 중단한다. 지정한 커밋의 파일을 다운로드하고 빈 파일과 구문 오류를 검사한 뒤 UTF-8 BOM으로 교체한다. 다운로드나 구문 검사 실패 시 기존 파일을 유지하며 설치는 자동 실행하지 않는다. 실제 VM에서의 전달과 갱신은 미검증이다. 자세한 절차는 [참가자 절차의 복구 항목](../docs/00-windows-vm.md#8-복구)을 따른다.
+VM 자원만 프로비저닝하려면 `azd up` 대신 다음 명령을 사용한다.
 
-## 참고와 변경
+```powershell
+azd provision
+```
 
-[`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크/VM/Run Command 전달 방식을 참고했다. 워크숍용으로 리소스 이름과 태그, 이미지 버전 입력, 라이선스 확인, 도구 목록과 설치 전달을 수정했고 `shared` 의존을 없앴다. 원본의 배포 성공을 이번 템플릿의 검증으로 승계하지 않는다.
+Windows 라이선스 확인과 관리자 암호를 요청하면 안내에 따라 입력한다. 라이선스 자격을 확인한 경우에만 `true`를 선택하고, 암호는 명령이나 파일에 저장하지 않는다.
+
+배포가 끝나면 Azure Portal에서 해당 VM의 **연결 > Bastion**을 선택한다. 기본 관리자 계정은 `workshopuser`이며, 암호는 배포할 때 입력한 값을 사용한다.
+
+## VM에서 도구 설치
+
+VM에 로그인한 뒤 **관리자 권한으로 PowerShell**을 연다. WinGet이 없다면 Microsoft의 공식 App Installer/WinGet 설치 절차로 먼저 준비한다.
+
+다음 명령을 실행하고 내용을 확인한 뒤 `INSTALL`을 입력한다.
+
+```powershell
+& "$HOME\scripts\install-vm-tools.ps1"
+```
+
+설치 내용과 패키지 사용 조건을 확인했다면 `-Yes`로 확인 입력을 생략할 수 있다.
+
+```powershell
+& "$HOME\scripts\install-vm-tools.ps1" -Yes
+```
+
+스크립트는 Git, GitHub CLI, nvm-windows, PowerShell, Node.js, Copilot CLI, Azure CLI, ACA CLI, Docker Sandboxes, WSL2, Ubuntu와 Docker Desktop을 설치한다. 이미 설치된 도구는 유지한다.
+
+재부팅 안내가 나오면 Windows를 재부팅하고 같은 명령을 다시 실행한다. Ubuntu 첫 실행 안내가 나오면 Ubuntu를 열어 Linux 사용자를 만든 뒤 다시 실행한다. 설치가 끝나면 Docker Desktop을 처음 실행해 약관을 확인하고 초기 설정을 마친다. GitHub, Copilot CLI, Azure, Docker 샌드박스 인증은 각 도구에서 직접 진행한다.
+
+이 템플릿은 [`justinyoo/agent-box/appmod-box`](https://github.com/justinyoo/agent-box/tree/18bd8c0ec534c02f83827a7d3917b590cb992ae0/appmod-box), SHA `18bd8c0ec534c02f83827a7d3917b590cb992ae0`의 네트워크, VM과 스크립트 전달 구성을 참고해 워크숍에 맞게 수정했다.
