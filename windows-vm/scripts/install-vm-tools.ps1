@@ -138,10 +138,9 @@ function Get-WslFeatures {
 
 function Test-WslRestartPending {
     param([array]$Features)
-    return @($Features | Where-Object { $_.State.ToString() -eq 'EnablePending' }).Count -gt 0
+    return @($Features | Where-Object { $_.State.ToString() -in @('EnablePending', 'DisablePending') }).Count -gt 0
 }
 
-# wsl --install은 기능 활성화를 예약하고 exit 0을 반환하기도 한다. 이때 DISM 상태가 EnablePending으로 보이지 않을 수 있다.
 function Test-WslRestartNeededAfterInstall {
     param([array]$Features)
     if (Test-WslRestartPending $Features) { return $true }
@@ -150,8 +149,38 @@ function Test-WslRestartNeededAfterInstall {
     }).Count -eq 0
 }
 
+function Invoke-WslInstall {
+    param([string[]]$Arguments)
+    $previousWslUtf8 = $env:WSL_UTF8
+    $previousEncoding = [Console]::OutputEncoding
+    $env:WSL_UTF8 = '1'
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    try {
+        $ErrorActionPreference = 'Continue'
+        $lines = @(& wsl.exe @Arguments 2>&1 | ForEach-Object { "$_" -replace "`0", '' })
+        $exitCode = $LASTEXITCODE
+        $lines | ForEach-Object { Write-Host $_ }
+        return [pscustomobject]@{ ExitCode = $exitCode; Output = ($lines -join ' ') }
+    }
+    finally {
+        [Console]::OutputEncoding = $previousEncoding
+        $env:WSL_UTF8 = $previousWslUtf8
+    }
+}
+
+function Test-WslInstallRestartRequired {
+    param($Result)
+    if ($Result.ExitCode -in @(1641, 3010)) { return $true }
+    if ($Result.ExitCode -ne 0) { return $false }
+    # WSL 3.x can print the localized Windows 3010 message but return exit 0.
+    $message = (New-Object System.ComponentModel.Win32Exception(3010)).Message
+    $message = ($message -replace '\s+', ' ').Trim()
+    $output = ($Result.Output -replace '\s+', ' ').Trim()
+    return $message.Length -gt 0 -and $output.IndexOf($message, [StringComparison]::OrdinalIgnoreCase) -ge 0
+}
+
 function Write-WslRestartRequired {
-    Write-Status -Level WARNING -Message 'WSL 구성 요소가 재부팅을 기다리고 있습니다. 재부팅하고 Ubuntu 첫 실행을 마친 뒤 이 스크립트를 다시 실행하세요. 재부팅한 뒤에도 같은 메시지가 반복되면 wsl.exe --status 출력과 VM 크기의 중첩 가상화 지원 여부를 확인하세요. Docker Desktop 설치는 아직 진행하지 않았습니다.'
+    Write-Status -Level WARNING -Message 'WSL 구성 요소에 재부팅이 필요합니다. Windows를 재부팅한 뒤 이 스크립트를 다시 실행하세요. 재부팅 후에도 같은 메시지가 반복되면 wsl.exe --status와 Windows 기능 상태를 확인하세요. Ubuntu 또는 Docker Desktop 설치가 아직 완료되지 않았을 수 있습니다.'
 }
 
 function Test-NoWslDistribution {
@@ -239,6 +268,18 @@ function Install-WslUbuntu {
         Write-WslRestartRequired
         return 'RestartRequired'
     }
+    Write-Status -Level INFO -Message 'Ubuntu 설치 전에 WSL 플랫폼을 확인합니다.'
+    $install = Invoke-WslInstall -Arguments @('--install', '--no-distribution')
+    if (Test-WslInstallRestartRequired $install) {
+        Write-WslRestartRequired
+        return 'RestartRequired'
+    }
+    if ($install.ExitCode -ne 0) { throw "WSL 플랫폼 설치 실패, exit=$($install.ExitCode).`n$($install.Output)" }
+    $features = @(Get-WslFeatures)
+    if (Test-WslRestartNeededAfterInstall $features) {
+        Write-WslRestartRequired
+        return 'RestartRequired'
+    }
     $result = Get-UbuntuWslVersion
     if ($result.ExitCode -ne 0) {
         $notInstalled = @($features | Where-Object { $_.State.ToString() -ne 'Disabled' }).Count -eq 0
@@ -252,10 +293,13 @@ function Install-WslUbuntu {
         return 'FirstLaunchRequired'
     }
     if ($null -eq $ubuntuVersion) {
-        Write-Status -Level INFO -Message 'WSL과 Ubuntu 설치를 시작합니다.'
-        & wsl.exe --install --distribution Ubuntu --no-launch | Out-Host
-        if ($LASTEXITCODE -ne 0) { throw "WSL2와 Ubuntu 설치 실패, exit=$LASTEXITCODE" }
-        Write-Status -Level PASS -Message 'WSL과 Ubuntu 설치 명령을 완료했습니다. 재부팅이 필요할 수 있습니다.'
+        Write-Status -Level INFO -Message 'Ubuntu 설치를 시작합니다.'
+        $install = Invoke-WslInstall -Arguments @('--install', '--distribution', 'Ubuntu', '--no-launch')
+        if (Test-WslInstallRestartRequired $install) {
+            Write-WslRestartRequired
+            return 'RestartRequired'
+        }
+        if ($install.ExitCode -ne 0) { throw "Ubuntu 설치 실패, exit=$($install.ExitCode).`n$($install.Output)" }
         if (Test-WslRestartNeededAfterInstall @(Get-WslFeatures)) {
             Write-WslRestartRequired
             return 'RestartRequired'
@@ -266,7 +310,7 @@ function Install-WslUbuntu {
             return 'FirstLaunchRequired'
         }
         if ($result.ExitCode -ne 0 -or $null -eq $result.Version) {
-            throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)). wsl.exe --status 출력과 VM 크기의 중첩 가상화 지원 여부를 확인하세요.`n$($result.Output)"
+            throw "설치 후 Ubuntu의 WSL 버전을 확인하지 못했습니다(exit=$($result.ExitCode)). 설치 출력과 wsl.exe --status를 확인하세요.`n$($install.Output)`n$($result.Output)"
         }
         $ubuntuVersion = $result.Version
     }
@@ -275,12 +319,6 @@ function Install-WslUbuntu {
     }
     if ($ubuntuVersion -eq 1) {
         Write-Status -Level WARNING -Message 'Ubuntu 배포판이 WSL1입니다. WSL2로 전환합니다.'
-        & wsl.exe --install --no-distribution | Out-Host
-        if ($LASTEXITCODE -ne 0) { throw "WSL2 구성 요소 설치 실패, exit=$LASTEXITCODE" }
-        if (Test-WslRestartNeededAfterInstall @(Get-WslFeatures)) {
-            Write-WslRestartRequired
-            return 'RestartRequired'
-        }
         & wsl.exe --set-version Ubuntu 2 | Out-Host
         if ($LASTEXITCODE -ne 0) {
             throw "Ubuntu를 WSL2로 전환하지 못했습니다(exit=$LASTEXITCODE)."
