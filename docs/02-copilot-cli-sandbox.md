@@ -19,8 +19,8 @@
 Node.js 24.x와 Git, Copilot CLI가 설치되어 있는지 확인한다. 운영체제 지원 여부도 확인한다.
 
 ```bash
-node --version
 git --version
+node --version
 copilot --version
 ```
 
