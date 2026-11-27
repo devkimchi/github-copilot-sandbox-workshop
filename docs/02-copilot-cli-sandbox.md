@@ -14,7 +14,7 @@
 
 ### 1.1 준비 상태 확인
 
-`<REPOSITORY_ROOT>`는 템플릿으로 만든 저장소를 복제한 폴더의 루트다. 이 안의 `workspace/`는 실습 앱을 담은 별도의 Git 저장소다.
+`<REPOSITORY_ROOT>`는 저장소 루트다. 그 안의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
 
 1. [사전 준비](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용한다. 추출 스크립트는 다시 실행하지 않는다.
 2. Node.js 24.x, Git과 Copilot CLI 지원 OS를 확인한다. `workspace`에 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소가 없는지도 확인한다.
