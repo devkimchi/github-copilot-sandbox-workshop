@@ -10,10 +10,10 @@ Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 �
 
 ## 3. 사전 조건과 현재 상태
 
-`<WORKSHOP_ROOT>`는 워크숍 루트다. [사전 준비의 샘플 다운로드](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용하며 추출 스크립트를 다시 실행하지 않는다. Node.js 24.x, Git과 Copilot 지원 OS를 확인한다. `workspace`에는 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소는 없어야 한다.
+`<REPOSITORY_ROOT>`는 템플릿으로 만든 저장소를 클론한 폴더의 루트다. 이 안의 `workspace/`는 실습 앱을 담은 별도의 Git 저장소다. [사전 준비의 샘플 다운로드](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용하며 추출 스크립트를 다시 실행하지 않는다. Node.js 24.x, Git과 Copilot 지원 OS를 확인한다. `workspace`에는 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소는 없어야 한다.
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
 Copy-Item .\evidence-template\* .\evidence -Recurse
 New-Item -ItemType Directory -Path .\evidence\lab-0,.\evidence\lab-1 -ErrorAction Stop
@@ -127,7 +127,7 @@ CLI 도구에서 `curl -I https://example.com`을 실행하고 출력과 종료 
 
 ### E. 설명과 복구, 5분
 
-세션 종료 후 `Stop-Transcript`를 실행한다. 다음 관찰 명령은 **HOST, WORKSHOP_ROOT**에서 실행해 출력 파일을 보관한다.
+세션 종료 후 `Stop-Transcript`를 실행한다. 다음 관찰 명령은 **저장소 루트**에서 실행해 출력 파일을 보관한다.
 
 ```powershell
 git -C .\workspace status --short | Out-File .\evidence\lab-1\git-after.txt

@@ -13,7 +13,7 @@
 개인 구독, 교육 전용 group, 본인의 Data Owner, 정확한 Copilot credential을 사전에 준비한다. `az login` 인증과 모델 PAT는 별개다. 이미지와 quota, 예상 비용을 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 New-Item -ItemType Directory .\evidence\lab-3 -ErrorAction Stop
 aca --version | Out-File .\evidence\lab-3\aca-version.txt
 aca doctor

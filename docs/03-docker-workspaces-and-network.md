@@ -13,7 +13,7 @@
 Lab 1에서 host용 `node_modules`를 설치한 폴더를 재사용하지 않는다. 플랫폼별 native 바이너리가 Linux와 맞지 않을 수 있다. 서로 다른 sandbox가 같은 working tree를 동시에 수정하게 하지 않는다.
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 .\scripts\download-sample.ps1 -Target workspace-direct
 .\scripts\download-sample.ps1 -Target workspace-docker
 New-Item -ItemType Directory .\evidence\lab-2 -ErrorAction Stop
@@ -49,7 +49,7 @@ printf '\n' >> package.json
 이 파일은 테스트용 줄바꿈만 추가한다. HOST의 다른 터미널에서 전파를 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-after.txt
 git -C .\workspace-direct diff --binary --output=..\evidence\lab-2\direct.patch
 ```
@@ -57,7 +57,7 @@ git -C .\workspace-direct diff --binary --output=..\evidence\lab-2\direct.patch
 ### Clone
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 Set-Location .\workspace-docker
 sbx run --clone --name ws-clone sbx/copilot:latest .
 ```
@@ -92,7 +92,7 @@ git -c user.name=workshop -c user.email=workshop@example.invalid commit -m "feat
 HOST에서 sandbox가 실행 중일 때만 fetch한다. 실제 remote 이름을 `git remote -v`에서 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_ROOT>
+# HOST, <REPOSITORY_ROOT>
 git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-after.txt
 git remote -v | Out-File .\evidence\lab-2\outer-remotes.txt
 git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-after.txt

@@ -56,7 +56,7 @@ headless Chromium만 다룬다. headed mode, codegen/UI runner는 display가 별
 
 ### 직접 제작, 확장 30분
 
-`mixins/`의 템플릿을 사람이 검토한 뒤 `evidence/`가 아니라 별도 교육용 제작 복사본으로 복사한다. 예: `<WORKSHOP_ROOT>/workspace-mixin-kit/`. 여기에는 앱이 아닌 kit만 둔다. `mixins/`는 완성 정답이 아니라 인자와 파일 추가를 연습하는 최소 템플릿이다.
+`mixins/`의 템플릿을 사람이 검토한 뒤 `evidence/`가 아니라 별도 교육용 제작 복사본으로 복사한다. 예: `<REPOSITORY_ROOT>/workspace-mixin-kit/`. 여기에는 앱이 아닌 kit만 둔다. `mixins/`는 완성 정답이 아니라 인자와 파일 추가를 연습하는 최소 템플릿이다.
 
 1. `greeting` 인자를 읽고 교육용 문자열로 바꾼다. 입력 pattern과 buildArg를 유지한다.
 2. VM의 `/etc/workshop-greeting`에 생성할 내용을 직접 수정한다. 새 credential이나 runtime network 요구를 추가하지 않는다.
