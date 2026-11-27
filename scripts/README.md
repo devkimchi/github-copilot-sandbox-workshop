@@ -55,4 +55,4 @@ git status --short --ignored
 
 기대는 clean, remote 없음, 앱 파일만 존재, 바깥 저장소에서 workspace 무시다. 과거 연구 부록 A.7은 54개 추적 파일을 보고했지만 이 스크립트의 실행 결과가 아니다. OS별 파일 목록과 내용의 동일성은 예행 연습에서 확인한다.
 
-`npm ci`, 테스트, Copilot, Docker와 Azure는 실행하지 않는다. [Lab 0/1](../docs/02-copilot-cli-sandbox.md)에서 다음 절차를 확인한다.
+`npm ci`, 테스트, Copilot, Docker와 Azure는 실행하지 않는다. [Copilot CLI 샌드박스 실습](../docs/02-copilot-cli-sandbox.md)에서 다음 절차를 확인한다.

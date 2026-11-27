@@ -10,7 +10,7 @@
 
 ## 3. 사전 조건과 현재 상태
 
-Lab 1에서 host용 `node_modules`를 설치한 폴더를 재사용하지 않는다. 플랫폼별 native 바이너리가 Linux와 맞지 않을 수 있다. 서로 다른 sandbox가 같은 working tree를 동시에 수정하게 하지 않는다.
+Copilot CLI 실습에서 HOST용 `node_modules`를 설치한 폴더는 재사용하지 않는다. 플랫폼별 native 바이너리가 Linux와 맞지 않을 수 있다. 서로 다른 샌드박스가 같은 작업 트리를 동시에 수정하게 하지 않는다.
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
@@ -73,7 +73,7 @@ touch /run/sandbox/source/__workshop-write-probe
 
 마지막 명령은 read-only 오류를 기대한다(미검증). 읽을 수 있는 source mount이므로 "host 파일을 전혀 볼 수 없다"고 설명하지 않는다. 실제 비밀은 원본에 두지 않는다.
 
-Copilot에 Lab 1과 같은 프롬프트 뒤에 **05번 과제 원문**을 붙인다. 아래 명령과 단위 테스트 결과도 기록하게 한다.
+Copilot에 Copilot CLI 실습에서 사용한 공통 프롬프트를 입력하고, 그 뒤에 **05번 과제 원문**을 붙인다. 아래 명령과 단위 테스트 결과도 기록하게 한다.
 
 ```bash
 git switch -c workshop/task05

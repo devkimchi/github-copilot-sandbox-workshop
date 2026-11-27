@@ -10,11 +10,11 @@
 
 실습 준비와 실행 기록 보관은 **HOST**에서, 접근 제한 확인과 과제 실행은 **COPILOT CLI가 호출한 도구**에서 한다. HOST의 실행 결과만으로 샌드박스 차단을 판정하지 않는다.
 
-## 1. 실습 준비와 실행 전 상태 확인 (Lab 0)
+## 1. 실습 준비와 실행 전 상태 확인
 
 ### 1.1 준비 상태 확인
 
-`<REPOSITORY_ROOT>`는 저장소 루트다. 그 안의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
+저장소 루트(`<REPOSITORY_ROOT>`)의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
 
 1. [사전 준비](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용한다. 추출 스크립트는 다시 실행하지 않는다.
 2. Node.js 24.x, Git과 Copilot CLI 지원 OS를 확인한다. `workspace`에 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소가 없는지도 확인한다.
@@ -32,17 +32,17 @@ HOST의 저장소 루트에서 다음 명령을 실행한다. 관찰표와 실�
 # HOST, <REPOSITORY_ROOT>
 New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
 Copy-Item .\evidence-template\* .\evidence -Recurse
-New-Item -ItemType Directory -Path .\evidence\lab-0,.\evidence\lab-1 -ErrorAction Stop
+New-Item -ItemType Directory -Path .\evidence\setup,.\evidence\copilot-cli -ErrorAction Stop
 Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비하고, `lab-0`과 `lab-1` 폴더도 만든다. 복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
+POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비하고, `evidence/setup`과 `evidence/copilot-cli` 폴더도 만든다. 복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
 
 ### 1.3 외부 확인용 파일과 시작 상태 기록
 
 샌드박스 밖의 파일에 접근할 수 있는지 시험하려고 교육용 확인 파일(canary)을 만든다. 이 파일은 OS 임시 폴더나 부모 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체에 자동으로 부여되는 읽기 권한 때문에 실험이 무효가 될 수 있다. 다음 예시 경로가 이미 존재하면 덮어쓰지 말고 다른 교육용 경로를 선택한다.
 
-HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/lab-0/`에 저장한다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
+HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/setup/`에 저장한다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
 
 ```powershell
 # HOST, 기존 폴더이면 중단하고 다른 교육용 경로를 선택한다.
@@ -51,15 +51,15 @@ Set-Content C:\SandboxCanary\read.txt 'WORKSHOP_CANARY=not-a-secret'
 Set-Content C:\SandboxCanary\write.txt 'before'
 Get-Content C:\SandboxCanary\read.txt
 Get-FileHash C:\SandboxCanary\write.txt |
-  Out-File .\evidence\lab-0\canary-before.txt
+  Out-File .\evidence\setup\canary-before.txt
 git -C .\workspace status --short |
-  Out-File .\evidence\lab-0\git-before.txt
+  Out-File .\evidence\setup\git-before.txt
 git -C .\workspace rev-parse baseline |
-  Out-File .\evidence\lab-0\baseline.txt
+  Out-File .\evidence\setup\baseline.txt
 git -C .\workspace remote -v |
-  Out-File .\evidence\lab-0\remotes.txt
+  Out-File .\evidence\setup\remotes.txt
 git status --short --ignored |
-  Out-File .\evidence\lab-0\outer-status.txt
+  Out-File .\evidence\setup\outer-status.txt
 ```
 
 `baseline.txt`에서 기준 커밋을 확인하고 `remotes.txt`에 원격 저장소가 없는지 확인한다. `git-before.txt`와 `outer-status.txt`는 나중에 변경 사항과 비교할 수 있도록 보관한다.
@@ -72,28 +72,28 @@ git status --short --ignored |
 
 ```powershell
 Push-Location .\workspace
-npm ci 2>&1 | Tee-Object ..\evidence\lab-0\npm-ci.txt
+npm ci 2>&1 | Tee-Object ..\evidence\setup\npm-ci.txt
 $LASTEXITCODE
 ```
 
 종료 코드를 기록한다. 0이 아니면 단위 테스트로 넘어가지 말고 오류를 기록한 뒤 일반 실행 환경을 확인한다. 성공했다면 다음 명령을 실행한다.
 
 ```powershell
-npm run test:unit 2>&1 | Tee-Object ..\evidence\lab-0\unit.txt
+npm run test:unit 2>&1 | Tee-Object ..\evidence\setup\unit.txt
 $LASTEXITCODE
 Pop-Location
 ```
 
 단위 테스트가 실패하면 오류와 종료 코드를 기록하고 일반 실행 환경부터 확인한다. `.env`가 Git에서 무시되어도 파일은 존재하고 읽힐 수 있다.
 
-## 2. 샌드박스 상태와 접근 권한 비교 (Lab 1)
+## 2. 샌드박스 상태와 접근 권한 비교
 
 ### 2.1 샌드박스를 끈 상태에서 실행
 
 샌드박스를 끈 상태의 결과를 이후 켠 상태의 결과와 비교한다. HOST의 저장소 루트에서 기록을 시작하고 `workspace`로 이동해 새 Copilot CLI 세션을 연다. 세션 기록에는 토큰을 입력하지 않는다.
 
 ```powershell
-Start-Transcript -Path .\evidence\lab-1\off-transcript.txt -NoClobber
+Start-Transcript -Path .\evidence\copilot-cli\off-transcript.txt -NoClobber
 Set-Location .\workspace
 copilot --no-sandbox
 ```
@@ -114,7 +114,7 @@ node -e "require('node:fs').writeFileSync('C:/SandboxCanary/write.txt','after')"
 ```powershell
 Stop-Transcript
 Set-Location ..
-Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after-off.txt
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after-off.txt
 ```
 
 세션 기록에 CLI 화면이 완전히 남지 않으면 실제 도구의 표준 출력, 표준 오류와 정책 화면을 별도 텍스트로 저장하고 빠진 부분을 표시한다. 모델이 작성한 설명으로 빈 실행 기록을 채우지 않는다.
@@ -126,8 +126,8 @@ HOST의 저장소 루트에서 확인용 파일 `write.txt`를 `before`로 되�
 ```powershell
 # HOST, <REPOSITORY_ROOT>
 Set-Content C:\SandboxCanary\write.txt 'before'
-Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-before-on.txt
-Start-Transcript -Path .\evidence\lab-1\on-transcript.txt -NoClobber
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-before-on.txt
+Start-Transcript -Path .\evidence\copilot-cli\on-transcript.txt -NoClobber
 Set-Location .\workspace
 copilot --sandbox
 ```
@@ -144,7 +144,7 @@ CLI에서 다음 상태와 설정을 확인해 기록한다. `Allow sandbox bypa
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after-on.txt
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after-on.txt
 ```
 
 `/sandbox policy npm ci`, `/sandbox policy npm run test:e2e`는 정책에 따른 처리 결과를 예측할 뿐 실제 실행 기록은 아니다.
@@ -194,9 +194,9 @@ CLI 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 세션 기록�
 ```powershell
 Stop-Transcript
 Set-Location ..
-git -C .\workspace status --short | Out-File .\evidence\lab-1\git-after.txt
-git -C .\workspace diff --binary --output=..\evidence\lab-1\changes.patch
-Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after.txt
+git -C .\workspace status --short | Out-File .\evidence\copilot-cli\git-after.txt
+git -C .\workspace diff --binary --output=..\evidence\copilot-cli\changes.patch
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after.txt
 ```
 
 `--output`은 Git의 `-C` 기준 상대 경로다. `changes.patch`에는 추적되지 않은 새 파일이 포함되지 않으므로 `git-after.txt`에서도 새 파일을 확인하고 필요한 내용은 별도로 보존한다. 시작 상태와 최종 상태를 비교하고 실행 기록에 비밀이 없는지 사람이 검토한다.

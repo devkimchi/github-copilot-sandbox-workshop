@@ -93,7 +93,7 @@ ACA advanced rule은 **첫 matching rule**이 적용된다. Docker의 deny 우�
 
 ### 공통 과제
 
-ACA REMOTE의 `workspace`에서 `copilot`을 실행하고 Lab 1 공통 프롬프트와 **05번 원문**을 붙인다. `npm run test:unit`과 과제 산출물 `evidence/summary.md`를 남긴다. checkpoint나 완성 예시는 읽히지 않으며 원격 push, PR과 앱 배포를 하지 않는다.
+ACA REMOTE의 `workspace`에서 `copilot`을 실행하고 Copilot CLI 실습에서 사용한 공통 프롬프트에 **05번 과제 원문**을 붙인다. `npm run test:unit`과 과제 산출물 `evidence/summary.md`를 남긴다. 체크포인트나 완성 예시는 읽히지 않으며 원격 push, PR과 앱 배포를 하지 않는다.
 
 원격 셸에서 실제 파일의 절대 경로와 hash를 기록한다.
 
