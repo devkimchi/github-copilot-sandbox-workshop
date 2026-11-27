@@ -27,7 +27,7 @@ Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x
 
 ## 앱 추출
 
-**실행 미검증.** PowerShell 7 이상 또는 Bash에서, 개인 워크숍 저장소 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
+**실행 미검증.** PowerShell 7 이상 또는 Bash에서, 워크숍 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
 
 ```powershell
 pwsh -File .\scripts\download-sample.ps1
