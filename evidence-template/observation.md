@@ -1,6 +1,6 @@
 # 관찰 기록
 
-이 파일을 `<WORKSHOP_DIR>/evidence/observation.md`로 복사한 뒤 **참가자가 직접** 작성한다. 아래 양식은 실행 결과가 아니다. 기대 결과는 모두 **미검증**이다.
+이 파일을 `<WORKSHOP_ROOT>/evidence/observation.md`로 복사한 뒤 **참가자가 직접** 작성한다. 아래 양식은 실행 결과가 아니다. 기대 결과는 모두 **미검증**이다.
 
 원자료는 사람이 명령 출력을 `evidence/lab-0/`, `lab-1/`, `lab-2/`, `lab-2b/`, `lab-3/`에 저장한다. 정확한 명령과 실행 위치를 함께 쓴다. 토큰, 구독 ID, 실제 credential 내용과 고객 자료를 쓰지 않는다. 앱 내부 `workspace/evidence/summary.md`는 이 관찰 기록과 다르다.
 
