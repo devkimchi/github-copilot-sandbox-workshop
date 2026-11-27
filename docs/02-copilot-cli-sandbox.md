@@ -16,9 +16,15 @@
 
 저장소 루트(`<REPOSITORY_ROOT>`)의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
 
-1. [사전 준비](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용한다. 추출 스크립트는 다시 실행하지 않는다.
-2. Node.js 24.x, Git과 Copilot CLI 지원 OS를 확인한다. `workspace`에 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소가 없는지도 확인한다.
-3. 교육용이 아닌 `.env`나 기존 기록이 없는지 확인한다. `workspace/.env`가 이미 있으면 덮어쓰지 말고 강사와 확인한다. [실습 공통 기준](01-workshop-guidelines.md)의 안전 수칙도 확인한다.
+Node.js 24.x와 Git, Copilot CLI가 설치되어 있는지 확인한다. 버전은 다음 명령으로 확인한다. 운영체제 지원 여부도 확인한다.
+
+```powershell
+node --version
+git --version
+copilot --version
+```
+
+`workspace`의 기준 커밋, `baseline` 태그와 원격 저장소 여부는 1.3절의 명령으로 확인하고 기록한다. 실습 전 상태를 확인하는 명령은 다시 실행할 필요가 없다.
 
 이 문서의 셸 명령은 PowerShell 예시다. macOS와 Linux에서는 사용하는 셸에 맞게 명령을 바꾸고, 모든 PowerShell 명령과 Node 명령의 확인용 파일 경로를 실제 외부 절대 경로로 바꾼다. `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 사용할 수 있다.
 
@@ -27,6 +33,8 @@
 `evidence`가 이미 있으면 기존 기록을 덮어쓰지 않는다. 강사와 별도 기록 경로를 정하고 이 문서의 `evidence` 경로를 해당 경로로 바꿔 사용한다.
 
 HOST의 저장소 루트에서 다음 명령을 실행한다. 관찰표와 실습별 실행 기록을 담을 폴더를 만들고, 실제 비밀이 아닌 교육용 `.env`를 준비한다.
+
+`workspace/.env`가 이미 있으면 아래 명령을 실행하지 말고 강사와 확인한다.
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
