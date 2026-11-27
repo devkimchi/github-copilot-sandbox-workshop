@@ -16,7 +16,7 @@
 
 저장소 루트(`<REPOSITORY_ROOT>`)의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
 
-Node.js 24.x와 Git, Copilot CLI가 설치되어 있는지 확인한다. 운영체제 지원 여부도 확인한다.
+Git, Node.js 24.x, Copilot CLI가 설치되어 있는지 확인한다. 운영체제 지원 여부도 확인한다.
 
 ```bash
 git --version
