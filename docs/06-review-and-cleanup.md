@@ -17,7 +17,7 @@
 HOST에서 회수한 diff, 새 파일, package/build script, CI, IDE task와 agent 설정을 검토한다. 샌드박스에서 나온 코드도 HOST에서 실행하면 HOST 권한으로 작동할 수 있다. 바로 `npm install`이나 build를 실행하지 않는다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
+# HOST, <WORKSHOP_ROOT>
 git -C .\workspace status --short | Out-File .\evidence\review-status.txt
 git -C .\workspace diff baseline --stat | Out-File .\evidence\review-stat.txt
 Get-ChildItem .\evidence -Recurse -File
