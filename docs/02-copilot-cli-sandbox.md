@@ -16,17 +16,15 @@
 
 저장소 루트(`<REPOSITORY_ROOT>`)의 `workspace/`는 실습용 앱이 있는 워크스페이스다.
 
-Node.js 24.x와 Git, Copilot CLI가 설치되어 있는지 확인한다. 버전은 다음 명령으로 확인한다. 운영체제 지원 여부도 확인한다.
+Node.js 24.x와 Git, Copilot CLI가 설치되어 있는지 확인한다. 운영체제 지원 여부도 확인한다.
 
-```powershell
+```bash
 node --version
 git --version
 copilot --version
 ```
 
 `workspace`의 기준 커밋, `baseline` 태그와 원격 저장소 여부는 1.3절의 명령으로 확인하고 기록한다. 실습 전 상태를 확인하는 명령은 다시 실행할 필요가 없다.
-
-이 문서의 셸 명령은 PowerShell 예시다. macOS와 Linux에서는 사용하는 셸에 맞게 명령을 바꾸고, 모든 PowerShell 명령과 Node 명령의 확인용 파일 경로를 실제 외부 절대 경로로 바꾼다. `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 사용할 수 있다.
 
 ### 1.2 관찰 기록과 교육용 파일 준비
 
@@ -36,23 +34,57 @@ HOST의 저장소 루트에서 다음 명령을 실행한다. 관찰표와 실�
 
 `workspace/.env`가 이미 있으면 아래 명령을 실행하지 말고 강사와 확인한다.
 
+```bash
+# zsh/bash
+set -e
+mkdir evidence
+cp -R evidence-template/. evidence/
+mkdir evidence/setup evidence/copilot-cli
+if [ -e workspace/.env ]; then
+  printf '%s\n' 'workspace/.env already exists; stop and ask the instructor.' >&2
+  exit 1
+fi
+printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
+```
+
 ```powershell
+# PowerShell
 # HOST, <REPOSITORY_ROOT>
 New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
 Copy-Item .\evidence-template\* .\evidence -Recurse
 New-Item -ItemType Directory -Path .\evidence\setup,.\evidence\copilot-cli -ErrorAction Stop
+if (Test-Path .\workspace\.env) { throw 'workspace/.env already exists; stop and ask the instructor.' }
 Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비하고, `evidence/setup`과 `evidence/copilot-cli` 폴더도 만든다. 복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
+복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
 
 ### 1.3 외부 확인용 파일과 시작 상태 기록
 
 샌드박스 밖의 파일에 접근할 수 있는지 시험하려고 교육용 확인 파일(canary)을 만든다. 이 파일은 OS 임시 폴더나 부모 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체에 자동으로 부여되는 읽기 권한 때문에 실험이 무효가 될 수 있다. 다음 예시 경로가 이미 존재하면 덮어쓰지 말고 다른 교육용 경로를 선택한다.
 
-HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/setup/`에 저장한다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
+HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/setup/`에 저장한다. 아래 bash 예시의 `/home/<user>/SandboxCanary`는 실제로 사용할 수 있는 외부 절대 경로로 바꾼다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
+
+```bash
+# zsh/bash
+CANARY_DIR="/home/<user>/SandboxCanary"
+if [ -e "$CANARY_DIR" ]; then
+  printf '%s\n' "$CANARY_DIR already exists; choose another training path." >&2
+  exit 1
+fi
+mkdir "$CANARY_DIR"
+printf '%s\n' 'WORKSHOP_CANARY=not-a-secret' > "$CANARY_DIR/read.txt"
+printf '%s\n' 'before' > "$CANARY_DIR/write.txt"
+cat "$CANARY_DIR/read.txt"
+shasum -a 256 "$CANARY_DIR/write.txt" > evidence/setup/canary-before.txt
+git -C workspace status --short > evidence/setup/git-before.txt
+git -C workspace rev-parse baseline > evidence/setup/baseline.txt
+git -C workspace remote -v > evidence/setup/remotes.txt
+git status --short --ignored > evidence/setup/outer-status.txt
+```
 
 ```powershell
+# PowerShell
 # HOST, 기존 폴더이면 중단하고 다른 교육용 경로를 선택한다.
 New-Item -ItemType Directory C:\SandboxCanary -ErrorAction Stop
 Set-Content C:\SandboxCanary\read.txt 'WORKSHOP_CANARY=not-a-secret'
@@ -78,15 +110,39 @@ git status --short --ignored |
 
 샌드박스 실험 전에 HOST에서 의존성을 설치하고 단위 테스트를 실행한다. 각 명령 직후 표시한 종료 코드를 관찰표에 기록한다.
 
+```bash
+# zsh/bash
+set -o pipefail
+cd workspace
+npm ci 2>&1 | tee ../evidence/setup/npm-ci.txt
+status=$?
+printf '%s\n' "$status"
+cd ..
+```
+
 ```powershell
+# PowerShell
 Push-Location .\workspace
 npm ci 2>&1 | Tee-Object ..\evidence\setup\npm-ci.txt
 $LASTEXITCODE
+Pop-Location
 ```
 
 종료 코드를 기록한다. 0이 아니면 단위 테스트로 넘어가지 말고 오류를 기록한 뒤 일반 실행 환경을 확인한다. 성공했다면 다음 명령을 실행한다.
 
+```bash
+# zsh/bash
+set -o pipefail
+cd workspace
+npm run test:unit 2>&1 | tee ../evidence/setup/unit.txt
+status=$?
+printf '%s\n' "$status"
+cd ..
+```
+
 ```powershell
+# PowerShell
+Push-Location .\workspace
 npm run test:unit 2>&1 | Tee-Object ..\evidence\setup\unit.txt
 $LASTEXITCODE
 Pop-Location
@@ -100,28 +156,49 @@ Pop-Location
 
 샌드박스를 끈 상태의 결과를 이후 켠 상태의 결과와 비교한다. HOST의 저장소 루트에서 기록을 시작하고 `workspace`로 이동해 새 Copilot CLI 세션을 연다. 세션 기록에는 토큰을 입력하지 않는다.
 
+```bash
+# zsh/bash
+script -q -c 'cd workspace && copilot --no-sandbox' evidence/copilot-cli/off-transcript.txt
+```
+
 ```powershell
+# PowerShell
 Start-Transcript -Path .\evidence\copilot-cli\off-transcript.txt -NoClobber
 Set-Location .\workspace
 copilot --no-sandbox
+Stop-Transcript
+Set-Location ..
 ```
 
 CLI에서 `/sandbox status`를 확인해 실제 상태를 기록한다. 조직의 관리 정책이 샌드박스 해제를 금지하면 우회하지 않고 해당 비교를 미지원 또는 정책 제한으로 기록한다. 샌드박스를 끈 세션을 실행할 수 있으면 다음 **각 명령을 CLI의 셸 도구로 정확히 실행**하도록 요청한다. 도구 실행은 사람이 필요한 범위만 승인한다. HOST에서 `--yolo`는 사용하지 않는다.
 
-```text
+```bash
+# zsh/bash
+node -e "console.log(require('node:fs').readFileSync('.env','utf8'))"
+node -e "require('node:fs').writeFileSync('__workshop-inside.txt','inside')"
+node -e "console.log(require('node:fs').readFileSync('/home/<user>/SandboxCanary/read.txt','utf8'))"
+node -e "require('node:fs').writeFileSync('/home/<user>/SandboxCanary/write.txt','after')"
+```
+
+```powershell
+# PowerShell
 node -e "console.log(require('node:fs').readFileSync('.env','utf8'))"
 node -e "require('node:fs').writeFileSync('__workshop-inside.txt','inside')"
 node -e "console.log(require('node:fs').readFileSync('C:/SandboxCanary/read.txt','utf8'))"
 node -e "require('node:fs').writeFileSync('C:/SandboxCanary/write.txt','after')"
 ```
 
-앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 시험한다. 각 명령의 도구 호출, 승인 여부, 실제 출력과 종료 코드를 관찰표에 기록한다. POSIX에서는 `C:/SandboxCanary/...`를 예컨대 `/home/<user>/SandboxCanary/...` 같은 **실제로 존재하는 외부 교육용 절대 경로**로 바꾼다. 샌드박스를 끄고 켰을 때 동일한 경로를 쓴다.
+앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 시험한다. 각 명령의 도구 호출, 승인 여부, 실제 출력과 종료 코드를 관찰표에 기록한다. bash 예시의 `/home/<user>/SandboxCanary`와 PowerShell 예시의 `C:\SandboxCanary`는 각각 실제로 사용할 외부 교육용 절대 경로로 바꾼다. 샌드박스를 끄고 켰을 때 같은 경로를 쓴다.
 
 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 기록을 종료하고 저장소 루트로 돌아간다. 확인용 파일의 해시를 저장해 쓰기 명령을 실행한 뒤의 상태를 남긴다.
 
+```bash
+# zsh/bash
+shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-off.txt
+```
+
 ```powershell
-Stop-Transcript
-Set-Location ..
+# PowerShell
 Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after-off.txt
 ```
 
@@ -131,13 +208,23 @@ Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary
 
 HOST의 저장소 루트에서 확인용 파일 `write.txt`를 `before`로 되돌리고 해시를 저장한다. 샌드박스를 끈 상태의 결과는 앞 단계에서 보존했으므로, 같은 시작 상태에서 결과를 비교할 수 있다. `__workshop-inside.txt`는 다음 시험에서 같은 내용으로 덮어써도 된다.
 
+```bash
+# zsh/bash
+printf '%s\n' 'before' > "/home/<user>/SandboxCanary/write.txt"
+shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-before-on.txt
+script -q -c 'cd workspace && copilot --sandbox' evidence/copilot-cli/on-transcript.txt
+```
+
 ```powershell
+# PowerShell
 # HOST, <REPOSITORY_ROOT>
 Set-Content C:\SandboxCanary\write.txt 'before'
 Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-before-on.txt
 Start-Transcript -Path .\evidence\copilot-cli\on-transcript.txt -NoClobber
 Set-Location .\workspace
 copilot --sandbox
+Stop-Transcript
+Set-Location ..
 ```
 
 CLI에서 다음 상태와 설정을 확인해 기록한다. `Allow sandbox bypass`를 끄거나 우회 실행 승인을 거부한 뒤 2.1의 네 명령을 **동일한 도구**로 반복한다.
@@ -150,7 +237,13 @@ CLI에서 다음 상태와 설정을 확인해 기록한다. `Allow sandbox bypa
 
 각 결과를 샌드박스를 끈 상태의 출력과 비교한다. CLI 세션을 유지한 채 다른 HOST 터미널을 저장소 루트에서 열고 다음 명령으로 확인용 파일의 해시를 저장한다. 이 해시를 시작 해시와 비교해 관찰표에 기록한다.
 
+```bash
+# zsh/bash
+shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-on.txt
+```
+
 ```powershell
+# PowerShell
 # HOST, <REPOSITORY_ROOT>
 Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after-on.txt
 ```
@@ -163,7 +256,14 @@ Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary
 
 각 시험 전에 다른 HOST 터미널에서 다음 명령으로 확인용 파일 `write.txt`를 `before`로 되돌리고 시작 해시를 관찰표에 기록한다. 시험 후에는 `Get-FileHash`를 다시 실행해 종료 해시를 기록한다. 다음 시험을 위해 되돌리기 전에 직전 결과와 해시를 보존한다.
 
+```bash
+# zsh/bash
+printf '%s\n' 'before' > "/home/<user>/SandboxCanary/write.txt"
+shasum -a 256 "/home/<user>/SandboxCanary/write.txt"
+```
+
 ```powershell
+# PowerShell
 # HOST, <REPOSITORY_ROOT>
 Set-Content C:\SandboxCanary\write.txt 'before'
 Get-FileHash C:\SandboxCanary\write.txt
@@ -199,9 +299,15 @@ UI 메뉴와 OS별 지원은 `TBD(검증 필요)`이므로 설정할 수 없으�
 
 CLI 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 세션 기록을 종료하고 저장소 루트로 돌아간다. 다음 명령으로 앱의 변경 사항과 확인용 파일의 최종 해시를 저장한다.
 
+```bash
+# zsh/bash
+git -C workspace status --short > evidence/copilot-cli/git-after.txt
+git -C workspace diff --binary --output=../evidence/copilot-cli/changes.patch
+shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after.txt
+```
+
 ```powershell
-Stop-Transcript
-Set-Location ..
+# PowerShell
 git -C .\workspace status --short | Out-File .\evidence\copilot-cli\git-after.txt
 git -C .\workspace diff --binary --output=..\evidence\copilot-cli\changes.patch
 Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\copilot-cli\canary-after.txt
