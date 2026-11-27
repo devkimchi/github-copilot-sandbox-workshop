@@ -1,16 +1,32 @@
 # 2. Copilot CLI 샌드박스
 
-## 1. 목표와 시간
+## 목표
 
-Lab 0은 10분, Lab 1은 30분이다. 같은 명령을 반복하고 정책과 상태로 차이를 설명한다. **이 문서의 모든 명령과 기대 결과는 미검증**이다. 강사 리허설 후에만 배포본으로 사용한다. [출처](sources.md), [개요](../README.md).
+같은 파일 접근 명령을 Copilot CLI 샌드박스 OFF, ON과 최소 권한 부여 상태에서 실행해 결과를 비교한다. 네트워크와 개발 도구의 실행 결과도 정책과 함께 관찰하고 기록한다.
 
-## 2. 실행 위치
+**이 문서의 모든 명령과 기대 결과는 미검증**이다. 강사 리허설 후에만 배포본으로 사용한다. [출처](sources.md), [개요](../README.md).
 
-준비와 원자료 저장은 **HOST**, 접근 제한 확인과 과제 실행은 **COPILOT CLI가 호출한 도구**에서 한다. HOST에서 실행한 probe를 sandbox 차단 증거로 기록하지 않는다. 예시는 PowerShell이다. macOS/Linux는 경로를 실제 절대 경로로 바꾸고 `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 쓴다.
+## 실행 위치
 
-## 3. 사전 조건과 현재 상태
+준비와 원자료 저장은 **HOST**에서, 접근 제한 확인과 과제 실행은 **COPILOT CLI가 호출한 도구**에서 한다. HOST의 실행 결과만으로 샌드박스 차단을 판정하지 않는다.
 
-`<REPOSITORY_ROOT>`는 템플릿으로 만든 저장소를 클론한 폴더의 루트다. 이 안의 `workspace/`는 실습 앱을 담은 별도의 Git 저장소다. [사전 준비의 샘플 다운로드](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용하며 추출 스크립트를 다시 실행하지 않는다. Node.js 24.x, Git과 Copilot 지원 OS를 확인한다. `workspace`에는 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소는 없어야 한다.
+## 1. 실습 준비와 기준선 확인 (Lab 0)
+
+### 1.1 준비 상태 확인
+
+`<REPOSITORY_ROOT>`는 템플릿으로 만든 저장소를 클론한 폴더의 루트다. 이 안의 `workspace/`는 실습 앱을 담은 별도의 Git 저장소다.
+
+1. [사전 준비](00-setup.md#샘플-다운로드하기)를 마친 `workspace`를 사용한다. 추출 스크립트는 다시 실행하지 않는다.
+2. Node.js 24.x, Git과 Copilot CLI 지원 OS를 확인한다. `workspace`에 고정 SHA의 앱 파일과 `baseline` 태그가 있고 원격 저장소가 없는지도 확인한다.
+3. 교육용이 아닌 `.env`나 기존 기록이 없는지 확인한다. `workspace/.env`가 이미 있으면 덮어쓰지 말고 강사와 확인한다. [실습 공통 기준](01-workshop-guidelines.md)의 안전 수칙도 확인한다.
+
+이 문서의 셸 명령은 PowerShell 예시다. macOS와 Linux에서는 사용하는 셸에 맞게 명령을 바꾸고, 모든 PowerShell 명령과 Node 명령의 canary 경로를 실제 외부 절대 경로로 바꾼다. `Get-FileHash` 대신 `shasum -a 256` 또는 `sha256sum`을 사용할 수 있다.
+
+### 1.2 관찰 기록과 교육용 파일 준비
+
+`evidence`가 이미 있으면 기존 기록을 덮어쓰지 않는다. 강사와 별도 기록 경로를 정하고 이 문서의 `evidence` 경로를 해당 경로로 바꿔 사용한다.
+
+HOST의 저장소 루트에서 다음 명령을 실행한다. 관찰표와 실습별 원자료를 담을 폴더를 만들고, 실제 비밀이 아닌 더미 `.env`를 준비한다.
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
@@ -20,9 +36,13 @@ New-Item -ItemType Directory -Path .\evidence\lab-0,.\evidence\lab-1 -ErrorActio
 Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-기존 `evidence`가 있으면 위 생성/복사를 반복하지 않고 새 실습 폴더를 고른다. POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비한다.
+POSIX에서는 `mkdir evidence`와 `cp -R evidence-template/. evidence/`로 관찰 기록 폴더를 준비하고, `lab-0`과 `lab-1` 폴더도 만든다. 복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
 
-canary는 OS 임시 폴더나 부모 워크숍 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체 읽기 자동 grant 때문에 실험이 무효가 될 수 있다.
+### 1.3 외부 canary와 시작 상태 기록
+
+canary는 샌드박스 밖의 파일 접근을 시험하는 교육용 파일이다. OS 임시 폴더나 부모 저장소 안에 두지 않는다. 임시 폴더와 저장소 전체 읽기 자동 grant 때문에 실험이 무효가 될 수 있다. 다음 예시 경로가 이미 존재하면 덮어쓰지 말고 다른 교육용 경로를 선택한다.
+
+HOST에서 canary를 만들고, 시작 전 파일 해시와 Git 상태를 `evidence/lab-0/`에 저장한다. 이 파일들은 이후 변경 여부를 비교하는 기준이다.
 
 ```powershell
 # HOST, 기존 폴더이면 중단하고 다른 교육용 경로를 선택한다.
@@ -42,24 +62,35 @@ git status --short --ignored |
   Out-File .\evidence\lab-0\outer-status.txt
 ```
 
+`baseline.txt`에서 기준 커밋을 확인하고 `remotes.txt`에 원격 저장소가 없는지 확인한다. `git-before.txt`와 `outer-status.txt`는 나중에 변경 사항과 비교할 수 있도록 보관한다.
+
 `workspace`의 가장 가까운 Git 루트만 repository 범위로 판단하는지는 미확인이다. sandbox ON에서 부모의 `checkpoints/`가 읽히면 강사에게 알린다. **과제 해결을 위해 checkpoint나 완성 예시를 Copilot에 읽히지 않는다.** 단순 프롬프트 금지는 보안 통제가 아니다.
 
-HOST에서 sandbox를 켜기 **전** 기준선을 확인한다. 실패하면 일반 환경부터 해결한다.
+### 1.4 HOST에서 앱 기준선 확인
+
+샌드박스 실험 전에 HOST에서 의존성을 설치하고 단위 테스트를 실행한다. 각 명령 직후 표시한 종료 코드를 관찰표에 기록한다.
 
 ```powershell
 Push-Location .\workspace
 npm ci 2>&1 | Tee-Object ..\evidence\lab-0\npm-ci.txt
+$LASTEXITCODE
+```
+
+종료 코드를 기록한다. 0이 아니면 단위 테스트로 넘어가지 말고 오류를 기록한 뒤 일반 실행 환경을 확인한다. 성공했다면 다음 명령을 실행한다.
+
+```powershell
 npm run test:unit 2>&1 | Tee-Object ..\evidence\lab-0\unit.txt
+$LASTEXITCODE
 Pop-Location
 ```
 
-각 명령 직후 `$LASTEXITCODE`도 별도 기록한다. `.env`가 Git에서 무시되어도 파일은 존재하고 읽힐 수 있다.
+기준선이 실패하면 오류와 종료 코드를 기록하고 일반 실행 환경부터 확인한다. `.env`가 Git에서 무시되어도 파일은 존재하고 읽힐 수 있다.
 
-## 4. 실행 명령과 공통 프롬프트
+## 2. 샌드박스 상태와 접근 권한 비교 (Lab 1)
 
-### A. OFF, 5분
+### 2.1 샌드박스 OFF에서 실행
 
-HOST에서 기록을 시작한 뒤 앱 루트에서 새 세션을 연다. transcript에는 토큰을 입력하지 않는다.
+OFF 상태의 결과를 이후 ON 상태와 비교한다. HOST의 저장소 루트에서 기록을 시작하고 `workspace`로 이동해 새 Copilot CLI 세션을 연다. transcript에는 토큰을 입력하지 않는다.
 
 ```powershell
 Start-Transcript -Path .\evidence\lab-1\off-transcript.txt -NoClobber
@@ -67,7 +98,7 @@ Set-Location .\workspace
 copilot --no-sandbox
 ```
 
-CLI에서 `/sandbox status`를 확인하고 다음 **각 명령을 CLI의 셸 도구로 정확히 실행**하도록 요청한다. 도구 승인은 필요한 범위만 사람이 승인한다. host `--yolo`는 사용하지 않는다.
+CLI에서 `/sandbox status`를 확인해 실제 상태를 기록한다. 조직 managed policy가 OFF를 금지하면 우회하지 않고 해당 비교를 미지원 또는 정책 제한으로 기록한다. OFF 세션을 실행할 수 있으면 다음 **각 명령을 CLI의 셸 도구로 정확히 실행**하도록 요청한다. 도구 승인은 필요한 범위만 사람이 승인한다. HOST에서 `--yolo`는 사용하지 않는다.
 
 ```text
 node -e "console.log(require('node:fs').readFileSync('.env','utf8'))"
@@ -76,24 +107,32 @@ node -e "console.log(require('node:fs').readFileSync('C:/SandboxCanary/read.txt'
 node -e "require('node:fs').writeFileSync('C:/SandboxCanary/write.txt','after')"
 ```
 
-POSIX에서는 `C:/SandboxCanary/...`를 예컨대 `/home/<user>/SandboxCanary/...` 같은 **실제 존재하는 외부 교육용 절대 경로**로 바꾼다. OFF/ON에서 동일한 문자열을 쓴다.
+앞의 두 명령은 `workspace` 안의 더미 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 canary 읽기와 쓰기를 시험한다. 각 명령의 도구 호출, 승인 여부, 실제 출력과 종료 코드를 관찰표에 기록한다. POSIX에서는 `C:/SandboxCanary/...`를 예컨대 `/home/<user>/SandboxCanary/...` 같은 **실제 존재하는 외부 교육용 절대 경로**로 바꾼다. OFF와 ON에서 동일한 문자열을 쓴다.
 
-세션을 종료한 뒤 HOST에서 `Stop-Transcript`를 실행한다. transcript에 CLI의 화면이 완전히 남지 않으면 실제 도구 stdout/stderr와 정책 화면을 복사해 별도 텍스트로 저장하고, 빠진 부분을 표시한다. 모델이 작성한 설명으로 빈 실행 로그를 채우지 않는다.
-
-### B. ON, 8분
-
-HOST에서 canary `write.txt`를 `before`로 되돌리고 hash를 기록한다. 각 시험 전 상태가 같아야 한다. `__workshop-inside.txt`는 다음 시험에서 같은 내용으로 덮어써도 된다.
+세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 기록을 종료하고 저장소 루트로 돌아간다. canary 해시를 저장해 OFF에서 쓰기 명령을 실행한 뒤의 상태를 남긴다.
 
 ```powershell
-# HOST, workspace에서 한 단계 위로 이동한 뒤
+Stop-Transcript
 Set-Location ..
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after-off.txt
+```
+
+transcript에 CLI 화면이 완전히 남지 않으면 실제 도구 stdout/stderr와 정책 화면을 별도 텍스트로 저장하고 빠진 부분을 표시한다. 모델이 작성한 설명으로 빈 실행 로그를 채우지 않는다.
+
+### 2.2 샌드박스 ON에서 같은 명령 반복
+
+HOST의 저장소 루트에서 canary `write.txt`를 `before`로 되돌리고 해시를 저장한다. OFF 결과는 앞 단계에서 보존했으므로 ON 시험은 같은 시작 상태에서 비교할 수 있다. `__workshop-inside.txt`는 다음 시험에서 같은 내용으로 덮어써도 된다.
+
+```powershell
+# HOST, <REPOSITORY_ROOT>
 Set-Content C:\SandboxCanary\write.txt 'before'
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-before-on.txt
 Start-Transcript -Path .\evidence\lab-1\on-transcript.txt -NoClobber
 Set-Location .\workspace
 copilot --sandbox
 ```
 
-CLI에서 다음을 기록하고 A의 네 명령을 **동일한 도구**로 반복한다.
+CLI에서 다음 상태와 설정을 확인해 기록한다. `Allow sandbox bypass`를 끄거나 우회 실행 승인을 거부한 뒤 2.1의 네 명령을 **동일한 도구**로 반복한다.
 
 ```text
 /sandbox status
@@ -101,21 +140,44 @@ CLI에서 다음을 기록하고 A의 네 명령을 **동일한 도구**로 반�
 /sandbox config
 ```
 
-`Allow sandbox bypass`를 끄거나 우회 실행 승인을 거부한다. 조직 managed policy가 OFF를 금지하면 우회하지 않고 해당 비교를 미지원/정책 제한으로 기록한다. `/sandbox policy npm ci`, `/sandbox policy npm run test:e2e`는 정책 예측이며 실제 실행 로그가 아니다.
+각 결과를 OFF의 출력과 비교한다. CLI 세션을 유지한 채 다른 HOST 터미널을 저장소 루트에서 열고 다음 명령으로 canary 해시를 저장한다. 이 해시를 시작 해시와 비교해 관찰표에 기록한다.
 
-### C. 최소 grant, 6분
+```powershell
+# HOST, <REPOSITORY_ROOT>
+Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after-on.txt
+```
 
-`/sandbox config`에서 정확한 UI 표기를 확인해 외부 canary 폴더 하나만 Read-Only로 허용한다. `/sandbox policy`를 저장하고 같은 읽기/쓰기 명령을 반복한다. 이어 쓰기가 필요한 교육용 파일/폴더에만 Read/Write를 부여하고 반복한다. UI 메뉴와 OS별 지원은 `TBD(검증 필요)`다.
+`/sandbox policy npm ci`, `/sandbox policy npm run test:e2e`는 정책 예측이며 실제 실행 로그가 아니다.
+
+### 2.3 필요한 범위만 권한 부여
+
+외부 파일에 부여한 권한에 따라 결과가 달라지는지 확인한다. 다음 단계마다 실제 도구 출력과 종료 코드, 유효 정책, canary의 전후 해시를 관찰표에 기록한다.
+
+각 시험 전에 다른 HOST 터미널에서 다음 명령으로 canary `write.txt`를 `before`로 되돌리고 시작 해시를 관찰표에 기록한다. 시험 후에는 `Get-FileHash`를 다시 실행해 종료 해시를 기록한다. 다음 시험을 위해 되돌리기 전에 직전 결과와 해시를 보존한다.
+
+```powershell
+# HOST, <REPOSITORY_ROOT>
+Set-Content C:\SandboxCanary\write.txt 'before'
+Get-FileHash C:\SandboxCanary\write.txt
+```
+
+1. `/sandbox config`에서 정확한 UI 표기를 확인하고 외부 canary 폴더 하나만 Read-Only로 허용한다.
+2. `/sandbox policy` 화면을 원자료로 저장하고 2.1의 외부 canary 읽기와 쓰기 명령을 반복한다. 읽기와 쓰기가 각각 어떻게 처리됐는지 ON 결과와 비교한다.
+3. 쓰기가 필요한 교육용 파일 또는 폴더에만 Read/Write를 부여한다. 유효 정책 화면을 다시 저장하고 같은 읽기와 쓰기 명령을 반복한다.
+
+UI 메뉴와 OS별 지원은 `TBD(검증 필요)`이므로 설정할 수 없으면 추측하지 말고 그 상태를 기록한다.
 
 명시적 Denied 실험에는 **이미 존재하는** dummy 파일만 쓴다. Denied가 allow보다 우선하므로 교육용 deny를 제거한 뒤 grant를 설정한다. 없는 denied 경로가 디렉터리로 생성될 수 있다는 공식 주의사항을 확인한다.
 
-### D. 네트워크와 개발 도구, 6분
+### 2.4 네트워크와 개발 도구 확인
 
-CLI 도구에서 `curl -I https://example.com`을 실행하고 출력과 종료 코드를 남긴다(Windows에서는 `curl.exe`). 특정 공개 호스트만 deny한 뒤 같은 명령과 유효 정책을 기록한다. 파일이나 canary 내용을 전송하지 않는다. 모델 API 전체를 막지 않는다.
+파일 접근과 별도로 네트워크 요청의 결과를 살펴본다. CLI 도구에서 `curl -I https://example.com`을 실행하고 출력과 종료 코드를 남긴다(Windows에서는 `curl.exe`). `example.com`만 deny한 뒤 같은 명령을 반복하고 유효 정책과 결과를 기록해 비교한다. 파일이나 canary 내용을 전송하지 않는다. 모델 API 전체를 막지 않는다.
 
-그다음 CLI에 `npm run test:unit`, `npm run build`, `npm run test:e2e`를 순서대로 실행하도록 요청한다. E2E의 실패를 browser 미설치, cache 접근 차단, localhost 차단, 일반 build 오류로 분류한다. Windows의 `Allow local network`는 proxy/credential masking과 private-network 접근에 영향을 줄 수 있다. 한 `curl` 결과를 모든 프로그램의 차단 보장으로 일반화하지 않는다.
+그다음 CLI에 `npm run test:unit`, `npm run build`, `npm run test:e2e`를 순서대로 실행하도록 요청하고 각 출력과 종료 코드를 기록한다. E2E가 실패하면 browser 미설치, cache 접근 차단, localhost 차단, 일반 build 오류 등 확인된 원인을 기록한다. 근거가 부족하면 미확정으로 남긴다. Windows의 `Allow local network`는 proxy/credential masking과 private-network 접근에 영향을 줄 수 있다. 한 `curl` 결과를 모든 프로그램의 차단 보장으로 일반화하지 않는다.
 
-공통 코딩 작업은 별도로 준비한 05번 원문을 아래 프롬프트 뒤에 그대로 붙인다. 30분 안에 구현을 끝내는 것보다 접근 허용과 차단 결과 관찰을 우선하며 시간이 부족하면 강사가 복구 경로를 안내한다.
+### 2.5 공통 과제 실행
+
+앞에서 확인한 정책이 실제 코딩 작업에 어떤 영향을 주는지 관찰한다. 사람이 [05번 과제](../tasks/05-catalog-summary.md)의 `BEGIN ORIGINAL`과 `END ORIGINAL` 사이 원문을 준비해 아래 프롬프트 뒤에 그대로 붙이고 CLI에 요청한다. 구현 완료 여부와 테스트 결과를 기록하며, 접근 허용과 차단 결과 관찰을 우선한다. 진행하지 못하면 그 상태를 기록하고 강사에게 복구 경로를 확인한다.
 
 ```text
 아래 과제 원문의 수락 조건을 구현한다. npm run test:unit을 실행하고 결과와
@@ -125,43 +187,46 @@ CLI 도구에서 `curl -I https://example.com`을 실행하고 출력과 종료 
 [사람이 tasks/05-catalog-summary.md의 원문 부분만 여기에 붙인다]
 ```
 
-### E. 설명과 복구, 5분
+### 2.6 변경 사항과 원자료 보관
 
-세션 종료 후 `Stop-Transcript`를 실행한다. 다음 관찰 명령은 **저장소 루트**에서 실행해 출력 파일을 보관한다.
+CLI 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 transcript를 종료하고 저장소 루트로 돌아간다. 다음 명령으로 앱의 변경 사항과 최종 canary 해시를 저장한다.
 
 ```powershell
+Stop-Transcript
+Set-Location ..
 git -C .\workspace status --short | Out-File .\evidence\lab-1\git-after.txt
 git -C .\workspace diff --binary --output=..\evidence\lab-1\changes.patch
 Get-FileHash C:\SandboxCanary\write.txt | Out-File .\evidence\lab-1\canary-after.txt
 ```
 
-`--output`은 Git의 `-C` 기준 상대 경로다. 원자료 파일에 비밀이 없는지 사람이 검토한다.
+`--output`은 Git의 `-C` 기준 상대 경로다. `changes.patch`에는 추적되지 않은 새 파일이 포함되지 않으므로 `git-after.txt`에서도 새 파일을 확인하고 필요한 내용은 별도로 보존한다. 시작 상태와 최종 상태를 비교하고 원자료 파일에 비밀이 없는지 사람이 검토한다.
 
-## 5. 관찰 항목
+## 3. 관찰 결과 정리
 
-OS/CLI 버전, 시작 CWD, 기준 commit, sandbox status, 유효 정책, 실제 호출 도구, 승인/우회 여부, stdout/stderr, 종료 코드와 파일 hash를 기록한다. 시간 초과로 건너뛴 작업도 숨기지 않는다.
+각 실험을 마칠 때마다 `evidence/observation.md`의 `Lab별 관찰`에 행을 추가한다. OS/CLI 버전, 시작 CWD, 기준 commit, sandbox status, 유효 정책, 실제 호출 도구, 승인/우회 여부, stdout/stderr, 종료 코드와 파일 hash를 기록한다. 근거 파일 경로와 판정 이유도 적는다. 시간 초과로 건너뛴 작업은 미실행으로 남긴다.
 
-## 6. 기대와 실제 결과
+다음 표는 비교할 항목과 **미검증 기대 결과**다. 실제 결과는 이 표가 아니라 참가자의 관찰표에 적는다.
 
-| 시험 | 기대 결과(모두 미검증) | 실제 결과 | 근거 파일 |
-| --- | --- | --- | --- |
-| workspace 파일과 dummy `.env` | 기본 CWD 정책이면 쓰기/읽기 가능 | 참가자 작성 | 참가자 작성 |
-| OFF 외부 canary | OS 사용자 권한 범위에서 접근 가능 | 참가자 작성 | 참가자 작성 |
-| ON 외부 canary | 기존 grant 밖이면 차단 | 참가자 작성 | 참가자 작성 |
-| Read-Only 후 read/write | 읽기만 허용 | 참가자 작성 | 참가자 작성 |
-| 최소 Read/Write 후 write | 명시한 범위만 허용 | 참가자 작성 | 참가자 작성 |
-| 네트워크와 E2E | 실제 정책과 오류를 연결 | 참가자 작성 | 참가자 작성 |
+| 시험 | 기대 결과(모두 미검증) |
+| --- | --- |
+| workspace 파일과 dummy `.env` | 기본 CWD 정책이면 쓰기/읽기 가능 |
+| OFF 외부 canary | OS 사용자 권한 범위에서 접근 가능 |
+| ON 외부 canary | 기존 grant 밖이면 차단 |
+| Read-Only 후 read/write | 읽기만 허용 |
+| 최소 Read/Write 후 write | 명시한 범위만 허용 |
+| 네트워크와 E2E | 실제 정책과 오류를 연결 |
 
-참가자가 `evidence/observation.md`에 직접 판정한다. Copilot의 "할 수 없다"는 문장은 차단 증거가 아니다.
+Copilot의 "할 수 없다"는 문장은 차단 증거가 아니다. 실제 도구 호출과 정책 기록을 함께 확인한다.
 
-## 7. 실패가 정상인 경우
+## 4. 실패 원인 확인
 
-정책 차단과 OS 미지원을 구분한다. Node 미설치, 일반 npm 오류, proxy를 따르지 않는 프로그램의 요청은 다른 원인이다. 자동 grant 안의 canary가 읽혔다면 실험 배치부터 수정한다. 전체 홈 접근 허용이나 sandbox OFF로 정상화하지 않는다.
+실패한 명령의 출력과 유효 정책을 대조해 정책 차단과 OS 미지원을 구분한다. Node 미설치, 일반 npm 오류, proxy를 따르지 않는 프로그램의 요청은 다른 원인일 수 있다. 근거가 부족하면 원인을 확정하지 않는다. 자동 grant 안의 canary가 읽혔다면 실험 배치부터 확인한다. 전체 홈 접근 허용이나 sandbox OFF로 정상화하지 않는다.
 
-## 8. 복구와 checkpoint
+## 5. 복구와 checkpoint
 
-교육용 `__workshop-inside.txt`와 canary 파일만 대상으로 복구한다. 전체 저장소를 임의 초기화하지 않는다. 공통 과제 복구는 `checkpoints/README.md`를 사람이 읽는다. 현재 패치는 리허설 전이므로 제공하지 않는다. 다음 Lab은 별도 clean workspace를 사용해 계속할 수 있다.
+복구가 필요하면 먼저 원자료를 보존하고 교육용 `__workshop-inside.txt`와 자신이 만든 canary 파일만 대상으로 삼는다. 전체 저장소를 임의 초기화하지 않는다. 공통 과제 복구는 사람이 [checkpoint 안내](../checkpoints/README.md)를 읽고 수행한다. 현재 패치는 리허설 전이므로 제공하지 않는다. 다음 Lab은 별도 clean workspace를 사용해 계속할 수 있다.
 
-## 9. 정리
+## 6. 정리
 
-추가한 교육용 rule만 제거하고 시작 전 개인 설정과 비교한다. `/sandbox enable`과 `/sandbox disable`은 개인 설정에 저장될 수 있으므로 이 실습은 세션 flag를 우선한다. 조직 정책은 변경하지 않는다. 원자료를 보존한 뒤 자신이 만든 canary의 **개별 파일**만 제거한다. 다른 파일이 있는 폴더를 재귀 삭제하지 않는다.
+1. 추가한 교육용 rule만 제거하고 일시적으로 바꾼 개인 설정을 시작 전 상태로 되돌린다. `/sandbox enable`과 `/sandbox disable`은 개인 설정에 저장될 수 있으므로 이 실습은 세션 flag를 우선한다. 조직 정책은 변경하지 않는다.
+2. 관찰표와 원자료를 보존한 뒤 자신이 만든 canary의 **개별 파일**만 제거한다. 다른 파일이 있는 폴더를 재귀 삭제하지 않는다.
