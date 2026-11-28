@@ -45,9 +45,7 @@
   git ls-files -- '*.ps1' | ForEach-Object {
     $tokens = $null
     $errors = $null
-    [System.Management.Automation.Language.Parser]::ParseFile(
-      (Join-Path $PWD $_), [ref]$tokens, [ref]$errors
-    ) | Out-Null
+    [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD $_), [ref]$tokens, [ref]$errors) | Out-Null
     if ($errors) { throw ($errors | Out-String) }
   }
   ```

@@ -133,12 +133,9 @@ aca sandbox shell --id <SANDBOX_ID>
 HOST PowerShell에서 실제 경로와 ID를 대입해 저장한다.
 
 ```powershell
-aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/workspace/evidence/summary.md |
-  Out-File ./evidence/lab-3/remote-summary.txt
-aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/result.patch |
-  Out-File ./evidence/lab-3/remote-diff-review.txt
-aca sandbox egress decisions --id <SANDBOX_ID> -o json |
-  Out-File ./evidence/lab-3/egress-decisions.json
+aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/workspace/evidence/summary.md | Out-File ./evidence/lab-3/remote-summary.txt
+aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/result.patch | Out-File ./evidence/lab-3/remote-diff-review.txt
+aca sandbox egress decisions --id <SANDBOX_ID> -o json | Out-File ./evidence/lab-3/egress-decisions.json
 ```
 
 PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 diff는 **검토용 텍스트**이지 바이트 보존 패치가 아니다. host/remote 파일 hash 일치를 주장하지 않는다. lifecycle은 remote 동일 파일끼리 비교한다.

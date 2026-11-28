@@ -92,16 +92,11 @@ New-Item -ItemType Directory -Path $canaryDir -Force | Out-Null
 Set-Content "$HOME/sandbox-canary/read.txt" 'WORKSHOP_CANARY=not-a-secret'
 Set-Content "$HOME/sandbox-canary/write.txt" 'before'
 Get-Content "$HOME/sandbox-canary/read.txt"
-Get-FileHash "$HOME/sandbox-canary/write.txt" |
-  Out-File ./evidence/setup/canary-before.txt
-git -C ./workspace status --short |
-  Out-File ./evidence/setup/git-before.txt
-git -C ./workspace rev-parse baseline |
-  Out-File ./evidence/setup/baseline.txt
-git -C ./workspace remote -v |
-  Out-File ./evidence/setup/remotes.txt
-git status --short --ignored |
-  Out-File ./evidence/setup/outer-status.txt
+Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/setup/canary-before.txt
+git -C ./workspace status --short | Out-File ./evidence/setup/git-before.txt
+git -C ./workspace rev-parse baseline | Out-File ./evidence/setup/baseline.txt
+git -C ./workspace remote -v | Out-File ./evidence/setup/remotes.txt
+git status --short --ignored | Out-File ./evidence/setup/outer-status.txt
 ```
 
 `baseline.txt`에서 기준 커밋을 확인하고 `remotes.txt`에 원격 저장소가 없는지 확인한다. `git-before.txt`와 `outer-status.txt`는 나중에 변경 사항과 비교할 수 있도록 보관한다.
@@ -156,7 +151,7 @@ Pop-Location
 
 ### 실습 단계마다 관찰표에 기록
 
-결과는 나중에 모아서 적지 말고 각 실습 단계가 끝난 직후 기록한다. 아래 명령은 **HOST**의 저장소 루트에서 실행해 `evidence/observation.md`에 행 하나를 덧붙인다. `<...>` 플레이스홀더를 실제 정보로 바꾼 뒤 실행한다. 표에 들어가는 명령에 `|`가 있으면 `\|`로 바꾸고, 비밀이나 토큰, 구독 ID와 고객 자료는 기록하지 않는다.
+결과는 나중에 모아서 적지 말고 각 실습 단계가 끝난 직후 기록한다. 아래 명령은 **HOST**의 저장소 루트에서 실행해 `evidence/observation.md`에 행 하나를 덧붙인다. `<...>` 플레이스홀더를 실제 정보로 바꾼 뒤 실행한다. 표에 들어가는 명령에 `|`가 있으면 `\|`로 바꾼다. PowerShell에서는 입력할 내용의 작은따옴표를 `''`로 쓴다. 비밀이나 토큰, 구독 ID와 고객 자료는 기록하지 않는다.
 
 ```bash
 # zsh/bash
@@ -167,9 +162,7 @@ EOF
 
 ```powershell
 # PowerShell
-@'
-| <실습 단계> | <HOST 또는 도구와 정확한 명령> | <미검증 기대 결과> | <실제 stdout/stderr와 종료 코드> | <실제 승인, 도구 호출과 정책> | <전후 hash 또는 diff> | <evidence 파일 경로> | <판정과 이유> |
-'@ | Add-Content -Path ./evidence/observation.md
+Add-Content -Path ./evidence/observation.md -Value '| <실습 단계> | <HOST 또는 도구와 정확한 명령> | <미검증 기대 결과> | <실제 stdout/stderr와 종료 코드> | <실제 승인, 도구 호출과 정책> | <전후 hash 또는 diff> | <evidence 파일 경로> | <판정과 이유> |'
 ```
 
 각 행에는 실제 실행 위치와 명령, 승인과 정책, 출력과 종료 코드, 파일 hash 또는 diff, 근거 파일 경로와 판정 이유를 쓴다. 시간 초과나 미실행은 성공으로 적지 말고 그대로 표시한다. OS와 CLI 버전, 시작 작업 디렉터리, 기준 커밋과 샌드박스 상태는 관찰표의 `환경과 원자료`에 기록한다.
