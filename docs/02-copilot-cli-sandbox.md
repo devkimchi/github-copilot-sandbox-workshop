@@ -111,7 +111,10 @@ cat evidence/setup/outer-status.txt
 
 ```powershell
 # PowerShell
-Get-Content ./evidence/setup/baseline.txt,./evidence/setup/git-before.txt,./evidence/setup/remotes.txt,./evidence/setup/outer-status.txt
+Get-Content ./evidence/setup/baseline.txt
+Get-Content ./evidence/setup/git-before.txt
+Get-Content ./evidence/setup/remotes.txt
+Get-Content ./evidence/setup/outer-status.txt
 ```
 
 `baseline.txt`의 커밋 해시는 이후 변경과 비교할 기준이다. `git-before.txt`에 출력이 있으면 `workspace`에 시작 전 변경 사항이 있는 것이고, `remotes.txt`에 출력이 있으면 원격 저장소가 설정된 것이다. 둘 중 하나라도 출력되면 진행 전에 강사와 확인한다. `outer-status.txt`에는 저장소 바깥의 초기 상태가 기록되어 있으므로 실습 후 같은 명령을 다시 실행해 결과를 비교한다.
