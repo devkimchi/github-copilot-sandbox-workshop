@@ -24,37 +24,29 @@ node --version
 copilot --version
 ```
 
-### 관찰 기록과 교육용 파일 준비
+### 실습 파일과 기록 폴더 준비
 
-아래 명령은 관찰 기록 폴더와 실습별 기록 폴더를 만들고, `workspace/.env`에 교육용 값을 쓴다. HOST의 저장소 루트에서 실행한다. 기존 `evidence/`가 있으면 폴더를 새로 만들거나 양식을 복사하는 두 명령은 건너뛰고, 실습별 기록 폴더 생성 명령부터 실행한다. `workspace/.env`가 이미 있으면 덮어쓰지 말고 해당 줄은 건너뛴다.
+파일 읽기 시험에 사용할 `workspace/.env`를 만들고 관찰 기록 폴더를 준비한다. **HOST**의 **저장소 루트**에서 실행한다.
 
 ```bash
 # zsh/bash
-set -e
-if [ ! -d evidence ]; then
-  mkdir evidence
-  cp -R evidence-template/. evidence/
-fi
 mkdir -p evidence/setup evidence/copilot-cli
-if [ ! -e workspace/.env ]; then
-  printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
+if [ ! -e evidence/observation.md ]; then
+  cp evidence-template/observation.md evidence/observation.md
 fi
+printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
 ```
 
 ```powershell
 # PowerShell
-# HOST, <REPOSITORY_ROOT>
-if (-not (Test-Path .\evidence)) {
-  New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
-  Copy-Item .\evidence-template\* .\evidence -Recurse
-}
 New-Item -ItemType Directory -Path .\evidence\setup,.\evidence\copilot-cli -Force | Out-Null
-if (-not (Test-Path .\workspace\.env)) {
-  Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
+if (-not (Test-Path .\evidence\observation.md)) {
+  Copy-Item .\evidence-template\observation.md .\evidence\observation.md
 }
+Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
 ```
 
-복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
+각 실험의 결과는 `evidence/observation.md`에 기록한다.
 
 ### 외부 확인용 파일과 시작 상태 기록
 
