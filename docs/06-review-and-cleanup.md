@@ -18,9 +18,9 @@ HOST에서 회수한 diff, 새 파일, package/build script, CI, IDE task와 age
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-git -C .\workspace status --short | Out-File .\evidence\review-status.txt
-git -C .\workspace diff baseline --stat | Out-File .\evidence\review-stat.txt
-Get-ChildItem .\evidence -Recurse -File
+git -C ./workspace status --short | Out-File ./evidence/review-status.txt
+git -C ./workspace diff baseline --stat | Out-File ./evidence/review-stat.txt
+Get-ChildItem ./evidence -Recurse -File
 ```
 
 `.git/hooks`, ignored 파일과 전역 설정 등 `git diff`만으로 보이지 않는 상태도 검토한다. Direct 공유 경로 위험과 commit으로 회수한 코드 위험은 다르며 **fetch가 상대 `.git/hooks`까지 복사한다고 설명하지 않는다**.

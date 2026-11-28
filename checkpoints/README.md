@@ -18,7 +18,7 @@ Copilot 세션과 앱 프로세스를 종료한다. 백업에는 **ignored 파�
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>, 실제 패치가 검증되어 배포된 후에만
-pwsh -File .\checkpoints\restore-checkpoint.ps1 -Target .\workspace -Patch .\checkpoints\task05-result.patch
+pwsh -File ./checkpoints/restore-checkpoint.ps1 -Target ./workspace -Patch ./checkpoints/task05-result.patch
 ```
 
 ```bash

@@ -14,8 +14,8 @@
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-New-Item -ItemType Directory .\evidence\lab-3 -ErrorAction Stop
-aca --version | Out-File .\evidence\lab-3\aca-version.txt
+New-Item -ItemType Directory ./evidence/lab-3 -ErrorAction Stop
+aca --version | Out-File ./evidence/lab-3/aca-version.txt
 aca doctor
 aca config show
 aca sandboxgroup disk list-public
@@ -73,7 +73,7 @@ npm ci
 
 ### 원격 파일과 egress
 
-ACA REMOTE에서 `test -e 'C:\SandboxCanary\read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
+ACA REMOTE에서 `test -e 'C:/SandboxCanary/read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
 
 ACA REMOTE에서 각각 실행한다.
 
@@ -134,11 +134,11 @@ HOST PowerShell에서 실제 경로와 ID를 대입해 저장한다.
 
 ```powershell
 aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/workspace/evidence/summary.md |
-  Out-File .\evidence\lab-3\remote-summary.txt
+  Out-File ./evidence/lab-3/remote-summary.txt
 aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/result.patch |
-  Out-File .\evidence\lab-3\remote-diff-review.txt
+  Out-File ./evidence/lab-3/remote-diff-review.txt
 aca sandbox egress decisions --id <SANDBOX_ID> -o json |
-  Out-File .\evidence\lab-3\egress-decisions.json
+  Out-File ./evidence/lab-3/egress-decisions.json
 ```
 
 PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 diff는 **검토용 텍스트**이지 바이트 보존 패치가 아니다. host/remote 파일 hash 일치를 주장하지 않는다. lifecycle은 remote 동일 파일끼리 비교한다.

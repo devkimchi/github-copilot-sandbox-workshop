@@ -77,8 +77,8 @@ DOCKER VM에서 `cat /etc/workshop-greeting`과 `touch /run/sandbox/source/__wor
 HOST에서는 폴더를 먼저 만들고 transcript를 사용할 수 있다.
 
 ```powershell
-New-Item -ItemType Directory .\evidence\lab-2b -ErrorAction Stop
-sbx policy ls | Out-File .\evidence\lab-2b\policy.txt
+New-Item -ItemType Directory ./evidence/lab-2b -ErrorAction Stop
+sbx policy ls | Out-File ./evidence/lab-2b/policy.txt
 ```
 
 도구 stdout/stderr는 실제 VM 출력에서 저장하고 모델의 요약으로 대신하지 않는다.

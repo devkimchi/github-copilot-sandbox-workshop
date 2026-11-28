@@ -30,7 +30,7 @@ Node.js는 macOS와 Linux에서 nvm으로, Windows에서 nvm-windows 2.x로 24.x
 **실행 미검증.** PowerShell 7 이상 또는 Bash에서, 저장소 루트를 현재 위치로 사용한다. Git, curl과 tar가 필요하다. Windows PowerShell 5.1의 `curl` 별칭을 피하려고 `.ps1`은 `curl.exe`와 `tar.exe`를 명시한다.
 
 ```powershell
-pwsh -File .\scripts\download-sample.ps1
+pwsh -File ./scripts/download-sample.ps1
 ```
 
 ```bash
@@ -46,10 +46,10 @@ bash scripts/download-sample.sh
 다음은 참가자가 실행할 확인 명령이며 **미검증**이다.
 
 ```powershell
-git -C .\workspace status --short
-git -C .\workspace remote -v
-git -C .\workspace ls-files
-git -C .\workspace rev-parse baseline
+git -C ./workspace status --short
+git -C ./workspace remote -v
+git -C ./workspace ls-files
+git -C ./workspace rev-parse baseline
 git status --short --ignored
 ```
 

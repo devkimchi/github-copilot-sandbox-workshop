@@ -14,13 +14,13 @@ Copilot CLI 실습에서 HOST용 `node_modules`를 설치한 폴더는 재사용
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-.\scripts\download-sample.ps1 -Target workspace-direct
-.\scripts\download-sample.ps1 -Target workspace-docker
-New-Item -ItemType Directory .\evidence\lab-2 -ErrorAction Stop
-git -C .\workspace-direct status --short | Out-File .\evidence\lab-2\direct-before.txt
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-before.txt
-git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-before.txt
-Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-before.txt
+./scripts/download-sample.ps1 -Target workspace-direct
+./scripts/download-sample.ps1 -Target workspace-docker
+New-Item -ItemType Directory ./evidence/lab-2 -ErrorAction Stop
+git -C ./workspace-direct status --short | Out-File ./evidence/lab-2/direct-before.txt
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/clone-before.txt
+git -C ./workspace-docker remote -v | Out-File ./evidence/lab-2/remotes-before.txt
+Get-FileHash ./workspace-direct/package.json | Out-File ./evidence/lab-2/direct-hash-before.txt
 ```
 
 POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-docker`를 각각 사용한다. Git 기준 commit `baseline`, remote 없음과 clean 상태를 확인한다.
@@ -31,7 +31,7 @@ POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-
 
 ```powershell
 # HOST
-Set-Location .\workspace-direct
+Set-Location ./workspace-direct
 sbx run --name ws-direct sbx/copilot:latest .
 ```
 
@@ -50,15 +50,15 @@ printf '\n' >> package.json
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-after.txt
-git -C .\workspace-direct diff --binary --output=..\evidence\lab-2\direct.patch
+Get-FileHash ./workspace-direct/package.json | Out-File ./evidence/lab-2/direct-hash-after.txt
+git -C ./workspace-direct diff --binary --output=../evidence/lab-2/direct.patch
 ```
 
 ### Clone
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-Set-Location .\workspace-docker
+Set-Location ./workspace-docker
 sbx run --clone --name ws-clone sbx/copilot:latest .
 ```
 
@@ -93,14 +93,14 @@ HOST에서 sandbox가 실행 중일 때만 fetch한다. 실제 remote 이름을 
 
 ```powershell
 # HOST, <REPOSITORY_ROOT>
-git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-after.txt
-git remote -v | Out-File .\evidence\lab-2\outer-remotes.txt
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-after.txt
-Test-Path .\workspace-docker\node_modules | Out-File .\evidence\lab-2\host-node-modules.txt
-Test-Path .\workspace-docker\tailspin.db | Out-File .\evidence\lab-2\host-db.txt
-git -C .\workspace-docker fetch sandbox-ws-clone
-git -C .\workspace-docker diff baseline..sandbox-ws-clone/workshop/task05 --binary --output=..\evidence\lab-2\clone.patch
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\after-fetch.txt
+git -C ./workspace-docker remote -v | Out-File ./evidence/lab-2/remotes-after.txt
+git remote -v | Out-File ./evidence/lab-2/outer-remotes.txt
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/clone-after.txt
+Test-Path ./workspace-docker/node_modules | Out-File ./evidence/lab-2/host-node-modules.txt
+Test-Path ./workspace-docker/tailspin.db | Out-File ./evidence/lab-2/host-db.txt
+git -C ./workspace-docker fetch sandbox-ws-clone
+git -C ./workspace-docker diff baseline..sandbox-ws-clone/workshop/task05 --binary --output=../evidence/lab-2/clone.patch
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/after-fetch.txt
 ```
 
 remote와 branch 이름이 다르면 확인한 실제 값으로 바꾼다. fetch는 commit을 받지만 working tree를 바꾸지 않는다. 코드 실행이나 checkout/merge는 검토 후 사람의 별도 판단이다. 원격 push와 PR은 만들지 않는다.
@@ -112,7 +112,7 @@ DOCKER VM에서 `docker info`를 확인하고, 사전에 준비한 `hello-world`
 HOST에서:
 
 ```powershell
-sbx policy ls | Out-File .\evidence\lab-2\policy-before.txt
+sbx policy ls | Out-File ./evidence/lab-2/policy-before.txt
 sbx policy deny network --sandbox ws-clone example.com
 sbx policy check network --sandbox ws-clone example.com
 sbx policy log
