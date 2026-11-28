@@ -26,33 +26,32 @@ copilot --version
 
 ### 관찰 기록과 교육용 파일 준비
 
-`evidence`가 이미 있으면 기존 기록을 덮어쓰지 않는다. 강사와 별도 기록 경로를 정하고 이 문서의 `evidence` 경로를 해당 경로로 바꿔 사용한다.
-
-HOST의 저장소 루트에서 다음 명령을 실행한다. 관찰표와 실습별 실행 기록을 담을 폴더를 만들고, 실제 비밀이 아닌 교육용 `.env`를 준비한다.
-
-`workspace/.env`가 이미 있으면 아래 명령을 실행하지 말고 강사와 확인한다.
+아래 명령은 관찰 기록 폴더와 실습별 기록 폴더를 만들고, `workspace/.env`에 교육용 값을 쓴다. HOST의 저장소 루트에서 실행한다. 기존 `evidence/`가 있으면 폴더를 새로 만들거나 양식을 복사하는 두 명령은 건너뛰고, 실습별 기록 폴더 생성 명령부터 실행한다. `workspace/.env`가 이미 있으면 덮어쓰지 말고 해당 줄은 건너뛴다.
 
 ```bash
 # zsh/bash
 set -e
-mkdir evidence
-cp -R evidence-template/. evidence/
-mkdir evidence/setup evidence/copilot-cli
-if [ -e workspace/.env ]; then
-  printf '%s\n' 'workspace/.env already exists; stop and ask the instructor.' >&2
-  exit 1
+if [ ! -d evidence ]; then
+  mkdir evidence
+  cp -R evidence-template/. evidence/
 fi
-printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
+mkdir -p evidence/setup evidence/copilot-cli
+if [ ! -e workspace/.env ]; then
+  printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
+fi
 ```
 
 ```powershell
 # PowerShell
 # HOST, <REPOSITORY_ROOT>
-New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
-Copy-Item .\evidence-template\* .\evidence -Recurse
-New-Item -ItemType Directory -Path .\evidence\setup,.\evidence\copilot-cli -ErrorAction Stop
-if (Test-Path .\workspace\.env) { throw 'workspace/.env already exists; stop and ask the instructor.' }
-Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
+if (-not (Test-Path .\evidence)) {
+  New-Item -ItemType Directory -Path .\evidence -ErrorAction Stop
+  Copy-Item .\evidence-template\* .\evidence -Recurse
+}
+New-Item -ItemType Directory -Path .\evidence\setup,.\evidence\copilot-cli -Force | Out-Null
+if (-not (Test-Path .\workspace\.env)) {
+  Set-Content .\workspace\.env 'WORKSHOP_DUMMY=not-a-secret'
+}
 ```
 
 복사한 `evidence/observation.md`에 이후 각 실험의 결과를 직접 기록한다.
