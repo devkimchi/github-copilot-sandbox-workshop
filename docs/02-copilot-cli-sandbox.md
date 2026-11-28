@@ -52,11 +52,11 @@ Set-Content ./workspace/.env 'WORKSHOP_DUMMY=not-a-secret'
 
 샌드박스 밖의 파일에 접근할 수 있는지 확인하려고 교육용 확인 파일(canary)을 만든다. OS 임시 폴더와 부모 저장소는 자동 읽기 권한 때문에 비교 결과를 왜곡할 수 있으므로 피하고, 이미 존재하는 경로는 덮어쓰지 말고 다른 경로를 선택한다.
 
-HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/setup/`에 저장한다. 아래 bash 예시의 `/home/<user>/SandboxCanary`는 실제로 사용할 수 있는 외부 절대 경로로 바꾼다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
+HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태를 `evidence/setup/`에 저장한다. Bash 예시에서는 `$HOME/SandboxCanary`를 사용한다. 이 기록은 이후 변경 여부를 비교하는 데 사용한다.
 
 ```bash
 # zsh/bash
-CANARY_DIR="/home/<user>/SandboxCanary"
+CANARY_DIR="$HOME/SandboxCanary"
 if [ -e "$CANARY_DIR" ]; then
   printf '%s\n' "$CANARY_DIR already exists; choose another training path." >&2
   exit 1
@@ -185,8 +185,8 @@ CLI에서 `/sandbox status`를 확인해 실제 상태를 관찰표에 기록한
 # zsh/bash
 node -e "console.log(require('node:fs').readFileSync('.env','utf8'))"
 node -e "require('node:fs').writeFileSync('__workshop-inside.txt','inside')"
-node -e "console.log(require('node:fs').readFileSync('/home/<user>/SandboxCanary/read.txt','utf8'))"
-node -e "require('node:fs').writeFileSync('/home/<user>/SandboxCanary/write.txt','after')"
+node -e "console.log(require('node:fs').readFileSync(process.env.HOME + '/SandboxCanary/read.txt','utf8'))"
+node -e "require('node:fs').writeFileSync(process.env.HOME + '/SandboxCanary/write.txt','after')"
 ```
 
 ```powershell
@@ -197,13 +197,13 @@ node -e "console.log(require('node:fs').readFileSync('C:/SandboxCanary/read.txt'
 node -e "require('node:fs').writeFileSync('C:/SandboxCanary/write.txt','after')"
 ```
 
-앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 확인한다. 각 명령의 결과를 확인하는 즉시 HOST에서 관찰표에 기록한다. bash 예시의 `/home/<user>/SandboxCanary`와 PowerShell 예시의 `C:/SandboxCanary`는 각각 실제로 사용할 외부 교육용 절대 경로로 바꾼다. 샌드박스를 끄고 켰을 때 같은 경로를 쓴다.
+앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 확인한다. 각 명령의 결과를 확인하는 즉시 HOST에서 관찰표에 기록한다. Bash에서는 `$HOME/SandboxCanary`, PowerShell에서는 `C:/SandboxCanary`를 샌드박스를 끄고 켰을 때 같은 경로로 사용한다.
 
 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 기록을 종료하고 저장소 루트로 돌아간다. 확인용 파일의 해시를 저장해 쓰기 명령을 실행한 뒤의 상태를 남긴다.
 
 ```bash
 # zsh/bash
-shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-off.txt
+shasum -a 256 "$HOME/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-off.txt
 ```
 
 ```powershell
@@ -219,8 +219,8 @@ HOST의 저장소 루트에서 확인용 파일 `write.txt`를 `before`로 되�
 
 ```bash
 # zsh/bash
-printf '%s\n' 'before' > "/home/<user>/SandboxCanary/write.txt"
-shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-before-on.txt
+printf '%s\n' 'before' > "$HOME/SandboxCanary/write.txt"
+shasum -a 256 "$HOME/SandboxCanary/write.txt" > evidence/copilot-cli/canary-before-on.txt
 script -q -c 'cd workspace && copilot --sandbox' evidence/copilot-cli/on-transcript.txt
 ```
 
@@ -248,7 +248,7 @@ CLI에서 다음 상태와 설정을 확인해 기록한다. `Allow sandbox bypa
 
 ```bash
 # zsh/bash
-shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-on.txt
+shasum -a 256 "$HOME/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after-on.txt
 ```
 
 ```powershell
@@ -267,8 +267,8 @@ Get-FileHash C:/SandboxCanary/write.txt | Out-File ./evidence/copilot-cli/canary
 
 ```bash
 # zsh/bash
-printf '%s\n' 'before' > "/home/<user>/SandboxCanary/write.txt"
-shasum -a 256 "/home/<user>/SandboxCanary/write.txt"
+printf '%s\n' 'before' > "$HOME/SandboxCanary/write.txt"
+shasum -a 256 "$HOME/SandboxCanary/write.txt"
 ```
 
 ```powershell
@@ -312,7 +312,7 @@ CLI 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 세션 기록�
 # zsh/bash
 git -C workspace status --short > evidence/copilot-cli/git-after.txt
 git -C workspace diff --binary --output=../evidence/copilot-cli/changes.patch
-shasum -a 256 "/home/<user>/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after.txt
+shasum -a 256 "$HOME/SandboxCanary/write.txt" > evidence/copilot-cli/canary-after.txt
 ```
 
 ```powershell
