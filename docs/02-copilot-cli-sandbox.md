@@ -125,7 +125,7 @@ Get-Content ./evidence/setup/outer-status.txt
 > - `git-before.txt`에 내용이 있으면 표시된 경로는 실습 전부터 변경 사항이 있다는 뜻이다.
 > - `outer-status.txt`: 저장소 루트의 실습 전 결과다.
 
-`workspace` 바깥 파일에 접근할 수 있는지는 샌드박스에서 확인한다. 과제 답안이 있는 `checkpoints/`는 열지 않는다. 프롬프트에 읽지 말라고 적어도 파일 접근은 차단되지 않는다.
+`workspace` 바깥 파일에 접근할 수 있는지는 샌드박스에서 확인한다.
 
 ### HOST에서 의존성 설치와 단위 테스트
 
