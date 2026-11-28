@@ -122,7 +122,7 @@ Get-Content ./evidence/setup/outer-status.txt
 > - `baseline.txt`: 이후 변경과 비교할 기준 커밋 해시다.
 > - `git-before.txt`: 내용이 있으면 `workspace`에 시작 전 변경 사항이 있다는 뜻이다.
 > - `remotes.txt`: 내용이 있으면 원격 저장소가 설정되어 있다는 뜻이다.
-> - `git-before.txt`에 내용이 있으면 표시된 항목은 실습 전 변경 사항이다. 덮어쓰거나 되돌리지 말고 관찰표에 기록한다.
+> - `git-before.txt`에 내용이 있으면 표시된 경로는 실습 전부터 변경된 상태다. 덮어쓰거나 되돌리지 말고, 실습 중 발생한 변경과 구분한다.
 > - `remotes.txt`에 원격 저장소가 표시되면 주소를 확인하고, 실습 중에는 해당 원격으로 push하지 않는다.
 > - `outer-status.txt`: `workspace`가 들어 있는 프로젝트 저장소 루트에서 실행한 `git status --short --ignored`의 실습 전 결과다. 실습 후 같은 위치에서 같은 명령을 실행해 비교한다.
 
