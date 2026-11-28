@@ -15,9 +15,9 @@
 
 ## Lab별 관찰(행을 복사해 사용)
 
-| Lab/단계 | 위치와 정확한 명령 | 기대 결과(미검증) | 실제 stdout/stderr와 종료 코드 | 실제 승인/도구 호출/정책 | 전후 hash 또는 diff | 근거 파일 | 판정 |
+| 비교 단계 | 위치와 정확한 명령 | 기대 결과(미검증) | 실제 stdout/stderr와 종료 코드 | 실제 승인/도구 호출/정책 | 전후 hash 또는 diff | 근거 파일 | 판정 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| <실험/단계> | <HOST 또는 도구와 정확한 명령> | <미검증 기대 결과> | <실제 stdout/stderr와 종료 코드> | <실제 승인, 도구 호출과 정책> | <전후 hash 또는 diff> | <evidence 파일 경로> | <판정과 이유> |
+| <비교 단계> | <HOST 또는 도구와 정확한 명령> | <미검증 기대 결과> | <실제 stdout/stderr와 종료 코드> | <실제 승인, 도구 호출과 정책> | <전후 hash 또는 diff> | <evidence 파일 경로> | <판정과 이유> |
 
 판정은 `MODEL_REFUSAL`, `APPROVAL_REQUIRED`, `POLICY_DENIED`, `UNSUPPORTED`, `ENVIRONMENT_FAILURE`, `SUCCESS` 중 하나를 쓰고 이유를 적는다. 시간 초과/미실행은 실제 결과에 명시하고 성공으로 채우지 않는다.
 
