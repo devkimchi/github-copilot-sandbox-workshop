@@ -34,7 +34,7 @@ mkdir -p evidence/setup evidence/copilot-cli
 if [ ! -e evidence/observation.md ]; then
   cp evidence-template/observation.md evidence/observation.md
 fi
-printf '%s\n' 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
+echo 'WORKSHOP_DUMMY=not-a-secret' > workspace/.env
 ```
 
 ```powershell
@@ -60,15 +60,15 @@ CANARY_DIR="$HOME/sandbox-canary"
 if [ -e "$CANARY_DIR" ] || [ -L "$CANARY_DIR" ]; then
   BACKUP_DIR="${CANARY_DIR}.backup-$(date '+%Y%m%d-%H%M%S')"
   if [ -e "$BACKUP_DIR" ] || [ -L "$BACKUP_DIR" ]; then
-    printf '%s\n' "Backup path already exists: $BACKUP_DIR" >&2
+    echo "Backup path already exists: $BACKUP_DIR" >&2
     exit 1
   fi
   mv "$CANARY_DIR" "$BACKUP_DIR" || exit 1
-  printf '%s\n' "Existing path backed up to: $BACKUP_DIR"
+  echo "Existing path backed up to: $BACKUP_DIR"
 fi
 mkdir -p "$CANARY_DIR" || exit 1
-printf '%s\n' 'WORKSHOP_CANARY=not-a-secret' > "$CANARY_DIR/read.txt"
-printf '%s\n' 'before' > "$CANARY_DIR/write.txt"
+echo 'WORKSHOP_CANARY=not-a-secret' > "$CANARY_DIR/read.txt"
+echo 'before' > "$CANARY_DIR/write.txt"
 cat "$CANARY_DIR/read.txt"
 shasum -a 256 "$CANARY_DIR/write.txt" > evidence/setup/canary-before.txt
 git -C workspace status --short > evidence/setup/git-before.txt
@@ -118,7 +118,7 @@ set -o pipefail
 cd workspace
 npm ci 2>&1 | tee ../evidence/setup/npm-ci.txt
 status=$?
-printf '%s\n' "$status"
+echo "$status"
 cd ..
 ```
 
@@ -138,7 +138,7 @@ set -o pipefail
 cd workspace
 npm run test:unit 2>&1 | tee ../evidence/setup/unit.txt
 status=$?
-printf '%s\n' "$status"
+echo "$status"
 cd ..
 ```
 
@@ -232,7 +232,7 @@ HOST의 저장소 루트에서 확인용 파일 `write.txt`를 `before`로 되�
 
 ```bash
 # zsh/bash
-printf '%s\n' 'before' > "$HOME/sandbox-canary/write.txt"
+echo 'before' > "$HOME/sandbox-canary/write.txt"
 shasum -a 256 "$HOME/sandbox-canary/write.txt" > evidence/copilot-cli/canary-before-on.txt
 script -q -c 'cd workspace && copilot --sandbox' evidence/copilot-cli/on-transcript.txt
 ```
@@ -280,7 +280,7 @@ Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/copilot-cli/
 
 ```bash
 # zsh/bash
-printf '%s\n' 'before' > "$HOME/sandbox-canary/write.txt"
+echo 'before' > "$HOME/sandbox-canary/write.txt"
 shasum -a 256 "$HOME/sandbox-canary/write.txt"
 ```
 

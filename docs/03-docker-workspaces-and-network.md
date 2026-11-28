@@ -43,7 +43,7 @@ uname -a
 node --version
 copilot --version
 git status --short
-printf '\n' >> package.json
+echo >> package.json
 ```
 
 이 파일은 테스트용 줄바꿈만 추가한다. HOST의 다른 터미널에서 전파를 확인한다.
