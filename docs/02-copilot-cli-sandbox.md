@@ -125,7 +125,7 @@ Get-Content ./evidence/setup/outer-status.txt
 > - `git-before.txt`에 내용이 있으면 표시된 경로는 실습 전부터 변경 사항이 있다는 뜻이다.
 > - `outer-status.txt`: 저장소 루트의 실습 전 결과다.
 
-`workspace`에서 가장 가까운 Git 루트만 저장소(repository) 범위로 판단하는지는 미확인이다. 샌드박스를 켠 상태에서 부모의 `checkpoints/`가 읽히면 강사에게 알린다. **과제 해결을 위해 체크포인트나 완성 예시를 Copilot에 읽히지 않는다.** 프롬프트에서 읽지 말라고 지시하는 것만으로는 접근을 차단할 수 없다.
+`workspace` 바깥 파일에 접근할 수 있는지는 샌드박스에서 확인한다. 과제 답안이 있는 `checkpoints/`는 열지 않는다. 프롬프트에 읽지 말라고 적어도 파일 접근은 차단되지 않는다.
 
 ### HOST에서 의존성 설치와 단위 테스트
 
