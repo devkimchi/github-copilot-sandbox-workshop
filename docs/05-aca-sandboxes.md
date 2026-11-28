@@ -149,7 +149,7 @@ PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 dif
 
 ## 6. 기대와 실제 결과
 
-| 시험 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
+| 확인 항목 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
 | --- | --- | --- | --- |
 | host canary 절대 경로 | remote에 없음, 자동 mount 아님 | 참가자 작성 | 참가자 작성 |
 | remote 수정 | host working tree 불변 | 참가자 작성 | 참가자 작성 |
@@ -159,7 +159,7 @@ PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 dif
 
 ## 7. 실패가 정상인 경우
 
-deny 시험의 차단과 RBAC/인증/quota 오류를 구분한다. `Disabled` 등 예외 상태는 기록하고 진단한다. 모델 요청 실패 시 전체 allow로 바꾸지 말고 정확한 denied endpoint와 인증을 각각 확인한다. provider token 주입과 egress `secretRef` header transform의 비밀 보장을 일반화하지 않는다.
+deny 정책에 따른 차단 결과와 RBAC/인증/quota 오류를 구분한다. `Disabled` 등 예외 상태는 기록하고 진단한다. 모델 요청 실패 시 전체 allow로 바꾸지 말고 정확한 denied endpoint와 인증을 각각 확인한다. provider token 주입과 egress `secretRef` header transform의 비밀 보장을 일반화하지 않는다.
 
 ## 8. 복구와 checkpoint
 

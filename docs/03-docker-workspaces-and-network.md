@@ -118,7 +118,7 @@ sbx policy check network --sandbox ws-clone example.com
 sbx policy log
 ```
 
-DOCKER VM에서 `curl -I --max-time 8 https://example.com`을 실행하고 종료 코드와 실제 decision을 함께 저장한다. HOST에서 교육용 deny만 제거하고 좁은 allow를 시험한다.
+DOCKER VM에서 `curl -I --max-time 8 https://example.com`을 실행하고 종료 코드와 실제 decision을 함께 저장한다. HOST에서 교육용 deny만 제거하고 좁은 allow를 적용해 결과를 확인한다.
 
 ```powershell
 sbx policy rm network --sandbox ws-clone --resource example.com
@@ -134,7 +134,7 @@ Direct 전후 hash/diff, Clone host working tree, `/run/sandbox/source` 오류, 
 
 ## 6. 기대와 실제 결과
 
-| 시험 | 기대 결과(미검증) | 실제/판정 | 근거 파일 |
+| 확인 항목 | 기대 결과(미검증) | 실제/판정 | 근거 파일 |
 | --- | --- | --- | --- |
 | Direct 수정 | host 파일 즉시 변경 | 참가자 작성 | 참가자 작성 |
 | Clone 수정/설치 | host working tree, node_modules와 DB 불변 | 참가자 작성 | 참가자 작성 |

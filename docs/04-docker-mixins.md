@@ -85,7 +85,7 @@ sbx policy ls | Out-File ./evidence/lab-2b/policy.txt
 
 ## 6. 기대와 실제 결과
 
-| 시험 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
+| 확인 항목 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
 | --- | --- | --- | --- |
 | 기본과 Playwright mixin | tool/browser 구성 차이 관찰 | 참가자 작성 | 참가자 작성 |
 | E2E | 버전과 browser 정합 후 Chromium 테스트 실행 | 참가자 작성 | 참가자 작성 |
