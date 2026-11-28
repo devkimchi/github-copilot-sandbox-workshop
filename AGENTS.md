@@ -21,6 +21,7 @@
 ## 작업 원칙
 
 - 문서는 한국어로 작성하고 명령, 경로, 제품 이름은 정확히 유지한다.
+- 문서의 디렉터리 구분자는 PowerShell(pwsh)과 zsh/bash 예시 모두 `/`로 통일한다.
 - 한국어 문서 작성과 수정에는 `/korean-technical-writing` 스킬을 사용한다. 스킬을 사용할 수 없으면 기존 문서의 표현과 형식을 따른다.
 - 요청한 범위에서 작업하고 기존 실습 흐름과 참가자 기록을 보존한다.
 - 검증하지 않은 명령과 기대 결과는 미검증으로 표시한다. 실제 실행 결과나 성공 여부를 추측하지 않는다.
@@ -44,9 +45,7 @@
   git ls-files -- '*.ps1' | ForEach-Object {
     $tokens = $null
     $errors = $null
-    [System.Management.Automation.Language.Parser]::ParseFile(
-      (Join-Path $PWD $_), [ref]$tokens, [ref]$errors
-    ) | Out-Null
+    [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD $_), [ref]$tokens, [ref]$errors) | Out-Null
     if ($errors) { throw ($errors | Out-String) }
   }
   ```

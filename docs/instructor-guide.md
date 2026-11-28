@@ -40,7 +40,7 @@
 | ACA copilot image | 최신 public image 사용 | 고정하거나 기록하지 않음 |
 | exact-host allowlist | 모델/npm/archive/browser 각각 기록 | `TBD(검증 필요)` |
 | Azure region/quota/예상 비용 | Korea Central 후보, 개인 구독별 확인 | `TBD(검증 필요)` |
-| Windows VM 이미지/SKU | appmod-box 참고값, Trusted Launch 유지 | `TBD(검증 필요)` |
+| Windows VM 이미지/SKU | 기본 이미지 버전 `latest`, appmod-box 참고 SKU, Trusted Launch 유지 | 실제 버전과 가용성 `TBD(검증 필요)` |
 | VM 도구 버전/설치 checksum/중첩 가상화 | 선택 경로 | `TBD(검증 필요)` |
 | checkpoint 패치와 확장 완성본 | 리허설 후 생성 | `TBD(검증 필요)` |
 | 실제 모듈 소요 시간/다운로드/cache | 현장과 같은 network에서 확인 | `TBD(검증 필요)` |

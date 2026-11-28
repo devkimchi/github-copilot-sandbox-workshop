@@ -17,10 +17,10 @@
 HOST에서 회수한 diff, 새 파일, package/build script, CI, IDE task와 agent 설정을 검토한다. 샌드박스에서 나온 코드도 HOST에서 실행하면 HOST 권한으로 작동할 수 있다. 바로 `npm install`이나 build를 실행하지 않는다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-git -C .\workspace status --short | Out-File .\evidence\review-status.txt
-git -C .\workspace diff baseline --stat | Out-File .\evidence\review-stat.txt
-Get-ChildItem .\evidence -Recurse -File
+# HOST, <REPOSITORY_ROOT>
+git -C ./workspace status --short | Out-File ./evidence/review-status.txt
+git -C ./workspace diff baseline --stat | Out-File ./evidence/review-stat.txt
+Get-ChildItem ./evidence -Recurse -File
 ```
 
 `.git/hooks`, ignored 파일과 전역 설정 등 `git diff`만으로 보이지 않는 상태도 검토한다. Direct 공유 경로 위험과 commit으로 회수한 코드 위험은 다르며 **fetch가 상대 `.git/hooks`까지 복사한다고 설명하지 않는다**.
@@ -66,6 +66,6 @@ GitHub 이슈나 PR은 만들지 않는다.
 5. 본인 group의 snapshot, disk image, volume과 임시 역할을 확인한다. group 삭제는 **본인 전용이며 다른 자원이 없음**을 사람이 확인했을 때만 별도 수행한다.
 6. 교육용 PAT를 회수하고 Docker/ACA에 저장한 본인 credential도 정리한다. 다른 작업의 credential을 일괄 삭제하지 않는다.
 7. 선택 Windows VM은 결과를 물리 PC로 먼저 회수하고 배포했던 PC에서 정확한 VM 전용 환경에 `azd down --environment <VM_ENV_NAME>`을 실행한다. ACA cleanup과 별개다. 자동 종료는 삭제가 아니다.
-8. canary는 자신이 만든 `read.txt`, `write.txt`만 지운다. workspace/evidence 보존 여부는 본인이 결정한다. 전체 워크숍 폴더와 홈을 재귀 삭제하는 명령을 사용하지 않는다.
+8. canary는 자신이 만든 `read.txt`, `write.txt`만 지운다. workspace/evidence 보존 여부는 본인이 결정한다. 저장소 루트 전체와 홈을 재귀 삭제하는 명령을 사용하지 않는다.
 
 삭제 후 디스크, NAT Gateway와 공인 IP 등 비용 자원이 남지 않았는지 Azure portal에서 확인한다. 정리 명령의 종료 코드만으로 비용이 0이라고 판단하지 않는다.

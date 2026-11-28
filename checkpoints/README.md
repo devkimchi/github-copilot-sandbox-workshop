@@ -17,8 +17,8 @@ Copilot 세션과 앱 프로세스를 종료한다. 백업에는 **ignored 파�
 복구 대상은 `workspace` 또는 `workspace-이름`의 **독립 Git 저장소**여야 한다. 워크숍 저장소 자체와 linked worktree는 받지 않는다. 패치와 backup은 대상 밖에 둔다. 다른 프로세스와 동시에 실행하지 않는다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>, 실제 패치가 검증되어 배포된 후에만
-pwsh -File .\checkpoints\restore-checkpoint.ps1 -Target .\workspace -Patch .\checkpoints\task05-result.patch
+# HOST, <REPOSITORY_ROOT>, 실제 패치가 검증되어 배포된 후에만
+pwsh -File ./checkpoints/restore-checkpoint.ps1 -Target ./workspace -Patch ./checkpoints/task05-result.patch
 ```
 
 ```bash

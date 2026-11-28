@@ -40,14 +40,14 @@ AI 코딩 에이전트에게 어디까지 맡겨도 될까요? 이 워크숍에�
 
 ## 시작하기 전에
 
-설치와 계정 준비는 실습 시간에 포함되지 않습니다. 워크숍 전에 [사전 준비](docs/00-prerequisites.md)를 마칩니다.
+설치와 계정 준비는 실습 시간에 포함되지 않습니다. 워크숍 전에 [사전 준비](docs/00-setup.md)를 마칩니다.
 
 - 개인 PC와 개인 GitHub 계정
 - 짧은 만료 기간의 개인 fine-grained PAT(`Copilot Requests` 권한)
 - Docker Sandboxes를 실행할 수 있는 환경
 - 비용을 감당할 수 있는 개인 Azure 구독과 교육 전용 리소스 그룹
 
-로컬 환경을 준비하기 어렵다면 [선택 사항인 Windows VM](docs/00-windows-vm.md)을 사용할 수 있습니다. 이 VM은 샌드박스 실습 환경을 준비하는 데 사용합니다.
+로컬 환경을 준비하기 어렵다면 [선택 사항인 Windows VM](windows-vm/README.md)을 사용할 수 있습니다. 이 VM은 샌드박스 실습 환경을 준비하는 데 사용합니다.
 
 ## 개인 실습 저장소 만들기
 
@@ -55,7 +55,7 @@ AI 코딩 에이전트에게 어디까지 맡겨도 될까요? 이 워크숍에�
 
 1. 이 저장소에서 **Use this template > Create a new repository**를 선택합니다.
 2. 소유자는 **개인 계정**, 공개 범위는 **Private**을 권장합니다.
-3. 만든 저장소를 클론합니다. 클론한 폴더의 루트를 실습 문서의 `<WORKSHOP_DIR>`로 사용합니다.
+3. 만든 저장소를 클론합니다. 클론한 폴더가 저장소 루트이며, 실습 문서의 `<REPOSITORY_ROOT>`는 이 폴더를 가리킵니다. 이 폴더 안의 `workspace/`는 실습 앱을 담은 별도의 Git 저장소입니다.
 
 GitHub CLI를 사용한다면 다음 명령의 플레이스홀더를 바꿔 실행합니다.
 
@@ -79,8 +79,8 @@ Set-Location "<실습저장소>"
 
 | 순서 | 실습 문서 | 기본 | 확장 |
 | --- | --- | ---: | ---: |
-| 1 | [승인과 접근 범위](docs/01-approval-and-boundaries.md) | 10분 | 10분 |
-| 2 | [Lab 0/1: baseline과 Copilot OFF/ON](docs/02-copilot-local-sandbox.md) | 40분 | 40분 |
+| 1 | [실습 공통 기준](docs/01-workshop-guidelines.md) | 10분 | 10분 |
+| 2 | [Copilot CLI 샌드박스](docs/02-copilot-cli-sandbox.md) | 40분 | 40분 |
 | 3 | [Lab 2: Docker Direct/Clone와 네트워크](docs/03-docker-workspaces-and-network.md) | 30분 | 30분 |
 | 4 | [Lab 2B: published mixin과 직접 만들기](docs/04-docker-mixins.md) | 20분 | 50분 |
 | - | 휴식 | 5분 | 5분 |
@@ -140,7 +140,6 @@ azd down --environment "<VM_ENV_NAME>"
 
 - Tailspin Toys 과제 원문: 각 과제 파일의 MIT 고지
 - mixin: [mixins/LICENSE-APACHE-2.0](mixins/LICENSE-APACHE-2.0), [mixins/NOTICE](mixins/NOTICE)
-- Windows VM 템플릿: [windows-vm/LICENSE-UPSTREAM](windows-vm/LICENSE-UPSTREAM)
 
 <!-- HUMANIZE-SUMMARY -->
 원문 글자 수: 4,749 | 윤문본 글자 수: 4,749 | 변경률: 0.0% | 탐지: S1 0건, S2 0건 | 자체검증: 6/6 | 등급: B

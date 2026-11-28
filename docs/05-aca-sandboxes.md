@@ -13,9 +13,9 @@
 개인 구독, 교육 전용 group, 본인의 Data Owner, 정확한 Copilot credential을 사전에 준비한다. `az login` 인증과 모델 PAT는 별개다. 이미지와 quota, 예상 비용을 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-New-Item -ItemType Directory .\evidence\lab-3 -ErrorAction Stop
-aca --version | Out-File .\evidence\lab-3\aca-version.txt
+# HOST, <REPOSITORY_ROOT>
+New-Item -ItemType Directory ./evidence/lab-3 -ErrorAction Stop
+aca --version | Out-File ./evidence/lab-3/aca-version.txt
 aca doctor
 aca config show
 aca sandboxgroup disk list-public
@@ -73,7 +73,7 @@ npm ci
 
 ### 원격 파일과 egress
 
-ACA REMOTE에서 `test -e 'C:\SandboxCanary\read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
+ACA REMOTE에서 `test -e 'C:/sandbox-canary/read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
 
 ACA REMOTE에서 각각 실행한다.
 
@@ -93,7 +93,7 @@ ACA advanced rule은 **첫 matching rule**이 적용된다. Docker의 deny 우�
 
 ### 공통 과제
 
-ACA REMOTE의 `workspace`에서 `copilot`을 실행하고 Lab 1 공통 프롬프트와 **05번 원문**을 붙인다. `npm run test:unit`과 과제 산출물 `evidence/summary.md`를 남긴다. checkpoint나 완성 예시는 읽히지 않으며 원격 push, PR과 앱 배포를 하지 않는다.
+ACA REMOTE의 `workspace`에서 `copilot`을 실행하고 Copilot CLI 실습에서 사용한 공통 프롬프트에 **05번 과제 원문**을 붙인다. `npm run test:unit`과 과제 산출물 `evidence/summary.md`를 남긴다. 체크포인트나 완성 예시는 읽히지 않으며 원격 push, PR과 앱 배포를 하지 않는다.
 
 원격 셸에서 실제 파일의 절대 경로와 hash를 기록한다.
 
@@ -133,12 +133,9 @@ aca sandbox shell --id <SANDBOX_ID>
 HOST PowerShell에서 실제 경로와 ID를 대입해 저장한다.
 
 ```powershell
-aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/workspace/evidence/summary.md |
-  Out-File .\evidence\lab-3\remote-summary.txt
-aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/result.patch |
-  Out-File .\evidence\lab-3\remote-diff-review.txt
-aca sandbox egress decisions --id <SANDBOX_ID> -o json |
-  Out-File .\evidence\lab-3\egress-decisions.json
+aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/workspace/evidence/summary.md | Out-File ./evidence/lab-3/remote-summary.txt
+aca sandbox fs cat --id <SANDBOX_ID> --path /home/aca-workshop/result.patch | Out-File ./evidence/lab-3/remote-diff-review.txt
+aca sandbox egress decisions --id <SANDBOX_ID> -o json | Out-File ./evidence/lab-3/egress-decisions.json
 ```
 
 PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 diff는 **검토용 텍스트**이지 바이트 보존 패치가 아니다. host/remote 파일 hash 일치를 주장하지 않는다. lifecycle은 remote 동일 파일끼리 비교한다.
@@ -149,7 +146,7 @@ PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 dif
 
 ## 6. 기대와 실제 결과
 
-| 시험 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
+| 확인 항목 | 기대 결과(미검증) | 실제 결과 | 근거 파일 |
 | --- | --- | --- | --- |
 | host canary 절대 경로 | remote에 없음, 자동 mount 아님 | 참가자 작성 | 참가자 작성 |
 | remote 수정 | host working tree 불변 | 참가자 작성 | 참가자 작성 |
@@ -159,7 +156,7 @@ PowerShell 인코딩/줄바꿈 변환은 바이트를 바꿀 수 있다. 위 dif
 
 ## 7. 실패가 정상인 경우
 
-deny 시험의 차단과 RBAC/인증/quota 오류를 구분한다. `Disabled` 등 예외 상태는 기록하고 진단한다. 모델 요청 실패 시 전체 allow로 바꾸지 말고 정확한 denied endpoint와 인증을 각각 확인한다. provider token 주입과 egress `secretRef` header transform의 비밀 보장을 일반화하지 않는다.
+deny 정책에 따른 차단 결과와 RBAC/인증/quota 오류를 구분한다. `Disabled` 등 예외 상태는 기록하고 진단한다. 모델 요청 실패 시 전체 allow로 바꾸지 말고 정확한 denied endpoint와 인증을 각각 확인한다. provider token 주입과 egress `secretRef` header transform의 비밀 보장을 일반화하지 않는다.
 
 ## 8. 복구와 checkpoint
 

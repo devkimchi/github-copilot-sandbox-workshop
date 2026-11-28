@@ -12,7 +12,7 @@
 | 추출 다운로드 실패 | GitHub archive redirect, `github.com`/`codeload.github.com`, 도구와 종료 코드 | 실제 network 문제부터 해결. 다른 SHA/전체 clone으로 바꾸지 않음 |
 | Git 기준 commit 실패 | Git 설치/버전, 잠금, 로컬 정책 | 부분 workspace 보존, 원격/전역 identity를 임의 변경하지 않음 |
 | PowerShell 스크립트가 구버전 오류 | `$PSVersionTable.PSVersion` | 추출/복구는 PowerShell 7로 실행. 조직 execution policy 우회 금지 |
-| baseline unit 실패 | HOST `npm ci`, Node >=22.13, 원본 파일과 lock | 일반 환경부터 해결. sandbox 차단으로 오분류 금지 |
+| baseline unit 실패 | HOST `npm ci`, Node.js 24.x, 원본 파일과 lock | 일반 환경부터 해결. sandbox 차단으로 오분류 금지 |
 | ON/OFF가 같음 | 실제 status/정책, 같은 도구와 명령인지, canary 경로/자동 grant | 임시 폴더와 부모 Git 저장소 밖의 기존 dummy 파일로 재배치 |
 | sandbox 미지원 | 실제 OS build/KB와 backend | `UNSUPPORTED` 기록, 조직 정책 우회 없이 지원 환경 사용 |
 | grant해도 deny | explicit Denied 우선순위와 기존 사용자/조직 정책 | 본인이 추가한 교육용 deny만 제거. 전체 홈 grant 금지 |
@@ -35,7 +35,8 @@
 | ACA 회수 후 hash 다름 | HOST 문자열 저장/줄바꿈/인코딩 | lifecycle hash는 remote끼리 비교, 회수본은 검토용으로 표시 |
 | checkpoint 없음/검사 실패 | 실제 패치 파일과 고정 앱 snapshot | 현재 패치 미제공. 빈 패치 생성 금지, backup 보존, clean 다음 Lab 진행 |
 | 복구 스크립트 중단 | 대상 독립 .git/이름, backup 위치, realpath 지원, 특수 파일명 | snapshot을 별도 새 폴더에 풀어 확인. 기존 위에 무작정 덮어쓰지 않음 |
-| VM 배포 실패 | 라이선스 자격, 고정 이미지, 지역/SKU/Bastion/quota | 실제 Azure 오류 확인. 보안 유형 자동 하향 금지 |
+| VM 배포 실패 | 라이선스 자격, 이미지 버전, 지역/SKU/Bastion/quota | 실제 Azure 오류 확인. 보안 유형 자동 하향 금지 |
+| VM Run Command에서 한글이 깨지고 `TerminatorExpectedAtEndOfString` 발생 | `stage-workshop-tools`의 실제 오류와 전달 스크립트 인코딩 | Windows PowerShell 5.1에서 BOM 없는 UTF-8을 잘못 읽을 수 있다. Run Command 진입 스크립트는 ASCII로 유지하고, 전달하는 설치 스크립트는 UTF-8 BOM을 포함한다. 수정 후 같은 azd 환경에서 다시 배포하며 기존 자원을 임의로 삭제하지 않는다 |
 | VM 설치 스크립트 실패 | 실제 사용자 관리자 세션, WinGet, 버전 가용성과 checksum | SYSTEM 실행 금지. 기존 도구 경고와 부분 설치를 기록 |
 | VM Docker만 실패 | 승인된 중첩 가상화/보안 조합에서 sbx microVM 실제 실행 | 미검증이면 개인 PC에서 해당 모듈 진행 |
 | 삭제 명령 실패/비용 남음 | 정확한 ID/이름과 snapshot/disk/volume/NAT/IP | 자원별 실제 상태 확인. 공용 group 일괄 삭제 금지 |

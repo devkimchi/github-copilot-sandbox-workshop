@@ -1,8 +1,24 @@
+# Keep this Run Command entry script ASCII for Windows PowerShell 5.1.
 $ErrorActionPreference = 'Stop'
-$directory = 'C:\WorkshopSetup'
+$userName = '__ADMIN_USERNAME__'
+$sid = (New-Object Security.Principal.NTAccount($userName)).Translate([Security.Principal.SecurityIdentifier]).Value
+$profileKey = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\$sid"
+if (Test-Path -LiteralPath $profileKey) {
+    $profilePath = (Get-ItemProperty -LiteralPath $profileKey).ProfileImagePath
+}
+else {
+    # Before the first sign-in, new profiles are copied from the Default profile.
+    $profilePath = Join-Path $env:SystemDrive 'Users\Default'
+}
+$directory = Join-Path $profilePath 'scripts'
 New-Item -ItemType Directory -Path $directory -Force | Out-Null
-$destination = Join-Path $directory 'install-tools.ps1'
-$content = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__INSTALLER_BASE64__'))
-# Windows PowerShell 5.1에서도 한국어 안내를 읽도록 BOM을 포함한다.
-[IO.File]::WriteAllText($destination, $content, (New-Object Text.UTF8Encoding $true))
-Write-Output "사용자 설치 도우미 전달 완료: $destination. 도구 설치는 실행하지 않았습니다."
+$scripts = [ordered]@{
+    'install-vm-tools.ps1' = '__INSTALLER_BASE64__'
+    'update-vm-tools.ps1' = '__UPDATER_BASE64__'
+}
+foreach ($script in $scripts.GetEnumerator()) {
+    $destination = Join-Path $directory $script.Key
+    $content = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($script.Value))
+    [IO.File]::WriteAllText($destination, $content, (New-Object Text.UTF8Encoding $true))
+    Write-Output "Script staged at $destination. No tools were installed."
+}

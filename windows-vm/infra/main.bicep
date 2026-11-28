@@ -22,16 +22,16 @@ param adminUsername string = 'workshopuser'
 param adminPassword string
 
 @allowed([
-  'true'
+  true
 ])
 @description('Windows 클라이언트 Azure 라이선스 자격을 본인이 확인한 경우에만 true로 지정한다.')
-param confirmWindowsClientLicense string
+param confirmWindowsClientLicense bool
 
 param vmSize string = 'Standard_D8s_v5'
 param imageSku string = 'win11-26h2-ent'
 
-@description('예행 연습에서 확인한 고정 이미지 버전. latest를 사용하지 않는다.')
-param imageVersion string
+@description('Windows VM 이미지 버전. 기본값은 latest이며 고정 숫자 버전도 지정할 수 있다.')
+param imageVersion string = 'latest'
 
 var token = uniqueString(subscription().id, environmentName, location)
 var tags = {
@@ -40,7 +40,7 @@ var tags = {
 }
 
 resource group 'Microsoft.Resources/resourceGroups@2024-03-01' = {
-  name: 'rg-${environmentName}-vm'
+  name: 'rg-${environmentName}'
   location: location
   tags: tags
 }
@@ -67,4 +67,4 @@ output AZURE_VM_NAME string = workstation.outputs.vmName
 output AZURE_VM_ID string = workstation.outputs.vmId
 output AZURE_VM_ADMIN_USERNAME string = adminUsername
 output AZURE_BASTION_NAME string = workstation.outputs.bastionName
-output WORKSHOP_TOOL_HELPER string = 'C:\\WorkshopSetup\\install-tools.ps1'
+output WORKSHOP_TOOL_HELPER string = '$HOME\\scripts\\install-vm-tools.ps1'

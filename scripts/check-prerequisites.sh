@@ -8,7 +8,7 @@ fi
 CHECK_SCRIPTS="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 source "$CHECK_SCRIPTS/terminal-output.sh"
 
-WORKSHOP_NODE_MINIMUM=22.13.0
+WORKSHOP_NODE_MINIMUM=24.0.0
 WORKSHOP_NODE_MAJOR=24
 CHECK_FAILURES=0
 CHECK_CONTEXT=''
@@ -32,7 +32,7 @@ check_result() {
 }
 
 check_group() {
-    printf '\n== %s ==\n' "$1"
+    workshop_status_printf '[INFO] == %s ==\n' "$1"
 }
 
 extract_version() {
@@ -127,22 +127,23 @@ check_linux_host() {
     if [[ -r /dev/kvm && -w /dev/kvm ]]; then check_result PASS kvm '/dev/kvm is accessible'
     elif [[ -e /dev/kvm ]]; then check_result FAIL kvm '/dev/kvm exists but is not accessible. Add your user to the kvm group, then sign out and back in.'
     else check_result FAIL kvm '/dev/kvm is missing. Enable KVM or nested virtualization for local sandboxes.'; fi
-    minimum_version bwrap 0.5.0 bwrap --version
-    probe slirp4netns --version
-    if (( PROBE_CODE == 0 )); then check_result PASS slirp4netns "$(extract_version "$PROBE_TEXT")"
-    else check_result FAIL slirp4netns "${PROBE_TEXT:-exit code $PROBE_CODE}"; fi
 }
 
 check_core_tools() {
-    local node_path version nvm_dir
+    local node_path nvm_dir nvm_version
     check_group 'Core tools'
     minimum_version git 2.0.0 git --version
+    minimum_version gh 2.0.0 gh --version
+    check_result MANUAL gh-auth 'Run gh auth status and confirm you are signed in to your personal GitHub account.'
     initialize_node_environment
+    if [[ $(type -t nvm) == function ]] &&
+        nvm_version=$(nvm --version 2>&1) &&
+        [[ -n "$nvm_version" ]] && [[ -n $(extract_version "$nvm_version") ]]; then
+        check_result PASS nvm "$nvm_version"
+    else
+        check_result FAIL nvm "${nvm_version:-Not found or could not read the version. The workshop installs Node.js through nvm.}"
+    fi
     if minimum_version node "$WORKSHOP_NODE_MINIMUM" node --version; then
-        version=$(extract_version "$PROBE_TEXT")
-        if [[ "${version%%.*}" != "$WORKSHOP_NODE_MAJOR" ]]; then
-            check_result WARN node-major "$version is supported, but the workshop installs the latest Node.js $WORKSHOP_NODE_MAJOR.x."
-        fi
         node_path=$(tool_path node)
         nvm_dir=$(nvm_directory)
         if [[ -n "$node_path" && -d "$nvm_dir" ]] &&
@@ -151,6 +152,8 @@ check_core_tools() {
         else
             check_result WARN node-manager "${node_path:-node} is not managed by nvm. The workshop installs Node.js through nvm."
         fi
+    else
+        check_result INFO node-install "Run bash scripts/install-prerequisites.sh to install the latest Node.js $WORKSHOP_NODE_MAJOR.x with nvm."
     fi
     probe npm --version
     if (( PROBE_CODE == 0 )); then check_result PASS npm "$PROBE_TEXT"
@@ -173,7 +176,7 @@ check_docker_sandboxes() {
 
 check_azure() {
     local saved_dynamic="${AZURE_EXTENSION_USE_DYNAMIC_INSTALL-__unset__}"
-    check_group 'Azure'
+    check_group 'Azure Container Apps Sandboxes'
     export AZURE_EXTENSION_USE_DYNAMIC_INSTALL=no
     if minimum_version az 2.0.0 az --version; then
         probe az account show --query state --output tsv
@@ -186,6 +189,20 @@ check_azure() {
     if (( PROBE_CODE == 0 )); then check_result PASS aca "$(extract_version "$PROBE_TEXT")"
     else check_result FAIL aca "${PROBE_TEXT:-exit code $PROBE_CODE}"; fi
     check_result MANUAL aca-config 'Run aca doctor and aca config show. Confirm the sandbox group, region, and RBAC.'
+}
+
+check_local_sandbox_packages() {
+    local version
+    [[ "$(uname -s)" == Linux ]] || return 0
+    check_group 'Local sandbox packages'
+    minimum_version bwrap 0.5.0 bwrap --version
+    probe slirp4netns --version
+    version=$(extract_version "$PROBE_TEXT")
+    if (( PROBE_CODE == 0 )) && [[ -n "$version" ]]; then
+        check_result PASS slirp4netns "$version"
+    else
+        check_result FAIL slirp4netns "${PROBE_TEXT:-Could not read the version}"
+    fi
 }
 
 check_optional() {
@@ -211,8 +228,9 @@ prerequisite_main() {
     check_host
     check_core_tools
     check_copilot
-    check_docker_sandboxes
     check_azure
+    check_docker_sandboxes
+    check_local_sandbox_packages
     check_optional
     printf '\nRequired failures: %d. MANUAL items were not checked automatically.\n' "$CHECK_FAILURES"
     (( CHECK_FAILURES == 0 ))

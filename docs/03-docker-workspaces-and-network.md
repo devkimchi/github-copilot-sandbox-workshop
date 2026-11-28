@@ -10,17 +10,17 @@
 
 ## 3. 사전 조건과 현재 상태
 
-Lab 1에서 host용 `node_modules`를 설치한 폴더를 재사용하지 않는다. 플랫폼별 native 바이너리가 Linux와 맞지 않을 수 있다. 서로 다른 sandbox가 같은 working tree를 동시에 수정하게 하지 않는다.
+Copilot CLI 실습에서 HOST용 `node_modules`를 설치한 폴더는 재사용하지 않는다. 플랫폼별 native 바이너리가 Linux와 맞지 않을 수 있다. 서로 다른 샌드박스가 같은 작업 트리를 동시에 수정하게 하지 않는다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-.\scripts\download-sample.ps1 -Target workspace-direct
-.\scripts\download-sample.ps1 -Target workspace-docker
-New-Item -ItemType Directory .\evidence\lab-2 -ErrorAction Stop
-git -C .\workspace-direct status --short | Out-File .\evidence\lab-2\direct-before.txt
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-before.txt
-git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-before.txt
-Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-before.txt
+# HOST, <REPOSITORY_ROOT>
+./scripts/download-sample.ps1 -Target workspace-direct
+./scripts/download-sample.ps1 -Target workspace-docker
+New-Item -ItemType Directory ./evidence/lab-2 -ErrorAction Stop
+git -C ./workspace-direct status --short | Out-File ./evidence/lab-2/direct-before.txt
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/clone-before.txt
+git -C ./workspace-docker remote -v | Out-File ./evidence/lab-2/remotes-before.txt
+Get-FileHash ./workspace-direct/package.json | Out-File ./evidence/lab-2/direct-hash-before.txt
 ```
 
 POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-docker`를 각각 사용한다. Git 기준 commit `baseline`, remote 없음과 clean 상태를 확인한다.
@@ -31,7 +31,7 @@ POSIX에서는 `bash scripts/download-sample.sh workspace-direct`와 `workspace-
 
 ```powershell
 # HOST
-Set-Location .\workspace-direct
+Set-Location ./workspace-direct
 sbx run --name ws-direct sbx/copilot:latest .
 ```
 
@@ -43,22 +43,22 @@ uname -a
 node --version
 copilot --version
 git status --short
-printf '\n' >> package.json
+echo >> package.json
 ```
 
 이 파일은 테스트용 줄바꿈만 추가한다. HOST의 다른 터미널에서 전파를 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-Get-FileHash .\workspace-direct\package.json | Out-File .\evidence\lab-2\direct-hash-after.txt
-git -C .\workspace-direct diff --binary --output=..\evidence\lab-2\direct.patch
+# HOST, <REPOSITORY_ROOT>
+Get-FileHash ./workspace-direct/package.json | Out-File ./evidence/lab-2/direct-hash-after.txt
+git -C ./workspace-direct diff --binary --output=../evidence/lab-2/direct.patch
 ```
 
 ### Clone
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-Set-Location .\workspace-docker
+# HOST, <REPOSITORY_ROOT>
+Set-Location ./workspace-docker
 sbx run --clone --name ws-clone sbx/copilot:latest .
 ```
 
@@ -73,7 +73,7 @@ touch /run/sandbox/source/__workshop-write-probe
 
 마지막 명령은 read-only 오류를 기대한다(미검증). 읽을 수 있는 source mount이므로 "host 파일을 전혀 볼 수 없다"고 설명하지 않는다. 실제 비밀은 원본에 두지 않는다.
 
-Copilot에 Lab 1과 같은 프롬프트 뒤에 **05번 과제 원문**을 붙인다. 아래 명령과 단위 테스트 결과도 기록하게 한다.
+Copilot에 Copilot CLI 실습에서 사용한 공통 프롬프트를 입력하고, 그 뒤에 **05번 과제 원문**을 붙인다. 아래 명령과 단위 테스트 결과도 기록하게 한다.
 
 ```bash
 git switch -c workshop/task05
@@ -92,15 +92,15 @@ git -c user.name=workshop -c user.email=workshop@example.invalid commit -m "feat
 HOST에서 sandbox가 실행 중일 때만 fetch한다. 실제 remote 이름을 `git remote -v`에서 확인한다.
 
 ```powershell
-# HOST, <WORKSHOP_DIR>
-git -C .\workspace-docker remote -v | Out-File .\evidence\lab-2\remotes-after.txt
-git remote -v | Out-File .\evidence\lab-2\outer-remotes.txt
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\clone-after.txt
-Test-Path .\workspace-docker\node_modules | Out-File .\evidence\lab-2\host-node-modules.txt
-Test-Path .\workspace-docker\tailspin.db | Out-File .\evidence\lab-2\host-db.txt
-git -C .\workspace-docker fetch sandbox-ws-clone
-git -C .\workspace-docker diff baseline..sandbox-ws-clone/workshop/task05 --binary --output=..\evidence\lab-2\clone.patch
-git -C .\workspace-docker status --short | Out-File .\evidence\lab-2\after-fetch.txt
+# HOST, <REPOSITORY_ROOT>
+git -C ./workspace-docker remote -v | Out-File ./evidence/lab-2/remotes-after.txt
+git remote -v | Out-File ./evidence/lab-2/outer-remotes.txt
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/clone-after.txt
+Test-Path ./workspace-docker/node_modules | Out-File ./evidence/lab-2/host-node-modules.txt
+Test-Path ./workspace-docker/tailspin.db | Out-File ./evidence/lab-2/host-db.txt
+git -C ./workspace-docker fetch sandbox-ws-clone
+git -C ./workspace-docker diff baseline..sandbox-ws-clone/workshop/task05 --binary --output=../evidence/lab-2/clone.patch
+git -C ./workspace-docker status --short | Out-File ./evidence/lab-2/after-fetch.txt
 ```
 
 remote와 branch 이름이 다르면 확인한 실제 값으로 바꾼다. fetch는 commit을 받지만 working tree를 바꾸지 않는다. 코드 실행이나 checkout/merge는 검토 후 사람의 별도 판단이다. 원격 push와 PR은 만들지 않는다.
@@ -112,13 +112,13 @@ DOCKER VM에서 `docker info`를 확인하고, 사전에 준비한 `hello-world`
 HOST에서:
 
 ```powershell
-sbx policy ls | Out-File .\evidence\lab-2\policy-before.txt
+sbx policy ls | Out-File ./evidence/lab-2/policy-before.txt
 sbx policy deny network --sandbox ws-clone example.com
 sbx policy check network --sandbox ws-clone example.com
 sbx policy log
 ```
 
-DOCKER VM에서 `curl -I --max-time 8 https://example.com`을 실행하고 종료 코드와 실제 decision을 함께 저장한다. HOST에서 교육용 deny만 제거하고 좁은 allow를 시험한다.
+DOCKER VM에서 `curl -I --max-time 8 https://example.com`을 실행하고 종료 코드와 실제 decision을 함께 저장한다. HOST에서 교육용 deny만 제거하고 좁은 allow를 적용해 결과를 확인한다.
 
 ```powershell
 sbx policy rm network --sandbox ws-clone --resource example.com
@@ -134,7 +134,7 @@ Direct 전후 hash/diff, Clone host working tree, `/run/sandbox/source` 오류, 
 
 ## 6. 기대와 실제 결과
 
-| 시험 | 기대 결과(미검증) | 실제/판정 | 근거 파일 |
+| 확인 항목 | 기대 결과(미검증) | 실제/판정 | 근거 파일 |
 | --- | --- | --- | --- |
 | Direct 수정 | host 파일 즉시 변경 | 참가자 작성 | 참가자 작성 |
 | Clone 수정/설치 | host working tree, node_modules와 DB 불변 | 참가자 작성 | 참가자 작성 |

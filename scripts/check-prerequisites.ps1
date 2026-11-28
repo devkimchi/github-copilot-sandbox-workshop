@@ -5,7 +5,7 @@ param([switch]$Help)
 $bootstrap = Initialize-WorkshopScript -ScriptPath $PSCommandPath -BoundParameters $PSBoundParameters -RemainingArguments $args -DotSourced ($MyInvocation.InvocationName -eq '.')
 if ($bootstrap.Handled) { exit $bootstrap.Code }
 
-$script:WorkshopNodeMinimum = [version]'22.13.0'
+$script:WorkshopNodeMinimum = [version]'24.0.0'
 $script:WorkshopNodeMajor = 24
 $script:WorkshopNvmMajor = 2
 $script:CheckFailures = 0
@@ -34,8 +34,7 @@ function Add-Check {
 
 function Write-CheckGroup {
     param([string]$Name)
-    Write-Host ''
-    Write-Host "== $Name =="
+    Write-WorkshopMessage "[INFO] == $Name =="
 }
 
 function Get-ToolVersion {
@@ -66,7 +65,8 @@ function Test-WorkshopHost {
     $arch = [Runtime.InteropServices.RuntimeInformation]::OSArchitecture
     if ($arch -eq [Runtime.InteropServices.Architecture]::X64) { Add-Check PASS architecture 'x64' }
     else { Add-Check FAIL architecture "$arch (requires 64-bit Intel or AMD)" }
-    Add-Check PASS powershell "$($PSVersionTable.PSVersion)"
+    if ($PSVersionTable.PSVersion.Major -ge 7) { Add-Check PASS powershell7 "$($PSVersionTable.PSVersion)" }
+    else { Add-Check FAIL powershell7 "$($PSVersionTable.PSVersion) (requires PowerShell 7)" }
     try {
         $feature = Get-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -ErrorAction Stop
         if ($feature.State -eq 'Enabled') { Add-Check PASS hypervisor-platform 'Enabled' }
@@ -80,14 +80,16 @@ function Test-WorkshopHost {
 function Test-WorkshopCoreTools {
     Write-CheckGroup 'Core tools'
     $null = Test-MinimumVersion git ([version]'2.0.0') git @('--version')
+    $null = Test-MinimumVersion gh ([version]'2.0.0') gh @('--version')
+    Add-Check MANUAL gh-auth 'Run gh auth status and confirm you are signed in to your personal GitHub account.'
     $nvm = Invoke-ToolProbe nvm @('version')
     $nvmVersion = if ($nvm.Code -eq 0) { Get-ToolVersion $nvm.Text }
     if ($nvmVersion -and $nvmVersion.Major -eq $script:WorkshopNvmMajor) { Add-Check PASS nvm-windows "$nvmVersion" }
-    elseif ($nvmVersion) { Add-Check WARN nvm-windows "$nvmVersion (the workshop uses nvm-windows $script:WorkshopNvmMajor.x)" }
-    else { Add-Check WARN nvm-windows "Not found. The workshop installs Node.js through nvm-windows $script:WorkshopNvmMajor.x." }
+    elseif ($nvmVersion) { Add-Check FAIL nvm-windows "$nvmVersion (requires nvm-windows $script:WorkshopNvmMajor.x)" }
+    else { Add-Check FAIL nvm-windows "Not found. The workshop installs Node.js through nvm-windows $script:WorkshopNvmMajor.x." }
     $node = Test-MinimumVersion node $script:WorkshopNodeMinimum node @('--version')
-    if ($node -and $node.Major -ne $script:WorkshopNodeMajor) {
-        Add-Check WARN node-major "$node is supported, but the workshop installs the latest Node.js $script:WorkshopNodeMajor.x."
+    if (-not $node) {
+        Add-Check INFO node-install "Run ./scripts/install-prerequisites.ps1 to install the latest Node.js $script:WorkshopNodeMajor.x with nvm-windows."
     }
     $npm = Invoke-ToolProbe npm @('--version')
     if ($npm.Code -eq 0) { Add-Check PASS npm $npm.Text } else { Add-Check FAIL npm $npm.Text }
@@ -107,7 +109,7 @@ function Test-WorkshopDockerSandboxes {
 }
 
 function Test-WorkshopAzure {
-    Write-CheckGroup 'Azure'
+    Write-CheckGroup 'Azure Container Apps Sandboxes'
     $saved = $env:AZURE_EXTENSION_USE_DYNAMIC_INSTALL
     $env:AZURE_EXTENSION_USE_DYNAMIC_INSTALL = 'no'
     try {
@@ -142,8 +144,8 @@ function Invoke-PrerequisiteMain {
     Test-WorkshopHost
     Test-WorkshopCoreTools
     Test-WorkshopCopilot
-    Test-WorkshopDockerSandboxes
     Test-WorkshopAzure
+    Test-WorkshopDockerSandboxes
     Test-WorkshopOptional
     Write-Host ''
     Write-Host "Required failures: $script:CheckFailures. MANUAL items were not checked automatically."

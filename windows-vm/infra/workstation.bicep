@@ -7,15 +7,23 @@ param tags object
 param adminUsername string
 @secure()
 param adminPassword string
-param confirmWindowsClientLicense string
+param confirmWindowsClientLicense bool
 param vmSize string
 param imageSku string
 param imageVersion string
 
 var stageScript = replace(
-  loadTextContent('../scripts/stage-tools.ps1'),
-  '__INSTALLER_BASE64__',
-  base64(loadTextContent('../scripts/install-tools.ps1'))
+  replace(
+    replace(
+      loadTextContent('../scripts/stage-tools.ps1'),
+      '__INSTALLER_BASE64__',
+      base64(loadTextContent('../scripts/install-vm-tools.ps1'))
+    ),
+    '__UPDATER_BASE64__',
+    base64(loadTextContent('../scripts/update-vm-tools.ps1'))
+  ),
+  '__ADMIN_USERNAME__',
+  replace(adminUsername, '\'', '\'\'')
 )
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2025-01-01' = {
@@ -117,7 +125,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2025-04-01' = {
   tags: tags
   properties: {
     hardwareProfile: { vmSize: vmSize }
-    licenseType: confirmWindowsClientLicense == 'true' ? 'Windows_Client' : null
+    licenseType: confirmWindowsClientLicense ? 'Windows_Client' : null
     securityProfile: {
       securityType: 'TrustedLaunch'
       uefiSettings: {

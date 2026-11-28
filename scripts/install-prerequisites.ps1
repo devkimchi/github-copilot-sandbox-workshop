@@ -142,27 +142,50 @@ function Install-AcaCli {
 
 function Install-WindowsTools {
     $failed = $false
-    $tools = @(
-        @{ Name = 'git'; Command = 'git'; Package = 'Git.Git' },
-        @{ Name = 'node'; Command = $null },
-        @{ Name = 'copilot'; Command = 'copilot'; Package = 'GitHub.Copilot' },
-        @{ Name = 'sbx'; Command = 'sbx'; Package = 'Docker.sbx' },
-        @{ Name = 'az'; Command = 'az'; Package = 'Microsoft.AzureCLI' },
-        @{ Name = 'aca'; Command = 'aca'; Package = $null }
+    $toolGroups = @(
+        @{
+            Name = 'Core tools'
+            Tools = @(
+                @{ Name = 'git'; Command = 'git'; Package = 'Git.Git' },
+                @{ Name = 'gh'; Command = 'gh'; Package = 'GitHub.cli' },
+                @{ Name = 'node'; Command = $null }
+            )
+        },
+        @{
+            Name = 'GitHub Copilot CLI'
+            Tools = @(
+                @{ Name = 'copilot'; Command = 'copilot'; Package = 'GitHub.Copilot' }
+            )
+        },
+        @{
+            Name = 'Azure Container Apps Sandboxes'
+            Tools = @(
+                @{ Name = 'az'; Command = 'az'; Package = 'Microsoft.AzureCLI' },
+                @{ Name = 'aca'; Command = 'aca'; Package = $null }
+            )
+        },
+        @{
+            Name = 'Docker Sandboxes'
+            Tools = @(
+                @{ Name = 'sbx'; Command = 'sbx'; Package = 'Docker.sbx' }
+            )
+        }
     )
-    Write-CheckGroup 'Core tools'
-    foreach ($tool in $tools) {
-        if ($tool.Name -eq 'node') {
-            if (-not (Install-WorkshopNode)) { $failed = $true }
-            continue
+    foreach ($group in $toolGroups) {
+        Write-CheckGroup $group.Name
+        foreach ($tool in $group.Tools) {
+            if ($tool.Name -eq 'node') {
+                if (-not (Install-WorkshopNode)) { $failed = $true }
+                continue
+            }
+            $existing = Get-Command $tool.Command -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($existing) {
+                Write-WorkshopMessage "[INFO] $($tool.Name): Found on PATH ($($existing.Source)). It will not be installed or updated."
+                continue
+            }
+            $ok = if ($tool.Package) { Install-WingetPackage $tool.Name $tool.Package } else { Install-AcaCli }
+            if (-not $ok) { $failed = $true }
         }
-        $existing = Get-Command $tool.Command -ErrorAction SilentlyContinue | Select-Object -First 1
-        if ($existing) {
-            Write-WorkshopMessage "[INFO] $($tool.Name): Found on PATH ($($existing.Source)). It will not be installed or updated."
-            continue
-        }
-        $ok = if ($tool.Package) { Install-WingetPackage $tool.Name $tool.Package } else { Install-AcaCli }
-        if (-not $ok) { $failed = $true }
     }
     Write-CheckGroup 'Host features'
     Write-WorkshopMessage '[MANUAL] If Windows Hypervisor Platform is disabled, run this in an elevated PowerShell and restart: Enable-WindowsOptionalFeature -Online -FeatureName HypervisorPlatform -All'
