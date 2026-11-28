@@ -75,11 +75,11 @@ git status --short --ignored > evidence/setup/outer-status.txt
 ```powershell
 # PowerShell
 # HOST, 기존 폴더이면 중단하고 다른 교육용 경로를 선택한다.
-New-Item -ItemType Directory C:/sandbox-canary -ErrorAction Stop
-Set-Content C:/sandbox-canary/read.txt 'WORKSHOP_CANARY=not-a-secret'
-Set-Content C:/sandbox-canary/write.txt 'before'
-Get-Content C:/sandbox-canary/read.txt
-Get-FileHash C:/sandbox-canary/write.txt |
+New-Item -ItemType Directory "$HOME/sandbox-canary" -ErrorAction Stop
+Set-Content "$HOME/sandbox-canary/read.txt" 'WORKSHOP_CANARY=not-a-secret'
+Set-Content "$HOME/sandbox-canary/write.txt" 'before'
+Get-Content "$HOME/sandbox-canary/read.txt"
+Get-FileHash "$HOME/sandbox-canary/write.txt" |
   Out-File ./evidence/setup/canary-before.txt
 git -C ./workspace status --short |
   Out-File ./evidence/setup/git-before.txt
@@ -193,11 +193,11 @@ node -e "require('node:fs').writeFileSync(process.env.HOME + '/sandbox-canary/wr
 # PowerShell
 node -e "console.log(require('node:fs').readFileSync('.env','utf8'))"
 node -e "require('node:fs').writeFileSync('__workshop-inside.txt','inside')"
-node -e "console.log(require('node:fs').readFileSync('C:/sandbox-canary/read.txt','utf8'))"
-node -e "require('node:fs').writeFileSync('C:/sandbox-canary/write.txt','after')"
+node -e "console.log(require('node:fs').readFileSync(require('node:path').join(require('node:os').homedir(),'sandbox-canary','read.txt'),'utf8'))"
+node -e "require('node:fs').writeFileSync(require('node:path').join(require('node:os').homedir(),'sandbox-canary','write.txt'),'after')"
 ```
 
-앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 확인한다. 각 명령의 결과를 확인하는 즉시 HOST에서 관찰표에 기록한다. Bash에서는 `$HOME/sandbox-canary`, PowerShell에서는 `C:/sandbox-canary`를 샌드박스를 끄고 켰을 때 같은 경로로 사용한다.
+앞의 두 명령은 `workspace` 안의 교육용 파일 읽기와 쓰기를, 뒤의 두 명령은 외부 확인용 파일 읽기와 쓰기를 확인한다. 각 명령의 결과를 확인하는 즉시 HOST에서 관찰표에 기록한다. Bash와 PowerShell 모두 `$HOME/sandbox-canary`를 사용하고, 샌드박스를 끄고 켰을 때 같은 경로로 실행한다.
 
 세션을 종료한 뒤 CLI를 시작한 HOST 터미널에서 기록을 종료하고 저장소 루트로 돌아간다. 확인용 파일의 해시를 저장해 쓰기 명령을 실행한 뒤의 상태를 남긴다.
 
@@ -208,7 +208,7 @@ shasum -a 256 "$HOME/sandbox-canary/write.txt" > evidence/copilot-cli/canary-aft
 
 ```powershell
 # PowerShell
-Get-FileHash C:/sandbox-canary/write.txt | Out-File ./evidence/copilot-cli/canary-after-off.txt
+Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/copilot-cli/canary-after-off.txt
 ```
 
 세션 기록에 CLI 화면이 완전히 남지 않으면 실제 도구의 표준 출력, 표준 오류와 정책 화면을 별도 텍스트로 저장하고 빠진 부분을 표시한다. 모델이 작성한 설명으로 빈 실행 기록을 채우지 않는다.
@@ -227,8 +227,8 @@ script -q -c 'cd workspace && copilot --sandbox' evidence/copilot-cli/on-transcr
 ```powershell
 # PowerShell
 # HOST, <REPOSITORY_ROOT>
-Set-Content C:/sandbox-canary/write.txt 'before'
-Get-FileHash C:/sandbox-canary/write.txt | Out-File ./evidence/copilot-cli/canary-before-on.txt
+Set-Content "$HOME/sandbox-canary/write.txt" 'before'
+Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/copilot-cli/canary-before-on.txt
 Start-Transcript -Path ./evidence/copilot-cli/on-transcript.txt -NoClobber
 Set-Location ./workspace
 copilot --sandbox
@@ -254,7 +254,7 @@ shasum -a 256 "$HOME/sandbox-canary/write.txt" > evidence/copilot-cli/canary-aft
 ```powershell
 # PowerShell
 # HOST, <REPOSITORY_ROOT>
-Get-FileHash C:/sandbox-canary/write.txt | Out-File ./evidence/copilot-cli/canary-after-on.txt
+Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/copilot-cli/canary-after-on.txt
 ```
 
 `/sandbox policy npm ci`, `/sandbox policy npm run test:e2e`는 정책에 따른 처리 결과를 예측할 뿐 실제 실행 기록은 아니다.
@@ -274,8 +274,8 @@ shasum -a 256 "$HOME/sandbox-canary/write.txt"
 ```powershell
 # PowerShell
 # HOST, <REPOSITORY_ROOT>
-Set-Content C:/sandbox-canary/write.txt 'before'
-Get-FileHash C:/sandbox-canary/write.txt
+Set-Content "$HOME/sandbox-canary/write.txt" 'before'
+Get-FileHash "$HOME/sandbox-canary/write.txt"
 ```
 
 1. `/sandbox config`에서 정확한 UI 표기를 확인하고 외부 확인용 폴더 하나만 읽기 전용(Read-Only)으로 허용한다.
@@ -319,7 +319,7 @@ shasum -a 256 "$HOME/sandbox-canary/write.txt" > evidence/copilot-cli/canary-aft
 # PowerShell
 git -C ./workspace status --short | Out-File ./evidence/copilot-cli/git-after.txt
 git -C ./workspace diff --binary --output=../evidence/copilot-cli/changes.patch
-Get-FileHash C:/sandbox-canary/write.txt | Out-File ./evidence/copilot-cli/canary-after.txt
+Get-FileHash "$HOME/sandbox-canary/write.txt" | Out-File ./evidence/copilot-cli/canary-after.txt
 ```
 
 `--output`은 Git의 `-C` 기준 상대 경로다. `changes.patch`에는 추적되지 않은 새 파일이 포함되지 않으므로 `git-after.txt`에서도 새 파일을 확인하고 필요한 내용은 별도로 보존한다. 시작 상태와 최종 상태를 비교하고 실행 기록에 비밀이 없는지 사람이 검토한다.
