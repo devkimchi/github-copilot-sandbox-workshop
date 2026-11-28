@@ -123,7 +123,7 @@ Get-Content ./evidence/setup/outer-status.txt
 > - `git-before.txt`: 내용이 있으면 `workspace`에 시작 전 변경 사항이 있다는 뜻이다.
 > - `remotes.txt`: 내용이 있으면 원격 저장소가 설정되어 있다는 뜻이다.
 > - `git-before.txt` 또는 `remotes.txt`에 내용이 있으면 진행 전에 강사와 확인한다.
-> - `outer-status.txt`: 저장소 바깥의 실습 전 상태다. 실습 후 `git status --short --ignored`를 다시 실행해 결과를 비교한다.
+> - `outer-status.txt`: `workspace`가 들어 있는 프로젝트 저장소 루트에서 실행한 `git status --short --ignored`의 실습 전 결과다. 실습 후 같은 위치에서 같은 명령을 실행해 비교한다.
 
 `workspace`에서 가장 가까운 Git 루트만 저장소(repository) 범위로 판단하는지는 미확인이다. 샌드박스를 켠 상태에서 부모의 `checkpoints/`가 읽히면 강사에게 알린다. **과제 해결을 위해 체크포인트나 완성 예시를 Copilot에 읽히지 않는다.** 프롬프트에서 읽지 말라고 지시하는 것만으로는 접근을 차단할 수 없다.
 
