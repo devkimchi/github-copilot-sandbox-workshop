@@ -73,7 +73,7 @@ npm ci
 
 ### 원격 파일과 egress
 
-ACA REMOTE에서 `test -e 'C:/SandboxCanary/read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
+ACA REMOTE에서 `test -e 'C:/sandbox-canary/read.txt'`를 실행해 HOST의 파일이 자동 연결되지 않음을 확인한다. 경로 부재는 "정책이 읽기를 차단했다"는 뜻이 아니다. 원격 파일시스템에 해당 host 파일이 없다는 관찰이다.
 
 ACA REMOTE에서 각각 실행한다.
 
