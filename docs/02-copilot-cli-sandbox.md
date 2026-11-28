@@ -57,11 +57,16 @@ HOST에서 확인용 파일을 만들고, 실습 전 파일 해시와 Git 상태
 ```bash
 # zsh/bash
 CANARY_DIR="$HOME/sandbox-canary"
-if [ -e "$CANARY_DIR" ]; then
-  printf '%s\n' "$CANARY_DIR already exists; choose another training path." >&2
-  exit 1
+if [ -e "$CANARY_DIR" ] || [ -L "$CANARY_DIR" ]; then
+  BACKUP_DIR="${CANARY_DIR}.backup-$(date '+%Y%m%d-%H%M%S')"
+  if [ -e "$BACKUP_DIR" ] || [ -L "$BACKUP_DIR" ]; then
+    printf '%s\n' "Backup path already exists: $BACKUP_DIR" >&2
+    exit 1
+  fi
+  mv "$CANARY_DIR" "$BACKUP_DIR" || exit 1
+  printf '%s\n' "Existing path backed up to: $BACKUP_DIR"
 fi
-mkdir "$CANARY_DIR"
+mkdir -p "$CANARY_DIR" || exit 1
 printf '%s\n' 'WORKSHOP_CANARY=not-a-secret' > "$CANARY_DIR/read.txt"
 printf '%s\n' 'before' > "$CANARY_DIR/write.txt"
 cat "$CANARY_DIR/read.txt"
@@ -74,8 +79,16 @@ git status --short --ignored > evidence/setup/outer-status.txt
 
 ```powershell
 # PowerShell
-# HOST, 기존 폴더이면 중단하고 다른 교육용 경로를 선택한다.
-New-Item -ItemType Directory "$HOME/sandbox-canary" -ErrorAction Stop
+$canaryDir = "$HOME/sandbox-canary"
+if (Test-Path -LiteralPath $canaryDir) {
+  $backupDir = "$canaryDir.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+  if (Test-Path -LiteralPath $backupDir) {
+    throw "Backup path already exists: $backupDir"
+  }
+  Move-Item -LiteralPath $canaryDir -Destination $backupDir -ErrorAction Stop
+  Write-Output "Existing path backed up to: $backupDir"
+}
+New-Item -ItemType Directory -Path $canaryDir -Force | Out-Null
 Set-Content "$HOME/sandbox-canary/read.txt" 'WORKSHOP_CANARY=not-a-secret'
 Set-Content "$HOME/sandbox-canary/write.txt" 'before'
 Get-Content "$HOME/sandbox-canary/read.txt"
